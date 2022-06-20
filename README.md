@@ -42,6 +42,8 @@ The food app for meal planning  including managing grocery shopping and cooking 
 **Optional Nice-to-have Stories (p2)**
 * 8. A good UI
 * 9. History: allow authenticated users to view the history of their cooked recipes
+
+
 **Complicated Stories (p3)**
 * 10. Share recipe info:
    - Use image generation sdk (https://dynapictures.com/lp/developers)
