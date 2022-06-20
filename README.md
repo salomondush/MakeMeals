@@ -10,6 +10,19 @@
 ### Description
 The food app for meal planning  including managing grocery shopping and cooking menus, from scanning grocery shopping receipts to suggesting what type of food you can make with the available ingredients and saving + sharing your favorite recipes 
 
+### Timeline
+
+| MU week | Project Week | Focus                                                                                                                                                                                            |
+|---------|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 3       | 0            | Write a project plan and discussing with manager                                                                                                                                                 |
+| 4       | 1            | Start + finish (project skeleton and unknowns). Midpoint self review due on Thursday - Digital wireframes and mockups - Unknown technologies and SDKs - Initiate Github projects and open issues |
+| 5       | 2            | p1: Start (p1 core features  + ambiguous tech probs) - Working code demo for textract or alternative natural language processing tools                                                           |
+| 6       | 3            | p1: Continue (p1 core features + ambiguous tech probs)                                                                                                                                           |
+| 7       | 4            | p1: Complete (p1 core features + ambiguous tech probs)  p2: Start (p2 stretch features + polish)                                                                                                 |
+| 8       | 5            | p2: Continue (additional stretch features + Polish). Final self review due                                                                                                                       |
+| 9       | 6            | p3: Delay offset + Finishing touches + improvements                                                                                                                                              |
+| 10      | 7            | Complete "Week 10" activities                                                                                                                                                                    |
+
 ### App Evaluation
 [Evaluation of your app across the following attributes]
 - **Category:** Food & Cooking
