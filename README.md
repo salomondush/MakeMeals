@@ -61,7 +61,6 @@ The food app for meal planning  including managing grocery shopping and cooking 
    - Use image generation sdk (https://dynapictures.com/lp/developers)
    - Use Facebook's 3rd party share APIs
 * 11. Suggest: suggest shopping list based on your saved/favorite recipes and grocery shopping history + **Diet**
-* 12. Use food image classification APIs
 
 ### 2. Screen Archetypes
 
