@@ -44,7 +44,6 @@ The food app for meal planning  including managing grocery shopping and cooking 
 * 5. Shows user's favorite recipes (usermarked favorite recipes)
 * 6. View Full Recipe Details including cooking instructions
    - Shows the list of ingredients
-   - <img width="663" alt="Screen Shot 2022-06-19 at 9 41 39 PM" src="https://user-images.githubusercontent.com/63796975/174526690-8f7d060d-8edc-43c0-9561-789aa8b5d281.png">
 * 7. Search Recipes 
     * Using Spoonacular api https://spoonacular.com/food-api/docs
     * Dietary Restriction and intorelances (ex, veg or non)
