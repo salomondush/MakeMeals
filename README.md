@@ -30,6 +30,8 @@ The food app for meal planning  including managing grocery shopping and cooking 
 * 4. Allows users to scan receipts or make ingredient/grocery entries
 * 5. Shows user's favorite recipes (usermarked favorite recipes)
 * 6. View Full Recipe Details including cooking instructions
+   - Shows the list of ingredients
+   - <img width="663" alt="Screen Shot 2022-06-19 at 9 41 39 PM" src="https://user-images.githubusercontent.com/63796975/174526690-8f7d060d-8edc-43c0-9561-789aa8b5d281.png">
 * 7. Search Recipes 
     * Using Spoonacular api https://spoonacular.com/food-api/docs
     * Dietary Restriction and intorelances (ex, veg or non)
@@ -59,6 +61,11 @@ The food app for meal planning  including managing grocery shopping and cooking 
     * Shows user's favorite recipes (usermarked favorite recipes)
 * Search Screen
     * User selects from available ingredients and can also provide additional ingredients
+    * Each recipe item in the results list will show
+        - title
+        - image
+        - missedIngredientCount
+        - usedIngredientCount 
 
 
 ### 3. Navigation
@@ -86,6 +93,28 @@ The food app for meal planning  including managing grocery shopping and cooking 
     * Recipe Screen
 * Favorites Screen
     * Recipe Screen
+
+## Data Models
+
+* User
+    * id (primary)
+    * username (String)
+    * password (String)
+    * profilePhoto (File)
+    * 
+* Recipe (https://spoonacular.com/food-api/docs#Get-Recipe-Information)
+    * id (primary)
+    * spoonacularId (Number)
+    * title (String)
+    * image (File)
+    * sourceName (String)
+    * sourceUrl (String)
+    * readyInMinutes (Number)
+    * extendedIngredients (Object)
+    * vegan (boolean) -- will show a vegan tag
+* Grocery (Ingridient)
+    * id (primary)
+    * name (String)
 
 
 ## Wireframes (in progress ...)
