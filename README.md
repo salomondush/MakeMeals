@@ -35,16 +35,18 @@ The food app for meal planning  including managing grocery shopping and cooking 
 * 7. Search Recipes 
     * Using Spoonacular api https://spoonacular.com/food-api/docs
     * Dietary Restriction and intorelances (ex, veg or non)
-    * user selects from available ingredients and can also provide additional ingredients
-* 8. Share recipe info
+    * user selects from available ingredients and can also provide additional ingredients 
+* 9. Amazon textract to extract receipt data from photo
+
 
 **Optional Nice-to-have Stories (p2)**
-* 10. A good UI
-* 11. Amazon textract to extract receipt data from photo
-* 11. Suggest: suggest shopping list based on your saved/favorite recipes and grocery shopping history + **Diet**
-
+* 8. A good UI
+* 9. History: allow authenticated users to view the history of their cooked recipes
 **Complicated Stories (p3)**
-
+* 10. Share recipe info:
+   - Use image generation sdk (https://dynapictures.com/lp/developers)
+   - Use Facebook's 3rd party share APIs
+* 11. Suggest: suggest shopping list based on your saved/favorite recipes and grocery shopping history + **Diet**
 * 12. Use food image classification APIs
 
 ### 2. Screen Archetypes
@@ -57,6 +59,12 @@ The food app for meal planning  including managing grocery shopping and cooking 
     * Show's user currently available ingredients with an option to remove and add ingredients.
 * Recipe Screen
     * View Full Recipe Details including cooking instructions
+      - SECION 0: Shows the favorite and save button
+      - SECTION I: pull recipe information with diet, nutrition, and allergen information
+      - SECTION II: Shows categorized ingredients details (missed and used) (from get recipe by ingredients endpoint)
+      - SECTION III: recipe instructions (Get Analyzed Recipe Instructions endpoint)
+    * Saving a recipe will make a `Recipe` entry in our database with the `favorite: false`
+    * Favoriting a reciple will also make a `Recipe` entry if it does not exists with `favorite: true` (use the double tap gesture)
 * Favorites Screen
     * Shows user's favorite recipes (usermarked favorite recipes)
 * Search Screen
@@ -66,8 +74,7 @@ The food app for meal planning  including managing grocery shopping and cooking 
         - image
         - missedIngredientCount
         - usedIngredientCount 
-
-
+ 
 ### 3. Navigation
 
 **Tab Navigation** (Tab to Screen)
@@ -87,8 +94,7 @@ The food app for meal planning  including managing grocery shopping and cooking 
 * Login Screen
    * Signup Screen (back)
    * Home Screen
-* Search Screen
-    * Results Screen
+* Search and Results Screen (Results will be displayed in a recyclerview using the grid layout manager)
 * Results Screen
     * Recipe Screen
 * Favorites Screen
@@ -101,19 +107,13 @@ The food app for meal planning  including managing grocery shopping and cooking 
     * username (String)
     * password (String)
     * profilePhoto (File)
-    * 
 * Recipe (https://spoonacular.com/food-api/docs#Get-Recipe-Information)
     * id (primary)
-    * spoonacularId (Number)
-    * title (String)
-    * image (File)
-    * sourceName (String)
-    * sourceUrl (String)
-    * readyInMinutes (Number)
-    * extendedIngredients (Object)
-    * vegan (boolean) -- will show a vegan tag
+    * spoonacularId (Number) -- will be used to lookup recipe information
+    * favorite (Boolean)
 * Grocery (Ingridient)
     * id (primary)
+    * Date
     * name (String)
 
 
