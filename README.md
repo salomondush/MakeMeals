@@ -39,6 +39,7 @@ The food app for meal planning  including managing grocery shopping and cooking 
 **Required Must-have Stories (P1)**
 * 1. Allow users to login/signup with username and password
 * 2. Profile page with username and photo + logout button
+* 3. 
 * 3. Show user currently available ingredients with an option to remove and add ingredients.
 * 4. Allows users to scan receipts or make ingredient/grocery entries
 * 5. Shows user's favorite recipes (usermarked favorite recipes)
@@ -60,7 +61,7 @@ The food app for meal planning  including managing grocery shopping and cooking 
 * 10. Share recipe info:
    - Use image generation sdk (https://dynapictures.com/lp/developers)
    - Use Facebook's 3rd party share APIs
-* 11. Suggest: suggest shopping list based on your saved/favorite recipes and grocery shopping history + **Diet**
+* 11. Suggest: suggest shopping list from a given recipe + **Diet**
 
 ### 2. Screen Archetypes
 
@@ -69,6 +70,8 @@ The food app for meal planning  including managing grocery shopping and cooking 
 * Scan Screen
     * Allows users to scan recieps  or make ingredient/grocery entries
 * Home Screen
+    * Show's user's saved recipes
+* Ingredients Screen
     * Show's user currently available ingredients with an option to remove and add ingredients.
 * Recipe Screen
     * View Full Recipe Details including cooking instructions
@@ -85,8 +88,10 @@ The food app for meal planning  including managing grocery shopping and cooking 
     * Each recipe item in the results list will show
         - title
         - image
-        - missedIngredientCount
-        - usedIngredientCount 
+        - calories
+        - carbs
+        - fat
+        - protein
  
 ### 3. Navigation
 
