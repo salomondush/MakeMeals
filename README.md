@@ -107,7 +107,7 @@ The food app for meal planning  including managing grocery shopping and cooking 
 * Login Screen
    * Signup Screen (back)
    * Home Screen
-* Search and Results Screen (Results will be displayed in a recyclerview using the grid layout manager)
+* Search and Results Screen (Results will be displayed in a recyclerview using the linear layout manager)
 * Results Screen
     * Recipe Screen
 * Favorites Screen
