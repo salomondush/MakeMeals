@@ -39,7 +39,7 @@ The food app for meal planning  including managing grocery shopping and cooking 
 **Required Must-have Stories (P1)**
 * 1. Allow users to login/signup with username and password
 * 2. Profile page with username and photo + logout button
-* 3. 
+* 3. Show's home page with a list of user saved recipes
 * 3. Show user currently available ingredients with an option to remove and add ingredients.
 * 4. Allows users to scan receipts or make ingredient/grocery entries
 * 5. Shows user's favorite recipes (usermarked favorite recipes)
