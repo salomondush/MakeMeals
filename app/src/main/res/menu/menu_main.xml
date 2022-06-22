@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/ingredients"
+        android:enabled="true"
+        app:showAsAction="always"
+        android:icon="@drawable/ingredients_icon_selector"
+        android:title="@string/home"
+        />
+    <item
+        android:id="@+id/profile"
+        android:enabled="true"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/user_icon_selector"
+        android:title="@string/home" />
+</menu>
