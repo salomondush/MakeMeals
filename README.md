@@ -119,7 +119,7 @@ The food app for meal planning  including managing grocery shopping and cooking 
     * Recipe Screen
 
 ## Wireframes
-![Screen Shot 2022-06-22 at 3 49 26 PM](https://user-images.githubusercontent.com/63796975/175167214-22c92fc2-c92b-4716-a380-8231fbb4de05.png)
+![Screen Shot 2022-06-22 at 3 49 26 PM](https://user-images.githubusercontent.com/63796975/174027368-690731c9-1c56-4f86-b35f-850eef1fd378.jpg)
 ### [BONUS] Digital Wireframes & Mockups
 https://www.figma.com/.../6u95Y8yEE0cTQKWmrO.../MakeMeals...
 ![Screen Shot 2022-06-22 at 3 49 26 PM](https://user-images.githubusercontent.com/63796975/175167214-22c92fc2-c92b-4716-a380-8231fbb4de05.png)
