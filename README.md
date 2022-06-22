@@ -118,6 +118,7 @@ The food app for meal planning  including managing grocery shopping and cooking 
 * Favorites Screen
     * Recipe Screen
 
+## Wireframes
 ### [BONUS] Digital Wireframes & Mockups
 ![Screen Shot 2022-06-22 at 3 49 26 PM](https://user-images.githubusercontent.com/63796975/175167214-22c92fc2-c92b-4716-a380-8231fbb4de05.png)
 
