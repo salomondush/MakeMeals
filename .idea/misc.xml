@@ -12,6 +12,7 @@
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1155" />
         <entry key="app/src/main/res/drawable/ingredients_icon_selector.xml" value="0.246" />
         <entry key="app/src/main/res/drawable/save_button_selector.xml" value="0.2515" />
+        <entry key="app/src/main/res/drawable/save_icon_selector.xml" value="0.224" />
         <entry key="app/src/main/res/drawable/search_meals_icon_selector.xml" value="0.246" />
         <entry key="app/src/main/res/drawable/splash_background.xml" value="0.1155" />
         <entry key="app/src/main/res/drawable/user_icon_selector.xml" value="0.246" />
@@ -20,7 +21,7 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.38981481481481484" />
         <entry key="app/src/main/res/layout/activity_splash_screen.xml" value="0.1361111111111111" />
-        <entry key="app/src/main/res/layout/fragment_ingredients.xml" value="0.4036458333333333" />
+        <entry key="app/src/main/res/layout/fragment_ingredients.xml" value="0.394403076171875" />
         <entry key="app/src/main/res/layout/fragment_listview.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/layout/fragment_recipe_details.xml" value="0.38958333333333334" />

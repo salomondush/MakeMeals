@@ -12,6 +12,7 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/ingredientName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ingredient_name_placeholder"
@@ -20,6 +21,7 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/ingredientDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/date_placeholder"
@@ -28,12 +30,12 @@
 
     <ImageButton
         android:id="@+id/removeButton"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginStart="260dp"
-        android:background="@drawable/make_meals_favorites_outlined"
+        android:background="@drawable/remove_icon"
         android:contentDescription="@string/remove_button_description" />
 
 </RelativeLayout>

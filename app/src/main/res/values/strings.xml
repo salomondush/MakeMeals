@@ -30,7 +30,10 @@
     <string name="calsValuePlaceholder">584</string>
     <string name="username">Username</string>
     <string name="log_out">Log Out</string>
-    <string name="ingredient_name_placeholder">IngredientI</string>
+    <string name="ingredient_name_placeholder">Ingredient Name</string>
     <string name="date_placeholder">01/01/2001</string>
     <string name="remove_button_description">remove</string>
+    <string name="type_place_holder">Type</string>
+    <string name="Diet">diet_placeholder</string>
+    <string name="search">Search</string>
 </resources>
