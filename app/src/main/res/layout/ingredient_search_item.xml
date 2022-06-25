@@ -29,20 +29,9 @@
             android:textStyle="italic" />
     </LinearLayout>
 
-    <ImageButton
-        android:layout_gravity="center"
-        android:id="@+id/removeButton"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:background="@drawable/remove_icon"
-        android:contentDescription="@string/remove_button_description"
-        android:visibility="visible"/>
-
     <CheckBox
         android:id="@+id/cbSelectIngredient"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:checked="false"
-        android:visibility="visible"/>
-
+        android:checked="false"/>
 </LinearLayout>

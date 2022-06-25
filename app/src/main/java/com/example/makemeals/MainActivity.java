@@ -7,17 +7,16 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.makemeals.databinding.ActivityMainBinding;
+import com.example.makemeals.fragments.FavoritesFragment;
+import com.example.makemeals.fragments.HomeFragment;
 import com.example.makemeals.fragments.IngredientsFragment;
-import com.example.makemeals.fragments.ListviewFragment;
 import com.example.makemeals.fragments.ProfileFragment;
 import com.example.makemeals.fragments.SearchFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity {
     private static final String FAVORITE_SCREEN = "favorite";
@@ -54,15 +53,11 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.favorites:
                     // todo: udpate fragment
-                    fragment = new ListviewFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString(FAVORITE_SCREEN, String.valueOf(true));
+                    fragment = new FavoritesFragment();
                     break;
                 case R.id.home:
                 default:
-                    fragment = new ListviewFragment();
-                    Bundle bundle1 = new Bundle();
-                    bundle1.putString(HOME_SCREEN, String.valueOf(true));
+                    fragment = new HomeFragment();
                     break;
             }
             fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();

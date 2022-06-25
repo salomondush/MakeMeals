@@ -99,7 +99,7 @@ public class IngredientsFragment extends Fragment {
         etIngredientName = view.findViewById(R.id.etIngredientName);
 
         ingredients = new ArrayList<>();
-        adapter = new IngredientsAdapter(ingredients, getContext());
+        adapter = new IngredientsAdapter(ingredients, getContext(), false);
 
         rvIngredients = view.findViewById(R.id.rvIngredients);
         rvIngredients.setAdapter(adapter);
@@ -149,8 +149,7 @@ public class IngredientsFragment extends Fragment {
             }
         });
 
-
-                queryIngredients();
+        queryIngredients();
     }
 
     private void queryIngredients() {

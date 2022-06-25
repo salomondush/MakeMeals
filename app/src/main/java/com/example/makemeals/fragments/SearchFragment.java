@@ -4,15 +4,25 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 
 import com.example.makemeals.R;
+import com.example.makemeals.adapters.IngredientsAdapter;
+import com.example.makemeals.models.Ingredient;
+import com.google.android.material.button.MaterialButton;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,6 +30,17 @@ import com.example.makemeals.R;
  * create an instance of this fragment.
  */
 public class SearchFragment extends Fragment {
+    private RecyclerView rvSearchIngredients;
+    private RecyclerView rvSearchResults;
+    private IngredientsAdapter ingredientsAdapter;
+    // private RecipeAdapter recipeAdapter;
+    private List<Ingredient> ingredients;
+    // private List<Recipes> resultRecipes;
+    private MaterialButton searchButton;
+    private AutoCompleteTextView recipeDiet;
+    private AutoCompleteTextView recipeType;
+
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -71,8 +92,27 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Fragment searchQueryFragment = new SearchQueryChildFragment();
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.add(R.id.sfContainer, searchQueryFragment).commit();
+        searchButton = view.findViewById(R.id.searchButton);
+        recipeDiet = view.findViewById(R.id.recipeDiet);
+        recipeType = view.findViewById(R.id.recipeType);
+        rvSearchResults = view.findViewById(R.id.rvSearchResults);
+        rvSearchIngredients = view.findViewById(R.id.rvSearchIngredients);
+
+        // set and attach ingredients adapter to rvSearchIngredients recyclerView
+        ingredients = new ArrayList<>();
+        ingredientsAdapter = new IngredientsAdapter(ingredients, getContext(), true);
+        rvSearchIngredients.setAdapter(ingredientsAdapter);
+        rvSearchIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // todo: set and attach recipe adapter to rvSearchResults
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // todo: When the search button is pressed, we fetch recipes, and immediately after getting
+                // results, we will set the rvSearchResults visible and display the results
+                // additionally, we will have another view with an arrow facing down to pull down the search
+                // view again (maybe with some fancy animations)
+            }
+        });
     }
 }
