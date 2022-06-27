@@ -36,4 +36,5 @@
     <string name="type_placeholder">Type</string>
     <string name="diet_placeholder">diet</string>
     <string name="search">Search</string>
+    <string name="ingredient_name">Ingredient Name</string>
 </resources>

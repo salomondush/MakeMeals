@@ -44,4 +44,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     implementation "com.github.parse-community.Parse-SDK-Android:parse:4.0.0"
+
+    implementation 'com.codepath.libraries:asynchttpclient:2.2.0'
+    implementation 'com.loopj.android:android-async-http:1.4.9'
 }
