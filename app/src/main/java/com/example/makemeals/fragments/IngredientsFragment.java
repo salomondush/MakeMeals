@@ -255,7 +255,7 @@ public class IngredientsFragment extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 showProgressBar();
 
-                int newSize = ingredients.size() + dialogIngredients.size();
+                List<Ingredient> newIngredients = new ArrayList<>();
 
                 // save all ingredients in rvDialogIngredients to dialogIngredients
                 for (int i = 0; i < rvDialogIngredients.getChildCount(); i++) {
@@ -266,25 +266,24 @@ public class IngredientsFragment extends Fragment {
 
                         Ingredient ingredient = new Ingredient();
                         ingredient.setName(ingredientName);
-                        ingredient.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e == null) {
-                                    ingredients.add(ingredient);
-                                    adapter.notifyItemInserted(ingredients.size() - 1);
-
-                                    // hide progress bar after last ingredient is added
-                                    if (ingredients.size() == newSize) {
-                                        hideProgressBar();
-                                    }
-
-                                } else {
-                                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                        newIngredients.add(ingredient);
                     }
                 }
+
+                // save all ingredients in dialogIngredients to ingredients
+                Ingredient.saveAllInBackground(newIngredients, new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            ingredients.addAll(newIngredients);
+                            adapter.notifyDataSetChanged();
+                            hideProgressBar();
+                        } else {
+                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
                 dialog.dismiss();
             }
         });
