@@ -58,6 +58,20 @@ public class IngredientsDialogAdapter extends RecyclerView.Adapter<IngredientsDi
 
             etIngredientName = binding.etDialogIngredientName;
             tvDialogIngredientDate = binding.tvDialogIngredientDate;
+
+            etIngredientName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (!hasFocus) {
+                        String ingredientName = etIngredientName.getText().toString();
+                        if (ingredientName.isEmpty()) {
+                            etIngredientName.setError("Ingredient name is required");
+                        } else {
+                            ingredients.set(getAdapterPosition(), ingredientName);
+                        }
+                    }
+                }
+            });
         }
 
         public void bind(String ingredient) {

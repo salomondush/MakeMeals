@@ -37,4 +37,6 @@
     <string name="diet_placeholder">diet</string>
     <string name="search">Search</string>
     <string name="ingredient_name">Ingredient Name</string>
+    <string name="add_button">add Button</string>
+    <string name="camera_button">Camera Button</string>
 </resources>
