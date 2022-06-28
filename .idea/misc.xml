@@ -21,6 +21,8 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.38981481481481484" />
         <entry key="app/src/main/res/layout/activity_splash_screen.xml" value="0.1361111111111111" />
+        <entry key="app/src/main/res/layout/add_ingredients_popup.xml" value="0.29899902343750007" />
+        <entry key="app/src/main/res/layout/dialog_ingredient_item.xml" value="0.28854166666666664" />
         <entry key="app/src/main/res/layout/fragment_ingredients.xml" value="0.394403076171875" />
         <entry key="app/src/main/res/layout/fragment_listview.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.4036458333333333" />

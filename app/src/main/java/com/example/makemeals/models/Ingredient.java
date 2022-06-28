@@ -17,4 +17,8 @@ public class Ingredient extends ParseObject {
     public void setName(String name) {
         put(KEY_NAME, name);
     }
+
+    public void setCreatedAt(Date createdAt) {
+        put(CREATED_AT, createdAt);
+    }
 }

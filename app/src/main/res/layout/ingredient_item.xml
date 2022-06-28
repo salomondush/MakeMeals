@@ -30,13 +30,13 @@
     </LinearLayout>
 
     <ImageButton
-        android:layout_gravity="center"
         android:id="@+id/removeButton"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="17dp"
+        android:layout_height="17dp"
+        android:layout_gravity="center"
         android:background="@drawable/remove_icon"
         android:contentDescription="@string/remove_button_description"
-        android:visibility="visible"/>
+        android:visibility="visible" />
 
     <CheckBox
         android:id="@+id/cbSelectIngredient"
