@@ -12,11 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +36,6 @@ import com.example.makemeals.adapters.IngredientsDialogAdapter;
 import com.example.makemeals.models.Ingredient;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -47,10 +46,8 @@ import org.json.JSONException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import cz.msebera.android.httpclient.Header;
 import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -140,20 +137,30 @@ public class IngredientsFragment extends Fragment {
 
         materialAlertDialogBuilder = new MaterialAlertDialogBuilder(requireContext());
 
+        rvIngredients = view.findViewById(R.id.rvIngredients);
         addButton = view.findViewById(R.id.addButton);
         addLayout = view.findViewById(R.id.addLayout);
         btnAddIngredient = view.findViewById(R.id.btnAddIngredient);
         etIngredientName = view.findViewById(R.id.etIngredientName);
         progressIndicator = view.findViewById(R.id.progressIndicator);
+        cameraButton = view.findViewById(R.id.cameraButton);
 
         ingredients = new ArrayList<>();
         adapter = new IngredientsAdapter(ingredients, getContext(), false);
-
-        rvIngredients = view.findViewById(R.id.rvIngredients);
         rvIngredients.setAdapter(adapter);
         rvIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        cameraButton = view.findViewById(R.id.cameraButton);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new IngredientsAdapter.SwipeHelper(adapter, rvIngredients));
+        itemTouchHelper.attachToRecyclerView(rvIngredients);
+
+
+        adapter.setOnRemoveIngredientClickListener(new IngredientsAdapter.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(View itemView, int position) {
+                adapter.deleteItem(rvIngredients, position);
+            }
+        });
 
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -235,6 +242,9 @@ public class IngredientsFragment extends Fragment {
         dialogAdapter = new IngredientsDialogAdapter(dialogIngredients, getContext());
         rvDialogIngredients.setAdapter(dialogAdapter);
         rvDialogIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new IngredientsDialogAdapter.SwipeHelper(dialogAdapter));
+        itemTouchHelper.attachToRecyclerView(rvDialogIngredients);
 
         materialAlertDialogBuilder.setView(addIngredientsDialogView);
         materialAlertDialogBuilder.setTitle("Add ingredients");
@@ -343,7 +353,7 @@ public class IngredientsFragment extends Fragment {
         for (String line : lines) {
             String[] item = line.split(",");
             if (item.length >= MINIMUM_LENGTH) {
-                // todo: index depends on the type of receipt 
+                // todo: index depends on the type of receipt
                 items.add(item[1]);
             }
         }

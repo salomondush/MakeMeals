@@ -1,5 +1,6 @@
 package com.example.makemeals.adapters;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,10 +8,13 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.BinderThread;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.makemeals.databinding.DialogIngredientItemBinding;
+import com.example.makemeals.databinding.IngredientItemBinding;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -65,5 +69,30 @@ public class IngredientsDialogAdapter extends RecyclerView.Adapter<IngredientsDi
             Date date = new Date();
             tvDialogIngredientDate.setText(dateFormat.format(date));
         }
+    }
+
+    public static class SwipeHelper extends ItemTouchHelper.SimpleCallback{
+        private final IngredientsDialogAdapter adapter;
+
+        public SwipeHelper(IngredientsDialogAdapter adapter) {
+            super(0, ItemTouchHelper.LEFT);
+            this.adapter = adapter;
+        }
+
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            int position = viewHolder.getAdapterPosition();
+            adapter.deleteItem(position);
+        }
+    }
+
+    private void deleteItem(int position) {
+        ingredients.remove(position);
+        notifyItemRemoved(position);
     }
 }
