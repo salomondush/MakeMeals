@@ -1,6 +1,5 @@
 package com.example.makemeals.adapters;
 
-import android.content.ClipData;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,13 +7,12 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.annotation.BinderThread;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.makemeals.databinding.DialogIngredientItemBinding;
-import com.example.makemeals.databinding.IngredientItemBinding;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -73,10 +71,12 @@ public class IngredientsDialogAdapter extends RecyclerView.Adapter<IngredientsDi
 
     public static class SwipeHelper extends ItemTouchHelper.SimpleCallback{
         private final IngredientsDialogAdapter adapter;
+        private final RecyclerView parentView;
 
-        public SwipeHelper(IngredientsDialogAdapter adapter) {
+        public SwipeHelper(IngredientsDialogAdapter adapter, RecyclerView parentView) {
             super(0, ItemTouchHelper.LEFT);
             this.adapter = adapter;
+            this.parentView = parentView;
         }
 
         @Override
@@ -87,12 +87,29 @@ public class IngredientsDialogAdapter extends RecyclerView.Adapter<IngredientsDi
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             int position = viewHolder.getAdapterPosition();
-            adapter.deleteItem(position);
+            adapter.deleteItem(parentView, position);
         }
     }
 
-    private void deleteItem(int position) {
+    private void restoreItem(RecyclerView parentView, String ingredient, int position) {
+        ingredients.add(position, ingredient);
+        notifyItemInserted(position);
+        parentView.scrollToPosition(position);
+    }
+
+    private void deleteItem(RecyclerView parentView, int position) {
+        String ingredient = ingredients.get(position);
         ingredients.remove(position);
         notifyItemRemoved(position);
+
+        Snackbar snackbar = Snackbar.make(parentView, "Ingredient deleted", Snackbar.LENGTH_LONG)
+                .setAction("UNDO", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        restoreItem(parentView, ingredient, position);
+                    }
+                });
+        // todo: set a better color
+        snackbar.show();
     }
 }

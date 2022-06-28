@@ -243,8 +243,10 @@ public class IngredientsFragment extends Fragment {
         rvDialogIngredients.setAdapter(dialogAdapter);
         rvDialogIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new IngredientsDialogAdapter.SwipeHelper(dialogAdapter));
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new IngredientsDialogAdapter.SwipeHelper(dialogAdapter, rvDialogIngredients));
         itemTouchHelper.attachToRecyclerView(rvDialogIngredients);
+
+
 
         materialAlertDialogBuilder.setView(addIngredientsDialogView);
         materialAlertDialogBuilder.setTitle("Add ingredients");
