@@ -11,17 +11,29 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.CompoundButton;
+import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.example.makemeals.R;
 import com.example.makemeals.adapters.IngredientsAdapter;
 import com.example.makemeals.models.Ingredient;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.datepicker.OnSelectionChangedListener;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -35,10 +47,21 @@ public class SearchFragment extends Fragment {
     private IngredientsAdapter ingredientsAdapter;
     // private RecipeAdapter recipeAdapter;
     private List<Ingredient> ingredients;
+    private List<String> searchIngredientsNames;
     // private List<Recipes> resultRecipes;
     private MaterialButton searchButton;
     private AutoCompleteTextView recipeDiet;
     private AutoCompleteTextView recipeType;
+
+    private CircularProgressIndicator progressIndicator;
+
+    private static final List<String> DIET_OPTIONS = Arrays.asList("Gluten Free", "Ketogenic",
+            "Vegetarian", "Lacto-Vegetarian", "Ovo-Vegetarian", "Vegan", "Pescetarian",
+            "Paleo", "Primal", "Whole30", "Low FODMAP");
+
+    private static final List<String> TYPE_OPTIONS = Arrays.asList("main course", "side dish",
+            "dessert", "appetizer", "salad", "breakfast", "soup", "beverage", "sauce", "drink");
+
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -97,22 +120,74 @@ public class SearchFragment extends Fragment {
         recipeType = view.findViewById(R.id.recipeType);
         rvSearchResults = view.findViewById(R.id.rvSearchResults);
         rvSearchIngredients = view.findViewById(R.id.rvSearchIngredients);
+        progressIndicator = view.findViewById(R.id.progressIndicator);
 
         // set and attach ingredients adapter to rvSearchIngredients recyclerView
         ingredients = new ArrayList<>();
+        searchIngredientsNames = new ArrayList<>();
         ingredientsAdapter = new IngredientsAdapter(ingredients, getContext(), true);
         rvSearchIngredients.setAdapter(ingredientsAdapter);
         rvSearchIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        ArrayAdapter<String> optionsAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, DIET_OPTIONS);
+        ArrayAdapter<String> typesAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, TYPE_OPTIONS);
+
+        recipeDiet.setAdapter(optionsAdapter);
+        recipeType.setAdapter(typesAdapter);
+
 
         // todo: set and attach recipe adapter to rvSearchResults
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // todo: When the search button is pressed, we fetch recipes, and immediately after getting
-                // results, we will set the rvSearchResults visible and display the results
-                // additionally, we will have another view with an arrow facing down to pull down the search
-                // view again (maybe with some fancy animations)
+                String type = recipeType.getText().toString();
+                String diet = recipeDiet.getText().toString();
+
+                Log.i("SearchFragment", "type: " + type);
+                Log.i("SearchFragment", "diet: " + diet);
+                Log.i("SearchFragment", "ingredients: " + searchIngredientsNames);
             }
         });
+
+        ingredientsAdapter.setOnSelectIngredientClickListener(new IngredientsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int position) {
+                if (searchIngredientsNames.contains(ingredients.get(position).getName())) {
+                    searchIngredientsNames.remove(ingredients.get(position).getName());
+                } else {
+                    searchIngredientsNames.add(ingredients.get(position).getName());
+                }
+            }
+        });
+
+        querySearchIngredients();
+    }
+
+    private void querySearchIngredients() {
+        showProgressBar();
+        ParseQuery<Ingredient> query = ParseQuery.getQuery(Ingredient.class);
+        query.findInBackground(new FindCallback<Ingredient>() {
+            @Override
+            public void done(List<Ingredient> objects, ParseException e) {
+                if (e == null) {
+                    ingredients.addAll(objects);
+                    ingredientsAdapter.notifyDataSetChanged();
+                    hideProgressBar();
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+
+    public void showProgressBar() {
+        // Show progress item
+        progressIndicator.setVisibility(View.VISIBLE);
+    }
+
+    public void hideProgressBar() {
+        // Hide progress item
+        progressIndicator.setVisibility(View.GONE);
     }
 }
