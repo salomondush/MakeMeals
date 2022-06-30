@@ -203,6 +203,7 @@ public class SearchFragment extends Fragment {
     }
 
     private void searchRecipes(String type, String diet) {
+        showProgressBar();
         restClient = new RestClient();
         restClient.complexSearch(searchIngredientsNames, type, diet, new JsonHttpResponseHandler(){
             @Override
@@ -211,6 +212,7 @@ public class SearchFragment extends Fragment {
 
                 try {
                     resultRecipes.addAll(Recipe.fromJsonArray(response.getJSONArray("results")));
+                    hideProgressBar();
                     hideSearchBlock();
                 } catch (JSONException e) {
                     e.printStackTrace();

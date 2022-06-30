@@ -32,6 +32,7 @@ public class HomeFragment extends Fragment {
     private Fragment recipesListFragment;
     private CircularProgressIndicator progressIndicator;
 
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -40,6 +41,8 @@ public class HomeFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    public static final int REQUEST_LIMIT = 20;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -95,6 +98,9 @@ public class HomeFragment extends Fragment {
     private void querySavedRecipes() {
         showProgressBar();
         ParseQuery<Recipe> query = ParseQuery.getQuery(Recipe.class);
+        // only get 20 most recent Recipes
+        query.setLimit(REQUEST_LIMIT);
+        query.orderByDescending(Recipe.KEY_CREATED_AT);
         query.whereEqualTo("user", ParseUser.getCurrentUser());
         query.whereEqualTo("saved", true);
         query.findInBackground((recipes, e) -> {
