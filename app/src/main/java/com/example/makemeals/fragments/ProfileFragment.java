@@ -14,7 +14,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.makemeals.R;
+import com.parse.ParseFile;
 import com.parse.ParseUser;
+
+import java.io.File;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -81,8 +84,12 @@ public class ProfileFragment extends Fragment {
 
         tvProfileUsername.setText(ParseUser.getCurrentUser().getUsername());
 
-        Glide.with(requireContext()).load(ParseUser.getCurrentUser().getParseFile("profileImage").getUrl())
-                .circleCrop()
-                .into(ivProfileImage);
+        ParseFile image = ParseUser.getCurrentUser().getParseFile("profileImage");
+
+        if (image != null) {
+            Glide.with(requireContext()).load(image.getUrl())
+                    .circleCrop()
+                    .into(ivProfileImage);
+        }
     }
 }
