@@ -2,6 +2,7 @@ package com.example.makemeals.models;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import org.json.JSONArray;
@@ -34,10 +35,30 @@ public class Recipe extends ParseObject {
         setUser(ParseUser.getCurrentUser());
     }
 
+    public static Recipe newInstanceIfNotExists(JSONObject jsonObject) throws JSONException {
+        int spnId = jsonObject.getInt("id");
+        Recipe recipe = Recipe.getRecipeBySpnId(spnId);
+
+        if (recipe == null) {
+            recipe = new Recipe(jsonObject);
+        }
+        return recipe;
+    }
+
+    private static Recipe getRecipeBySpnId(int spnId) {
+        ParseQuery<Recipe> query = ParseQuery.getQuery(Recipe.class);
+        query.whereEqualTo(SPN_ID, spnId);
+        try {
+            return query.getFirst();
+        } catch (com.parse.ParseException e) {
+            return null;
+        }
+    }
+
     public static List<Recipe> fromJsonArray(JSONArray jsonArray) throws JSONException {
         List<Recipe> recipes = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
-            recipes.add(new Recipe(jsonArray.getJSONObject(i)));
+            recipes.add(newInstanceIfNotExists(jsonArray.getJSONObject(i)));
         }
         return recipes;
     }
