@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +41,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.json.JSONException;
@@ -63,6 +63,7 @@ import okhttp3.RequestBody;
  * create an instance of this fragment.
  */
 public class IngredientsFragment extends Fragment {
+    private static final String TAG = "IngredientsFragment";
     private RecyclerView rvIngredients;
     private RecyclerView rvDialogIngredients;
     private IngredientsAdapter adapter;
@@ -78,14 +79,13 @@ public class IngredientsFragment extends Fragment {
     private View addIngredientsDialogView;
 
     private File photoFile;
-    private String photoFileName = "photo.jpg";
+    final private String PHOTO_FILE_NAME = "photo.jpg";
 
 
     public static final String REST_URL = "http://172.23.178.111:3200/file/analyse";
     public static final int MINIMUM_LENGTH = 2;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
     public static final int GALLERY_IMAGE_ACTIVITY_REQUEST_CODE = 3;
-    public static final String TAG = "IngredientsFragment";
 
     private CircularProgressIndicator progressIndicator;
 
@@ -152,7 +152,6 @@ public class IngredientsFragment extends Fragment {
         btnAddIngredient = view.findViewById(R.id.btnAddIngredient);
         etIngredientName = view.findViewById(R.id.etIngredientName);
         progressIndicator = view.findViewById(R.id.progressIndicator);
-//        cameraButton = view.findViewById(R.id.cameraButton);
         galleryButton = view.findViewById(R.id.galleryButton);
 
         ingredients = new ArrayList<>();
@@ -171,13 +170,6 @@ public class IngredientsFragment extends Fragment {
                 adapter.deleteItem(rvIngredients, position);
             }
         });
-
-//        cameraButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                launchCamera(v);
-//            }
-//        });
 
         galleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -240,7 +232,6 @@ public class IngredientsFragment extends Fragment {
             Uri uri = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), uri);
-                // Log.d(TAG, String.valueOf(bitmap));
                 showProgressBar();
                 getImageText(bitmap);
             } catch (IOException e) {
@@ -255,8 +246,6 @@ public class IngredientsFragment extends Fragment {
             // RESIZE BITMAP, see section below
             // Load the taken image into a preview
 
-            Log.i(TAG, "Loaded Image from Camera");
-
         } else { // Result was a failure
             Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
         }
@@ -266,7 +255,7 @@ public class IngredientsFragment extends Fragment {
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Create a File reference for future access
-        photoFile = getPhotoFileUri(photoFileName);
+        photoFile = getPhotoFileUri(PHOTO_FILE_NAME);
 
         // wrap File object into a content provider
         // required for API >= 24
@@ -292,7 +281,7 @@ public class IngredientsFragment extends Fragment {
 
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
-            Log.d(TAG, "failed to create directory");
+            Toast.makeText(requireContext(), "Failed to create directory", Toast.LENGTH_SHORT).show();
         }
 
         // Return the file target for the photo based on filename
@@ -360,6 +349,7 @@ public class IngredientsFragment extends Fragment {
     private void queryIngredients() {
         showProgressBar();
         ParseQuery<Ingredient> query = ParseQuery.getQuery(Ingredient.class);
+        query.whereEqualTo("user", ParseUser.getCurrentUser());
         query.findInBackground(new FindCallback<Ingredient>() {
             @Override
             public void done(List<Ingredient> objects, ParseException e) {
@@ -393,7 +383,6 @@ public class IngredientsFragment extends Fragment {
         client.post(REST_URL, new RequestHeaders(), new RequestParams(), requestBody, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                Log.i("IngredientsFragment", "onSuccess: " + json.toString());
                 try {
                     hideProgressBar();
                     launchAddIngredientDialog(extractItemsFromCSV(json.jsonObject.getString("response")));
@@ -404,7 +393,7 @@ public class IngredientsFragment extends Fragment {
 
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                Log.e(TAG, "onFailure: " + response);
+                Toast.makeText(getContext(), "Failed to get image text", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -421,8 +410,6 @@ public class IngredientsFragment extends Fragment {
                 items.add(item[1]);
             }
         }
-
-        Log.i(TAG, "extractItemsFromCSV: " + items.toString());
         return items;
     }
 

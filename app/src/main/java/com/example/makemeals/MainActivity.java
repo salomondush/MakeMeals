@@ -46,10 +46,6 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.search:
                     fragment = new SearchFragment();
-                    // pass current user ID to profile fragment
-//                    Bundle bundle = new Bundle();
-//                    bundle.putString(USER_ID, ParseUser.getCurrentUser().getObjectId());
-//                    fragment.setArguments(bundle);
                     break;
                 case R.id.favorites:
                     // todo: udpate fragment

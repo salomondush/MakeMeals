@@ -22,8 +22,8 @@ import java.util.Locale;
 
 public class IngredientsDialogAdapter extends RecyclerView.Adapter<IngredientsDialogAdapter.ViewHolder> {
 
-    private List<String> ingredients;
-    private Context context;
+    final private List<String> ingredients;
+    final private Context context;
     private DialogIngredientItemBinding binding;
 
     public IngredientsDialogAdapter(List<String> ingredients, Context context) {
@@ -50,8 +50,8 @@ public class IngredientsDialogAdapter extends RecyclerView.Adapter<IngredientsDi
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDialogIngredientDate;
-        private EditText etIngredientName;
+        final private TextView tvDialogIngredientDate;
+        final private EditText etIngredientName;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -123,7 +123,6 @@ public class IngredientsDialogAdapter extends RecyclerView.Adapter<IngredientsDi
                         restoreItem(parentView, ingredient, position);
                     }
                 });
-        // todo: set a better color
         snackbar.show();
     }
 }
