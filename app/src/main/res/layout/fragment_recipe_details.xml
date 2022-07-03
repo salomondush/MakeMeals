@@ -1,14 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".fragments.RecipeDetailsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_recipe_details_fragment" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+        
+        <!-- recipe image -->
+        <ImageView
+            android:id="@+id/recipeImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            tools:srcCompat="@tools:sample/avatars" />
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:orientation="vertical">
 
-</FrameLayout>
+            <ToggleButton
+                android:id="@+id/tbSave"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginBottom="5dp"
+                android:checked="false"
+                android:background="@drawable/save_icon_selector"
+                android:text=""
+                android:textOff=""
+                android:textOn=""/>
+            <!--Favorite Recipe Button-->
+            <ToggleButton
+                android:id="@+id/tbFavorite"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginBottom="5dp"
+                android:checked="false"
+                android:background="@drawable/favorites_icon_selector"
+                android:text=""
+                android:textOff=""
+                android:textOn=""/>
+
+            <ToggleButton
+                android:id="@+id/tbShare"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginBottom="5dp"
+                android:checked="false"
+                android:background="@drawable/share_icon_make_meals"
+                android:text=""
+                android:textOff=""
+                android:textOn=""/>
+
+            <ToggleButton
+                android:id="@+id/tbShoppingList"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:checked="false"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/shopping_cart_icon_make_meals"
+                android:text=""
+                android:textOff=""
+                android:textOn=""/>
+
+            <!-- saved, favorite, sharing, and shopping list image buttons -->
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- recipe title -->
+    <TextView
+        android:id="@+id/tvRecipeTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/recipe_title"/>
+
+    <!-- nutrition info -->
+
+    <!-- recipe Ingredients -->
+
+
+    <!-- recipe instructions -->
+
+</LinearLayout>
