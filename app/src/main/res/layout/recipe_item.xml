@@ -15,7 +15,6 @@
 <!--    Recipe Item Details Block-->
     <LinearLayout
         android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
         android:layout_width="wrap_content"
         android:orientation="vertical"
         android:layout_height="wrap_content">
@@ -134,9 +133,9 @@
             <!--Save Recipe Button. Todo: change button to save-->
             <ToggleButton
                 android:id="@+id/tbSave"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="10dp"
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:layout_marginStart="25dp"
                 android:layout_marginEnd="10dp"
                 android:checked="false"
                 android:background="@drawable/save_icon_selector"
@@ -148,6 +147,7 @@
                 android:id="@+id/tbFavorite"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
+                android:layout_marginStart="10dp"
                 android:checked="false"
                 android:background="@drawable/favorites_icon_selector"
                 android:text=""

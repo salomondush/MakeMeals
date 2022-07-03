@@ -6,13 +6,13 @@
         android:id="@+id/ingredients"
         android:enabled="true"
         app:showAsAction="always"
-        android:icon="@drawable/ingredients_icon_selector"
+        android:icon="@drawable/ingredients_icon"
         android:title="@string/home"
         />
     <item
         android:id="@+id/profile"
         android:enabled="true"
         app:showAsAction="ifRoom"
-        android:icon="@drawable/user_icon_selector"
+        android:icon="@drawable/profile_icon_make_meals"
         android:title="@string/home" />
 </menu>
