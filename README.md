@@ -16,7 +16,7 @@ The food app for meal planning  including managing grocery shopping and cooking 
 |---------|--------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 3       | 0            | <ul> <li>- [x] Write a project plan and discussing with manager </li> </ul>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | 4       | 1            | <ul> <li> p1: start core features + project skeleton and unknowns + midpoint self review </li> <li>- [x] Digital wireframes and mockups </li> <li>- [x] Figure out unknown technologies and SDKs (Amazon Textract) </li> <li>- [x] Initiate Github projects and open issues </li> <li>- [x] User login and signup </li> <li>- [x] Basic Navigation between the main screens </li> <li>- [x] Write a node.js textract server to parse images </li> <li>- [x] Ingredients page + ingredients manual entry </li> <li>- [x] Spoonacular API account setup and making example search queries </li> </ul> |
-| 5       | 2            | <ul> <li> p1: Continue(p1 core features  + ambiguous tech probs) </li> <li>- [ ] Search Page </li> <li>- [ ] Find out how to use facebook sharing </li> <li>- [x] Integrate textract to scan recipes  </li> <li>- [ ] favorites Page </li> </ul>                                                                                                                                                                                                                                                                                                                                                    |
+| 5       | 2            | <ul> <li> p1: Continue(p1 core features  + ambiguous tech probs) </li> <li>- [x] Search Page </li> <li>- [x] Home Page </li> <li>- [x] Profile Page </li> <li>- [x] Find out how to use facebook sharing </li> <li>- [x] Integrate textract to scan recipes  </li> <li>- [x] favorites Page </li> </ul>                                                                                                                                                                                                                                                                                                                                                    |
 | 6       | 3            | <ul> <li> p1: Continue (p1 core features + ambiguous tech probs) </li> <li>- [ ] Recipe details page </li> <li>- [ ] Integrate (https://dynapictures.com/lp/developers) image generation SDK to generate a sharable recipe </li>  <li>- [ ] Add recipe sharing feature </li> </ul>                                                                                                                                                                                                                                                                                                                  |
 |         | 4            | <ul> <li> p1: Complete (p1 core features + ambiguous tech probs) </li> <li> p2: Start (p2 stretch features + polish) </li> <li>- [ ] generate shopping list from recipe </li> <li>- [ ] allow user's to save and view shopping lists </li> </ul>                                                                                                                                                                                                                                                                                                                                                    |
 | 8       | 5            | <ul> <li>p2: Continue (additional stretch features + Polish). Final self review due</li> <li>- [ ] Enhancing UI </li> <li>- [ ] better icons </li> <li>- [ ] better color and texture combinations (non-blurry icons - VSGs) </li> <li>- [ ] simplified interface consistent across all screens </li> <li>- [ ] Further search Parameters for recipes </li>     - excludeIngridients \n      - includeIngridients \n </ul>                                                                                                                                                                          |
@@ -139,12 +139,20 @@ https://www.figma.com/.../6u95Y8yEE0cTQKWmrO.../MakeMeals...
     * password (String)
     * profilePhoto (File)
 * Recipe (https://spoonacular.com/food-api/docs#Get-Recipe-Information)
-    * id (primary)
+    * id (objectId)
+    * user (User objectId reference)
+    * updatedAt (Date)
+    * createdAt (Date)
+    * title (String)
+    * imageUrl (String)
     * spoonacularId (Number) -- will be used to lookup recipe information
     * favorite (Boolean)
+    * saved (Boolean)
 * Grocery (Ingridient)
-    * id (primary)
-    * Date
+    * id (objectId)
+    * user (User objectId reference)
+    * updatedAt (Date)
+    * createdAt (Date)
     * name (String)
    
 ### Networking

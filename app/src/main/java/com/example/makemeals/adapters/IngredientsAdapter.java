@@ -8,8 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -17,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.makemeals.databinding.IngredientItemBinding;
 import com.example.makemeals.models.Ingredient;
+import com.google.android.material.slider.Slider;
 import com.google.android.material.snackbar.Snackbar;
 import com.parse.DeleteCallback;
 import com.parse.ParseException;
@@ -25,12 +29,12 @@ import com.parse.SaveCallback;
 import java.util.List;
 
 public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.ViewHolder> {
-    private List<Ingredient> ingredients;
-    private Context context;
+    final private List<Ingredient> ingredients;
+    final private Context context;
     private IngredientItemBinding binding;
     private OnItemClickListener removeIngredientClickListener;
     private OnItemClickListener onSelectIngredientListener;
-    private boolean isSearchIngredient;
+    final private boolean isSearchIngredient;
 
     public IngredientsAdapter(List<Ingredient> ingredients, Context context, boolean isSearchIngredient) {
         this.ingredients = ingredients;
@@ -73,10 +77,10 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView name;
-        private TextView date;
-        private ImageButton removeIngredient;
-        private CheckBox cbSelectIngredient;
+        final private TextView name;
+        final private TextView date;
+        final private ImageButton removeIngredient;
+        final private CheckBox cbSelectIngredient;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -146,7 +150,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
             @Override
             public void done(ParseException e) {
                 if (e != null) {
-                    Log.e("IngredientsAdapter", "Error while restoring ingredient", e);
+                    Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
                 ingredients.add(position, newIngredient);
                 notifyItemInserted(position);
@@ -174,7 +178,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
                     // todo: set a better color
                     snackbar.show();
                 } else {
-                    Log.e("IngredientsAdapter", "Error deleting ingredient", e);
+                    Toast.makeText(context, "Error deleting ingredient", Toast.LENGTH_SHORT).show();
                 }
             }
         });

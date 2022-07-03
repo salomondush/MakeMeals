@@ -14,15 +14,38 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.CompoundButton;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.makemeals.R;
+import com.example.makemeals.RestClient;
 import com.example.makemeals.adapters.IngredientsAdapter;
+import com.example.makemeals.adapters.RecipeAdapter;
 import com.example.makemeals.models.Ingredient;
+import com.example.makemeals.models.Recipe;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.datepicker.OnSelectionChangedListener;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,15 +53,34 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class SearchFragment extends Fragment {
+    private static final String TAG = "SearchFragment";
     private RecyclerView rvSearchIngredients;
-    private RecyclerView rvSearchResults;
+    private RestClient restClient;
     private IngredientsAdapter ingredientsAdapter;
-    // private RecipeAdapter recipeAdapter;
     private List<Ingredient> ingredients;
-    // private List<Recipes> resultRecipes;
+    private List<String> searchIngredientsNames;
+    private List<Recipe> resultRecipes;
     private MaterialButton searchButton;
     private AutoCompleteTextView recipeDiet;
     private AutoCompleteTextView recipeType;
+
+    private ImageButton ibHideSearchBlock;
+    private TextView tvSearchBar;
+    private LinearLayout llSearchResultBlock;
+    private LinearLayout llSearchBlock;
+
+    private Fragment recipesListFragment;
+
+
+    private CircularProgressIndicator progressIndicator;
+
+    private static final List<String> DIET_OPTIONS = Arrays.asList("Gluten Free", "Ketogenic",
+            "Vegetarian", "Lacto-Vegetarian", "Ovo-Vegetarian", "Vegan", "Pescetarian",
+            "Paleo", "Primal", "Whole30", "Low FODMAP");
+
+    private static final List<String> TYPE_OPTIONS = Arrays.asList("main course", "side dish",
+            "dessert", "appetizer", "salad", "breakfast", "soup", "beverage", "sauce", "drink");
+
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -95,24 +137,130 @@ public class SearchFragment extends Fragment {
         searchButton = view.findViewById(R.id.searchButton);
         recipeDiet = view.findViewById(R.id.recipeDiet);
         recipeType = view.findViewById(R.id.recipeType);
-        rvSearchResults = view.findViewById(R.id.rvSearchResults);
         rvSearchIngredients = view.findViewById(R.id.rvSearchIngredients);
+        progressIndicator = view.findViewById(R.id.progressIndicator);
+        tvSearchBar = view.findViewById(R.id.tvSearchBar);
+        llSearchResultBlock = view.findViewById(R.id.llSearchResultBlock);
+        llSearchBlock = view.findViewById(R.id.llSearchBlock);
+        ibHideSearchBlock = view.findViewById(R.id.ibHideSearchBlock);
 
         // set and attach ingredients adapter to rvSearchIngredients recyclerView
         ingredients = new ArrayList<>();
+        searchIngredientsNames = new ArrayList<>();
         ingredientsAdapter = new IngredientsAdapter(ingredients, getContext(), true);
         rvSearchIngredients.setAdapter(ingredientsAdapter);
         rvSearchIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // todo: set and attach recipe adapter to rvSearchResults
+        // initialize the child fragment that displays result recipes in a recyclerView
+        resultRecipes = new ArrayList<>();
+        recipesListFragment = RecipesListFragment.newInstance(resultRecipes);
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.add(R.id.flSearchResultsContainer, recipesListFragment).commit();
+
+        // set up autocomplete text views
+        ArrayAdapter<String> optionsAdapter = new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_list_item_1, DIET_OPTIONS);
+        ArrayAdapter<String> typesAdapter = new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_list_item_1, TYPE_OPTIONS);
+        recipeDiet.setAdapter(optionsAdapter);
+        recipeType.setAdapter(typesAdapter);
+
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // todo: When the search button is pressed, we fetch recipes, and immediately after getting
-                // results, we will set the rvSearchResults visible and display the results
-                // additionally, we will have another view with an arrow facing down to pull down the search
-                // view again (maybe with some fancy animations)
+                String type = recipeType.getText().toString();
+                String diet = recipeDiet.getText().toString();
+                searchRecipes(type, diet);
             }
         });
+
+        ingredientsAdapter.setOnSelectIngredientClickListener(new IngredientsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int position) {
+                if (searchIngredientsNames.contains(ingredients.get(position).getName())) {
+                    searchIngredientsNames.remove(ingredients.get(position).getName());
+                } else {
+                    searchIngredientsNames.add(ingredients.get(position).getName());
+                }
+            }
+        });
+
+        tvSearchBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSearchBlock();
+            }
+        });
+
+        ibHideSearchBlock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               hideSearchBlock();
+            }
+        });
+
+        querySearchIngredients();
+    }
+
+    private void searchRecipes(String type, String diet) {
+        showProgressBar();
+        restClient = new RestClient();
+        restClient.complexSearch(searchIngredientsNames, type, diet, new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+
+                try {
+                    resultRecipes.addAll(Recipe.fromJsonArray(response.getJSONArray("results")));
+                    hideProgressBar();
+                    hideSearchBlock();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                Toast.makeText(getContext(), "Error searching recipes", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void querySearchIngredients() {
+        showProgressBar();
+        ParseQuery<Ingredient> query = ParseQuery.getQuery(Ingredient.class);
+        query.findInBackground(new FindCallback<Ingredient>() {
+            @Override
+            public void done(List<Ingredient> objects, ParseException e) {
+                if (e == null) {
+                    ingredients.addAll(objects);
+                    ingredientsAdapter.notifyDataSetChanged();
+                    hideProgressBar();
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void hideSearchBlock(){
+        llSearchBlock.setVisibility(View.GONE);
+        llSearchResultBlock.setVisibility(View.VISIBLE);
+    }
+
+    private void showSearchBlock(){
+        llSearchBlock.setVisibility(View.VISIBLE);
+        llSearchResultBlock.setVisibility(View.GONE);
+    }
+
+    public void showProgressBar() {
+        // Show progress item
+        progressIndicator.setVisibility(View.VISIBLE);
+    }
+
+    public void hideProgressBar() {
+        // Hide progress item
+        progressIndicator.setVisibility(View.GONE);
     }
 }
