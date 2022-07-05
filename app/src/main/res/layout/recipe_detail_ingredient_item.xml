@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp">
+
+    <ImageView
+        android:id="@+id/ivIngredientImage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="10dp"
+        tools:srcCompat="@tools:sample/avatars" />
 
     <LinearLayout
         android:id="@+id/ingredient"
@@ -10,28 +18,20 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        <EditText
-            android:id="@+id/etDialogIngredientName"
+        <TextView
+            android:id="@+id/tvDetailIngredientName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:hint="@string/ingredient_name"
             android:textColor="@color/black" />
-
-        <TextView
-            android:id="@+id/tvDialogIngredientDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="visible"
-            android:text="@string/date_placeholder"
-            android:textStyle="italic" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/tvIngredientQuantity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:visibility="visible"
         android:text="1 Large"
         android:textColor="@color/black"/>
 </LinearLayout>

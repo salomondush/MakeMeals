@@ -3,33 +3,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:layout_margin="10dp"
     tools:context=".fragments.RecipeDetailsFragment">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="horizontal">
+        android:layout_margin="10dp"
+        android:orientation="vertical">
         
         <!-- recipe image -->
         <ImageView
-            android:id="@+id/recipeImage"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:id="@+id/ivRecipeImage"
+            android:layout_width="200dp"
+            android:layout_height="150dp"
             tools:srcCompat="@tools:sample/avatars" />
         
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:orientation="vertical">
+            android:padding="10dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
 
             <ToggleButton
                 android:id="@+id/tbSave"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginEnd="20dp"
                 android:checked="false"
                 android:background="@drawable/save_icon_selector"
                 android:text=""
@@ -40,34 +44,34 @@
                 android:id="@+id/tbFavorite"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginEnd="20dp"
                 android:checked="false"
                 android:background="@drawable/favorites_icon_selector"
                 android:text=""
                 android:textOff=""
                 android:textOn=""/>
 
-            <ToggleButton
-                android:id="@+id/tbShare"
+            <ImageButton
+                android:id="@+id/ibShare"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginEnd="20dp"
                 android:checked="false"
                 android:background="@drawable/share_icon_make_meals"
                 android:text=""
                 android:textOff=""
                 android:textOn=""/>
 
-            <ToggleButton
-                android:id="@+id/tbShoppingList"
-                android:layout_width="25dp"
+            <ImageButton
+                android:id="@+id/ibShoppingList"
+                android:layout_width="22dp"
                 android:layout_height="25dp"
-                android:checked="false"
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/shopping_cart_icon_make_meals"
+                android:checked="false"
                 android:text=""
                 android:textOff=""
-                android:textOn=""/>
+                android:textOn="" />
 
             <!-- saved, favorite, sharing, and shopping list image buttons -->
         </LinearLayout>
@@ -78,13 +82,193 @@
         android:id="@+id/tvRecipeTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="16sp"
         android:text="@string/recipe_title"/>
 
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/toggleButtonRecipeInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:selectionRequired="true"
+        app:singleSelection="true"
+        app:checkedButton="@+id/btnNutrition">
+        <Button
+            android:id="@+id/btnNutrition"
+            android:layout_weight="0.3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nutrition"
+            android:textSize="12sp"
+            style="?attr/materialButtonOutlinedStyle"
+            />
+        <Button
+            android:id="@+id/btnIngredients"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:textSize="12sp"
+            android:text="Ingredients"
+            style="?attr/materialButtonOutlinedStyle"
+            />
+        <Button
+            android:id="@+id/btnInstructions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:textSize="12sp"
+            android:text="Instructions"
+            style="?attr/materialButtonOutlinedStyle"
+            />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
     <!-- nutrition info -->
+    <LinearLayout
+        android:id="@+id/llNutritionInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:orientation="vertical">
+        <!--1st block-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="2dp"
+            android:orientation="horizontal">
+            <!-- ready in -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:text="@string/ready_in"/>
+
+                <!-- ready in time -->
+                <TextView
+                    android:id="@+id/tvReadyInTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/_45m"/>
+            </LinearLayout>
+
+            <!-- Types -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:text="@string/types"/>
+
+                <!-- ready in time -->
+                <TextView
+                    android:id="@+id/tvTypes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lunch_main_course"/>
+            </LinearLayout>
+        </LinearLayout>
+        <!--2nd block-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+            <!-- ready in -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:text="@string/servings"/>
+
+                <!-- ready in time -->
+                <TextView
+                    android:id="@+id/tvServings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/_2"/>
+            </LinearLayout>
+
+            <!-- Types -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:text="@string/diet"/>
+
+                <!-- ready in time -->
+                <TextView
+                    android:id="@+id/tvDiets"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_diet"/>
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
 
     <!-- recipe Ingredients -->
+    <LinearLayout
+        android:id="@+id/llIngredients"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:text="@string/ingredients"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvRecipeDetailIngredients"
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 
 
     <!-- recipe instructions -->
+    <LinearLayout
+        android:id="@+id/llInstructions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:text="@string/instructions"/>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvRecipeDetailInstructions"
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
 </LinearLayout>

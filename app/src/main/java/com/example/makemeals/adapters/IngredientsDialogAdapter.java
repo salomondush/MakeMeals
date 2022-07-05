@@ -28,8 +28,7 @@ public class IngredientsDialogAdapter extends RecyclerView.Adapter<IngredientsDi
 
     public IngredientsDialogAdapter(List<String> ingredients, Context context) {
         this.ingredients = ingredients;
-        this.context = context;
-    }
+        this.context = context;    }
 
     @NonNull
     @Override
@@ -52,12 +51,14 @@ public class IngredientsDialogAdapter extends RecyclerView.Adapter<IngredientsDi
     public class ViewHolder extends RecyclerView.ViewHolder {
         final private TextView tvDialogIngredientDate;
         final private EditText etIngredientName;
+        final private TextView tvIngredientQuantity;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             etIngredientName = binding.etDialogIngredientName;
             tvDialogIngredientDate = binding.tvDialogIngredientDate;
+            tvIngredientQuantity = binding.tvIngredientQuantity;
 
             etIngredientName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override

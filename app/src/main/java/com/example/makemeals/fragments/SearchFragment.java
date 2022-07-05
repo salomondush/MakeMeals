@@ -63,15 +63,11 @@ public class SearchFragment extends Fragment {
     private MaterialButton searchButton;
     private AutoCompleteTextView recipeDiet;
     private AutoCompleteTextView recipeType;
-
     private ImageButton ibHideSearchBlock;
     private TextView tvSearchBar;
     private LinearLayout llSearchResultBlock;
     private LinearLayout llSearchBlock;
-
     private Fragment recipesListFragment;
-
-
     private CircularProgressIndicator progressIndicator;
 
     private static final List<String> DIET_OPTIONS = Arrays.asList("Gluten Free", "Ketogenic",
@@ -211,7 +207,7 @@ public class SearchFragment extends Fragment {
                 super.onSuccess(statusCode, headers, response);
 
                 try {
-                    resultRecipes.addAll(Recipe.fromJsonArray(response.getJSONArray("results")));
+                    ((RecipesListFragment) recipesListFragment).updateRecipes(Recipe.fromJsonArray(response.getJSONArray("results")));
                     hideProgressBar();
                     hideSearchBlock();
                 } catch (JSONException e) {

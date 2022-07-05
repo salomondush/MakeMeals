@@ -39,4 +39,16 @@
     <string name="ingredient_name">Ingredient Name</string>
     <string name="add_button">add Button</string>
     <string name="camera_button">Camera Button</string>
+    <string name="instructions_text_placeholder">Instructions Text</string>
+    <string name="instruction_number">1.</string>
+    <string name="ready_in">Ready In:</string>
+    <string name="_45m">45m</string>
+    <string name="types">Types:</string>
+    <string name="lunch_main_course">lunch, main course</string>
+    <string name="servings">Servings:</string>
+    <string name="_2">2</string>
+    <string name="diet">Diet:</string>
+    <string name="no_diet">No Diet</string>
+    <string name="ingredients">Ingredients:</string>
+    <string name="instructions">Instructions:</string>
 </resources>
