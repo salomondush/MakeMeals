@@ -20,6 +20,13 @@ public class Recipe extends ParseObject {
     public static final String FAVORITE = "favorite";
     public static final String SAVED = "saved";
     public static final String KEY_USER = "user";
+    public static final String DIETS = "diets";
+    public static final String DISH_TYPES = "dishTypes";
+    public static final String READY_IN = "readyInMinutes";
+    public static final String SERVINGS = "servings";
+    public static final String EXTENDED_INGREDIENTS = "extendedIngredients";
+//    public static final String NUTRITION = "nutrition";
+    public static final String ANALYZED_INSTRUCTIONS = "analyzedInstructions";
 
     // implement the default constructor
     public Recipe() {
@@ -30,6 +37,13 @@ public class Recipe extends ParseObject {
         setSpnId(jsonObject.getInt("id"));
         setTitle(jsonObject.getString("title"));
         setImageUrl(jsonObject.getString("image"));
+        setDiets(jsonObject.getJSONArray("diets"));
+        setDishTypes(jsonObject.getJSONArray("dishTypes"));
+        setReadyInMinutes(jsonObject.getInt("readyInMinutes"));
+        setServings(jsonObject.getInt("servings"));
+        setExtendedIngredients(jsonObject.getJSONArray("extendedIngredients"));
+//        setNutrition(jsonObject.getJSONObject("nutrition"));
+        setAnalyzedInstructions(jsonObject.getJSONArray("analyzedInstructions"));
         setFavorite(false);
         setSaved(false);
         setUser(ParseUser.getCurrentUser());
@@ -109,5 +123,61 @@ public class Recipe extends ParseObject {
 
     public void setSaved(boolean saved) {
         put(SAVED, saved);
+    }
+
+    public JSONArray getDiets() {
+        return getJSONArray(DIETS);
+    }
+
+    public void setDiets(JSONArray diets) {
+        put(DIETS, diets);
+    }
+
+    public JSONArray getDishTypes() {
+        return getJSONArray(DISH_TYPES);
+    }
+
+    public void setDishTypes(JSONArray dishTypes) {
+        put(DISH_TYPES, dishTypes);
+    }
+
+    public int getReadyInMinutes() {
+        return getInt(READY_IN);
+    }
+
+    public void setReadyInMinutes(int readyInMinutes) {
+        put(READY_IN, readyInMinutes);
+    }
+
+    public int getServings() {
+        return getInt(SERVINGS);
+    }
+
+    public void setServings(int servings) {
+        put(SERVINGS, servings);
+    }
+
+    public JSONArray getExtendedIngredients() {
+        return getJSONArray(EXTENDED_INGREDIENTS);
+    }
+
+    public void setExtendedIngredients(JSONArray extendedIngredients) {
+        put(EXTENDED_INGREDIENTS, extendedIngredients);
+    }
+
+//    public JSONObject getNutrition() {
+//        return getJSONObject(NUTRITION);
+//    }
+
+//    public void setNutrition(JSONObject nutrition) {
+//        put(NUTRITION, nutrition);
+//    }
+
+    public JSONArray getAnalyzedInstructions() {
+        return getJSONArray(ANALYZED_INSTRUCTIONS);
+    }
+
+    public void setAnalyzedInstructions(JSONArray analyzedInstructions) {
+        put(ANALYZED_INSTRUCTIONS, analyzedInstructions);
     }
 }

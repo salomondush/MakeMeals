@@ -14,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.example.makemeals.Constant;
 import com.example.makemeals.databinding.RecipeItemBinding;
 import com.example.makemeals.models.Recipe;
 import com.parse.FindCallback;
@@ -28,6 +30,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     final private List<Recipe> recipes;
     final private Context context;
     private RecipeItemBinding binding;
+    private OnItemClickListener onItemClickListener;
 
     public RecipeAdapter(List<Recipe> recipes, Context context) {
         this.recipes = recipes;
@@ -47,17 +50,15 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
         holder.bind(recipe);
     }
 
-//    public void setOnRecipeSaveListener(OnItemClickListener listener){
-//        onRecipeSaveListener = listener;
-//    }
-//
-//    public void setOnRecipeFavoriteListener(OnItemClickListener listener){
-//        onRecipeFavoriteListener = listener;
-//    }
 
     // Define the listener interface
     public interface OnItemClickListener {
         void onItemClick(View itemView, int position);
+    }
+
+    // Define the method that allows the parent activity or fragment to define the listener
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
     }
 
     @Override
@@ -78,6 +79,13 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             tbSave = binding.tbSave;
             tbFavorite = binding.tbFavorite;
 
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemClickListener.onItemClick(itemView, getAdapterPosition());
+                }
+            });
+
             tbSave.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -94,6 +102,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
                                 // show error and reverse toggle
                                 Toast.makeText(context, "Error saving recipe", Toast.LENGTH_SHORT).show();
                                 tbSave.setChecked(!tbSave.isChecked());
+                                Log.e("RecipeAdapter", "Error saving recipe: ", e);
                             }
                         }
                     });
@@ -127,7 +136,10 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             recipeTitle.setText(recipe.getTitle());
             tbSave.setChecked(recipe.getSaved());
             tbFavorite.setChecked(recipe.getFavorite());
-            Glide.with(context).load(recipe.getImageUrl()).into(recipeImage);
+            Glide.with(context).load(recipe.getImageUrl())
+                    .centerCrop()
+                    .transform(new RoundedCorners(Constant.IMAGE_RADIUS))
+                    .into(recipeImage);
         }
     }
 }

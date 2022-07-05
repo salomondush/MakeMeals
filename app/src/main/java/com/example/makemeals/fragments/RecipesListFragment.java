@@ -13,12 +13,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.makemeals.MainActivity;
 import com.example.makemeals.R;
 import com.example.makemeals.adapters.RecipeAdapter;
 import com.example.makemeals.models.Recipe;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -81,6 +83,19 @@ public class RecipesListFragment extends Fragment {
 
         rvRecipeList = view.findViewById(R.id.rvRecipeList);
         recipeAdapter = new RecipeAdapter(recipes, getContext());
+
+
+        recipeAdapter.setOnItemClickListener(new RecipeAdapter.OnItemClickListener() {
+             @Override
+             public void onItemClick(View itemView, int position) {
+
+                 // call the activity to show the recipe details
+                 ((MainActivity) requireActivity()).showRecipeDetails(recipes.get(position));
+
+             }
+        });
+
+
         rvRecipeList.setAdapter(recipeAdapter);
         rvRecipeList.setLayoutManager(new LinearLayoutManager(getContext()));
     }
@@ -89,4 +104,6 @@ public class RecipesListFragment extends Fragment {
         this.recipes.addAll(recipes);
         recipeAdapter.notifyDataSetChanged();
     }
+
+
 }

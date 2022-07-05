@@ -15,12 +15,12 @@ import com.example.makemeals.fragments.FavoritesFragment;
 import com.example.makemeals.fragments.HomeFragment;
 import com.example.makemeals.fragments.IngredientsFragment;
 import com.example.makemeals.fragments.ProfileFragment;
+import com.example.makemeals.fragments.RecipeDetailsFragment;
 import com.example.makemeals.fragments.SearchFragment;
+import com.example.makemeals.models.Recipe;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String FAVORITE_SCREEN = "favorite";
-    private static final String HOME_SCREEN = "home";
     final FragmentManager fragmentManager = getSupportFragmentManager();
     private BottomNavigationView bottomNavigationView;
     private ActivityMainBinding binding;
@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
                     fragment = new SearchFragment();
                     break;
                 case R.id.favorites:
-                    // todo: udpate fragment
                     fragment = new FavoritesFragment();
                     break;
                 case R.id.home:
@@ -56,7 +55,10 @@ public class MainActivity extends AppCompatActivity {
                     fragment = new HomeFragment();
                     break;
             }
-            fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.flContainer, fragment)
+                    .addToBackStack(null)
+                    .commit();
             return true;
         });
 
@@ -82,5 +84,22 @@ public class MainActivity extends AppCompatActivity {
             fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (fragmentManager.getBackStackEntryCount() > 0) {
+            fragmentManager.popBackStack();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    public void showRecipeDetails(Recipe recipe) {
+        Fragment fragment = RecipeDetailsFragment.newInstance(recipe);
+        fragmentManager.beginTransaction()
+                .replace(R.id.flContainer, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 }
