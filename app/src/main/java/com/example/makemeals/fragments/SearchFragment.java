@@ -55,7 +55,6 @@ import cz.msebera.android.httpclient.Header;
 public class SearchFragment extends Fragment {
     private static final String TAG = "SearchFragment";
     private RecyclerView rvSearchIngredients;
-    private RestClient restClient;
     private IngredientsAdapter ingredientsAdapter;
     private List<Ingredient> ingredients;
     private List<String> searchIngredientsNames;
@@ -200,7 +199,7 @@ public class SearchFragment extends Fragment {
 
     private void searchRecipes(String type, String diet) {
         showProgressBar();
-        restClient = new RestClient();
+        RestClient restClient = new RestClient(getContext());
         restClient.complexSearch(searchIngredientsNames, type, diet, new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {

@@ -16,17 +16,18 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.makemeals.Constant;
 import com.example.makemeals.databinding.RecipeDetailIngredientItemBinding;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Objects;
 
 public class RecipeDetailsIngredientsAdapter extends RecyclerView.Adapter<RecipeDetailsIngredientsAdapter.ViewHolder> {
-    private List<JSONObject> ingredients;
+    private JSONArray ingredients;
     private Context context;
     private RecipeDetailIngredientItemBinding binding;
 
-    public RecipeDetailsIngredientsAdapter(List<JSONObject> ingredients, Context context) {
+    public RecipeDetailsIngredientsAdapter(JSONArray ingredients, Context context) {
         this.ingredients = ingredients;
         this.context = context;
     }
@@ -40,13 +41,13 @@ public class RecipeDetailsIngredientsAdapter extends RecyclerView.Adapter<Recipe
 
     @Override
     public void onBindViewHolder(@NonNull RecipeDetailsIngredientsAdapter.ViewHolder holder, int position) {
-        JSONObject ingredient = ingredients.get(position);
+        JSONObject ingredient = ingredients.optJSONObject(position);
         holder.bind(ingredient);
     }
 
     @Override
     public int getItemCount() {
-        return ingredients.size();
+        return ingredients.length();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -66,7 +67,6 @@ public class RecipeDetailsIngredientsAdapter extends RecyclerView.Adapter<Recipe
         public void bind(JSONObject ingredient) {
             tvDetailIngredientName.setText(ingredient.optString("name"));
             JSONObject measure = Objects.requireNonNull(ingredient.optJSONObject("measures")).optJSONObject("us");
-            Log.i("measure", measure.toString());
             String quantity = Objects.requireNonNull(measure).optInt("amount") + " " + measure.optString("unitShort");
             tvIngredientQuantity.setText(quantity);
 

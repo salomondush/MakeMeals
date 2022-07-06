@@ -1,5 +1,10 @@
 package com.example.makemeals.fragments;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,6 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,21 +27,28 @@ import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.makemeals.R;
+import com.example.makemeals.RestClient;
 import com.example.makemeals.adapters.RecipeDetailsIngredientsAdapter;
 import com.example.makemeals.adapters.RecipeDetailsInstructionsAdapter;
 import com.example.makemeals.databinding.FragmentRecipeDetailsBinding;
 import com.example.makemeals.models.Recipe;
 import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.parse.ParseException;
 import com.parse.SaveCallback;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,41 +56,20 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class RecipeDetailsFragment extends Fragment {
-    private FragmentRecipeDetailsBinding binding;
-    private ImageView ivRecipeImage;
-    private TextView tvRecipeTitle;
-    private TextView tvReadyInTime;
-    private TextView tvTypes;
-    private TextView tvServings;
-    private TextView tvDiets;
+    private static final String TAG = "RecipeDetailsFragment";
+    private CircularProgressIndicator progressIndicator;
 
     private ToggleButton tbSave;
     private ToggleButton tbFavorite;
-    private ImageButton ibShare;
-    private ImageButton ibShoppingList;
-
-    private MaterialButtonToggleGroup toggleButtonRecipeInfo;
     private LinearLayout llNutritionInfo;
     private LinearLayout llIngredients;
     private LinearLayout llInstructions;
+    private Recipe recipe;
 
-    private List<JSONObject> ingredients;
-    private RecipeDetailsIngredientsAdapter recipeDetailsIngredientsAdapter;
-    private RecyclerView rvRecipeDetailIngredients;
-    private List<JSONObject> instructions;
-    private RecipeDetailsInstructionsAdapter recipeDetailsInstructionsAdapter;
-    private RecyclerView rvRecipeDetailInstructions;
 
     public final static int IMAGE_RADIUS = 10;
-
-
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "recipe";
 
-    // TODO: Rename and change types of parameters
-    private Recipe recipe;
 
     public RecipeDetailsFragment() {
         // Required empty public constructor
@@ -117,27 +110,49 @@ public class RecipeDetailsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        binding = FragmentRecipeDetailsBinding.bind(view);
+        com.example.makemeals.databinding.FragmentRecipeDetailsBinding binding = FragmentRecipeDetailsBinding.bind(view);
 
-        ivRecipeImage = binding.ivRecipeImage;
-        tvRecipeTitle = binding.tvRecipeTitle;
-        tvReadyInTime = binding.tvReadyInTime;
-        tvTypes = binding.tvTypes;
-        tvServings = binding.tvServings;
-        tvDiets = binding.tvDiets;
+        progressIndicator = binding.progressIndicator;
 
-        rvRecipeDetailIngredients = binding.rvRecipeDetailIngredients;
-        rvRecipeDetailInstructions = binding.rvRecipeDetailInstructions;
+        ImageView ivRecipeImage = binding.ivRecipeImage;
+        TextView tvRecipeTitle = binding.tvRecipeTitle;
+        TextView tvReadyInTime = binding.tvReadyInTime;
+        TextView tvTypes = binding.tvTypes;
+        TextView tvServings = binding.tvServings;
+        TextView tvDiets = binding.tvDiets;
+
+        RecyclerView rvRecipeDetailIngredients = binding.rvRecipeDetailIngredients;
+        RecyclerView rvRecipeDetailInstructions = binding.rvRecipeDetailInstructions;
 
         tbSave = binding.tbSave;
         tbFavorite = binding.tbFavorite;
-        ibShare = binding.ibShare;
-        ibShoppingList = binding.ibShoppingList;
+        ImageButton ibShare = binding.ibShare;
+        ImageButton ibShoppingList = binding.ibShoppingList;
 
-        toggleButtonRecipeInfo = binding.toggleButtonRecipeInfo;
+        MaterialButtonToggleGroup toggleButtonRecipeInfo = binding.toggleButtonRecipeInfo;
         llNutritionInfo = binding.llNutritionInfo;
         llIngredients = binding.llIngredients;
         llInstructions = binding.llInstructions;
+
+        Glide.with(requireContext()).load(recipe.getImageUrl())
+                .centerCrop()
+                .transform(new RoundedCorners(IMAGE_RADIUS))
+                .into(ivRecipeImage);
+        tvRecipeTitle.setText(recipe.getTitle());
+        tvReadyInTime.setText(MessageFormat.format("{0}m", recipe.getReadyInMinutes()));
+        tvTypes.setText(getDietDishTypesStringFromRecipe());
+        tvServings.setText(String.valueOf(recipe.getServings()));
+        tvDiets.setText(getDietStringFromRecipe());
+
+        // get ingredients from jsonArray and display them using adapter
+        RecipeDetailsIngredientsAdapter recipeDetailsIngredientsAdapter = new RecipeDetailsIngredientsAdapter(recipe.getExtendedIngredients(), getContext());
+        rvRecipeDetailIngredients.setAdapter(recipeDetailsIngredientsAdapter);
+        rvRecipeDetailIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // get instructions from jsonArray and display them using adapter
+        RecipeDetailsInstructionsAdapter recipeDetailsInstructionsAdapter = new RecipeDetailsInstructionsAdapter(recipe.getAnalyzedInstructions(), getContext());
+        rvRecipeDetailInstructions.setAdapter(recipeDetailsInstructionsAdapter);
+        rvRecipeDetailInstructions.setLayoutManager(new LinearLayoutManager(getContext()));
 
         toggleButtonRecipeInfo.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
             @Override
@@ -198,26 +213,110 @@ public class RecipeDetailsFragment extends Fragment {
             });
         });
 
+        ibShare.setOnClickListener(v -> {
+            generateSharableImage();
+        });
+    }
 
-        Glide.with(requireContext()).load(recipe.getImageUrl())
-                .centerCrop()
-                .transform(new RoundedCorners(IMAGE_RADIUS))
-                .into(ivRecipeImage);
-        tvRecipeTitle.setText(recipe.getTitle());
-        tvReadyInTime.setText(MessageFormat.format("{0}m", recipe.getReadyInMinutes()));
+    private void generateSharableImage() {
+        showProgressBar();
+        JSONObject body = buildJSONBody();
+        RestClient client = new RestClient(getContext());
 
-        // get dishtypes from jsonArray
-        StringBuilder types = new StringBuilder();
-        for (int i = 0; i < recipe.getDishTypes().length(); ++i){
-            types.append(recipe.getDishTypes().optString(i));
-            if (i != recipe.getDishTypes().length() - 1){
-                types.append(", ");
-            }
+        if (body != null) {
+            client.getSharableImage(body, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    Log.i(TAG, "onSuccess: " + response.optString("imageUrl"));
+                    String imageUrl = response.optString("imageUrl");
+                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                    shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    shareIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    shareIntent.setType("image/jpeg");
+
+                    // get image from url and share it
+                    Glide.with(requireContext())
+                            .load(imageUrl)
+                            .into(new SimpleTarget<Drawable>() {
+                                @Override
+                                public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                                    Bitmap bitmap = ((BitmapDrawable) resource).getBitmap();
+
+                                    String path = MediaStore.Images.Media.insertImage(requireContext().getContentResolver(),
+                                            bitmap, recipe.getTitle(), null);
+                                    Uri bmpUri = Uri.parse(path);
+                                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                                    shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
+                                    shareIntent.setType("image/*");
+                                    requireContext().startActivity(Intent.createChooser(shareIntent, "Share Image"));
+                                    hideProgressBar();
+                                }
+                            });
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    Toast.makeText(getContext(), "Error generating sharable image", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), "Error generating sharable image", Toast.LENGTH_SHORT).show();
         }
-        tvTypes.setText(types.toString());
-        tvServings.setText(String.valueOf(recipe.getServings()));
+    }
 
-        // get diets from jsonArray
+    private JSONObject buildJSONBody(){
+        JSONObject body = new JSONObject();
+        JSONArray params = new JSONArray();
+
+        try {
+            params.put(0, new JSONObject().put("name", "recipeImage")
+                    .put("imageUrl", recipe.getImageUrl()));
+
+            params.put(1, new JSONObject().put("name", "readyIn")
+                    .put("text", recipe.getReadyInMinutes() + " m<br>"));
+
+            params.put(2, new JSONObject().put("name", "types")
+                    .put("text", recipe.getDishTypes().join(",")));
+
+            params.put(3, new JSONObject().put("name", "diet")
+                    .put("text", recipe.getDiets().join(",")));
+
+            params.put(4, new JSONObject().put("name", "servings")
+                    .put("text", recipe.getServings()));
+
+            params.put(5, new JSONObject().put("name", "instructions")
+                    .put("text", getInstructionsString()));
+
+            params.put(6, new JSONObject().put("name", "ingredients")
+                    .put("text", getIngredientsString()));
+
+            body.put("params", params);
+            body.put("format", "jpeg");
+            body.put("metadata", "some text");
+
+            return body;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private String getIngredientsString(){
+        StringBuilder ingredients = new StringBuilder();
+        JSONArray ingredientsArray = recipe.getExtendedIngredients();
+        for (int i = 0; i < ingredientsArray.length(); i++) {
+            JSONObject ingredient = ingredientsArray.optJSONObject(i);
+
+            JSONObject measure = Objects.requireNonNull(ingredient.optJSONObject("measures")).optJSONObject("us");
+            String quantity = Objects.requireNonNull(measure).optInt("amount") + " " + measure.optString("unitShort");
+
+            ingredients.append("- ").append(ingredient.optString("name")).append(" (")
+                    .append(quantity).append(")<br>");
+        }
+        return ingredients.toString();
+    }
+
+    private String getDietStringFromRecipe(){
         StringBuilder diets = new StringBuilder();
         for (int i = 0; i < recipe.getDiets().length(); ++i){
             diets.append(recipe.getDiets().optString(i));
@@ -225,27 +324,43 @@ public class RecipeDetailsFragment extends Fragment {
                 diets.append(", ");
             }
         }
-        tvDiets.setText(diets.toString());
+        return diets.toString();
+    }
 
-        ingredients = new ArrayList<>();
-        JSONArray ingredientsArray = recipe.getExtendedIngredients();
-        for (int i = 0; i < ingredientsArray.length(); i++) {
-            ingredients.add(ingredientsArray.optJSONObject(i));
+    private String getDietDishTypesStringFromRecipe(){
+        StringBuilder types = new StringBuilder();
+        for (int i = 0; i < recipe.getDishTypes().length(); ++i){
+            types.append(recipe.getDishTypes().optString(i));
+            if (i != recipe.getDishTypes().length() - 1){
+                types.append(", ");
+            }
         }
+        return types.toString();
+    }
 
-        recipeDetailsIngredientsAdapter = new RecipeDetailsIngredientsAdapter(ingredients, getContext());
-        rvRecipeDetailIngredients.setAdapter(recipeDetailsIngredientsAdapter);
-        rvRecipeDetailIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
-
-
-        instructions = new ArrayList<>();
+    private String getInstructionsString(){
+        StringBuilder instructions = new StringBuilder();
         JSONArray instructionsArray = recipe.getAnalyzedInstructions();
-        for (int i = 0; i < instructionsArray.length(); i++) {
-            instructions.add(instructionsArray.optJSONObject(i));
-        }
 
-        recipeDetailsInstructionsAdapter = new RecipeDetailsInstructionsAdapter(instructions, getContext());
-        rvRecipeDetailInstructions.setAdapter(recipeDetailsInstructionsAdapter);
-        rvRecipeDetailInstructions.setLayoutManager(new LinearLayoutManager(getContext()));
+        for (int i = 0; i < instructionsArray.length(); i++) {
+            JSONObject instruction = instructionsArray.optJSONObject(i);
+            instructions.append("<b>").append(instruction.optString("name")).append("</b><br>");
+
+            for (int j = 0; j < Objects.requireNonNull(instruction.optJSONArray("steps")).length(); j++) {
+                JSONObject step = Objects.requireNonNull(instruction.optJSONArray("steps")).optJSONObject(j);
+                instructions.append(step.optInt("number")).append(". ").append(step.optString("step")).append("<br>");
+            }
+        }
+        return instructions.toString();
+    }
+
+    public void showProgressBar() {
+        // Show progress item
+        progressIndicator.setVisibility(View.VISIBLE);
+    }
+
+    public void hideProgressBar() {
+        // Hide progress item
+        progressIndicator.setVisibility(View.GONE);
     }
 }
