@@ -20,7 +20,8 @@ android {
         versionCode 1
         versionName "1.0"
         // should correspond to key/value pairs inside the file
-        buildConfigField("String", "API_KEY", apikeyProperties['API_KEY'])
+        buildConfigField("String", "SPN_API_KEY", apikeyProperties['SPN_API_KEY'])
+        buildConfigField("String", "DNP_API_KEY", apikeyProperties['DNP_API_KEY'])
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

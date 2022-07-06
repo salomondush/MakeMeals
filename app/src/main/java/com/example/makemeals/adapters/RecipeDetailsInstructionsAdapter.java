@@ -20,13 +20,11 @@ import java.util.Objects;
 
 public class RecipeDetailsInstructionsAdapter extends RecyclerView.Adapter<RecipeDetailsInstructionsAdapter.ViewHolder> {
 
-    final private List<JSONObject> instructions;
+    final private JSONArray instructions;
     final private Context context;
     private InstructionItemBinding binding;
 
-    private InstructionStepsAdapter instructionStepsAdapter;
-
-    public RecipeDetailsInstructionsAdapter(List<JSONObject> instructions, Context context) {
+    public RecipeDetailsInstructionsAdapter(JSONArray instructions, Context context) {
         this.instructions = instructions;
         this.context = context;
     }
@@ -40,19 +38,19 @@ public class RecipeDetailsInstructionsAdapter extends RecyclerView.Adapter<Recip
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        JSONObject instruction = instructions.get(position);
+        JSONObject instruction = instructions.optJSONObject(position);
         holder.bind(instruction);
     }
 
     @Override
     public int getItemCount() {
-        return instructions.size();
+        return instructions.length();
     }
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         final private TextView tvInstructionItemText;
-        private RecyclerView rvInstructionSteps;
+        private final RecyclerView rvInstructionSteps;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -66,7 +64,7 @@ public class RecipeDetailsInstructionsAdapter extends RecyclerView.Adapter<Recip
 
             JSONArray steps = instruction.optJSONArray("steps");
             if (steps != null) {
-                instructionStepsAdapter = new InstructionStepsAdapter(steps, context);
+                InstructionStepsAdapter instructionStepsAdapter = new InstructionStepsAdapter(steps, context);
                 rvInstructionSteps.setAdapter(instructionStepsAdapter);
                 rvInstructionSteps.setLayoutManager(new LinearLayoutManager(context));
             }
