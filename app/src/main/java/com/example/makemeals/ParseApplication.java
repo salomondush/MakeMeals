@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.example.makemeals.models.Ingredient;
 import com.example.makemeals.models.Recipe;
+import com.example.makemeals.models.ShoppingItem;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
@@ -15,6 +16,7 @@ public class ParseApplication extends Application {
 
         ParseObject.registerSubclass(Ingredient.class);
         ParseObject.registerSubclass(Recipe.class);
+        ParseObject.registerSubclass(ShoppingItem.class);
 
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId("QOsFGMyspfK70xND7ekNVzNrB6KCtbK5PHRydK1b")

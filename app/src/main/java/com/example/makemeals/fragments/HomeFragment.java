@@ -114,12 +114,10 @@ public class HomeFragment extends Fragment {
     }
 
     public void showProgressBar() {
-        // Show progress item
         progressIndicator.setVisibility(View.VISIBLE);
     }
 
     public void hideProgressBar() {
-        // Hide progress item
         progressIndicator.setVisibility(View.GONE);
     }
 }

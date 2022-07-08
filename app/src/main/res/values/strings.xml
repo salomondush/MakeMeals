@@ -51,4 +51,8 @@
     <string name="no_diet">No Diet</string>
     <string name="ingredients">Ingredients:</string>
     <string name="instructions">Instructions:</string>
+    <string name="cart">Cart</string>
+    <string name="unchecked">Unchecked</string>
+    <string name="clear_list">Clear list</string>
+    <string name="checked">checked</string>
 </resources>

@@ -1,5 +1,7 @@
 package com.example.makemeals.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -10,6 +12,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,16 +32,23 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.example.makemeals.MainActivity;
 import com.example.makemeals.R;
 import com.example.makemeals.RestClient;
-import com.example.makemeals.adapters.RecipeDetailsIngredientsAdapter;
-import com.example.makemeals.adapters.RecipeDetailsInstructionsAdapter;
+import com.example.makemeals.adapters.IngredientsDialogAdapter;
+import com.example.makemeals.adapters.RecipeIngredientsAdapter;
+import com.example.makemeals.adapters.RecipeInstructionsAdapter;
 import com.example.makemeals.databinding.FragmentRecipeDetailsBinding;
+import com.example.makemeals.models.Ingredient;
 import com.example.makemeals.models.Recipe;
+import com.example.makemeals.models.ShoppingItem;
 import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.json.JSONArray;
@@ -46,6 +56,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import cz.msebera.android.httpclient.Header;
@@ -57,14 +69,21 @@ import cz.msebera.android.httpclient.Header;
  */
 public class RecipeDetailsFragment extends Fragment {
     private static final String TAG = "RecipeDetailsFragment";
+    public static final String SHOPPING_LIST = "shoppingList";
     private CircularProgressIndicator progressIndicator;
-
     private ToggleButton tbSave;
     private ToggleButton tbFavorite;
     private LinearLayout llNutritionInfo;
     private LinearLayout llIngredients;
     private LinearLayout llInstructions;
     private Recipe recipe;
+    private View addShoppingIngredientsDialogView;
+    private RecyclerView rvDialogIngredients;
+    private RecipeIngredientsAdapter shoppingIngredientsDialogAdapter;
+
+
+    // material popup
+    private MaterialAlertDialogBuilder materialAlertDialogBuilder;
 
 
     public final static int IMAGE_RADIUS = 10;
@@ -112,6 +131,7 @@ public class RecipeDetailsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         com.example.makemeals.databinding.FragmentRecipeDetailsBinding binding = FragmentRecipeDetailsBinding.bind(view);
 
+        materialAlertDialogBuilder = new MaterialAlertDialogBuilder(requireContext());
         progressIndicator = binding.progressIndicator;
 
         ImageView ivRecipeImage = binding.ivRecipeImage;
@@ -145,13 +165,13 @@ public class RecipeDetailsFragment extends Fragment {
         tvDiets.setText(getDietStringFromRecipe());
 
         // get ingredients from jsonArray and display them using adapter
-        RecipeDetailsIngredientsAdapter recipeDetailsIngredientsAdapter = new RecipeDetailsIngredientsAdapter(recipe.getExtendedIngredients(), getContext());
-        rvRecipeDetailIngredients.setAdapter(recipeDetailsIngredientsAdapter);
+        RecipeIngredientsAdapter recipeIngredientsAdapter = new RecipeIngredientsAdapter(recipe.getExtendedIngredients(), getContext());
+        rvRecipeDetailIngredients.setAdapter(recipeIngredientsAdapter);
         rvRecipeDetailIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // get instructions from jsonArray and display them using adapter
-        RecipeDetailsInstructionsAdapter recipeDetailsInstructionsAdapter = new RecipeDetailsInstructionsAdapter(recipe.getAnalyzedInstructions(), getContext());
-        rvRecipeDetailInstructions.setAdapter(recipeDetailsInstructionsAdapter);
+        RecipeInstructionsAdapter recipeInstructionsAdapter = new RecipeInstructionsAdapter(recipe.getAnalyzedInstructions(), getContext());
+        rvRecipeDetailInstructions.setAdapter(recipeInstructionsAdapter);
         rvRecipeDetailInstructions.setLayoutManager(new LinearLayoutManager(getContext()));
 
         toggleButtonRecipeInfo.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
@@ -172,7 +192,6 @@ public class RecipeDetailsFragment extends Fragment {
                         llInstructions.setVisibility(View.VISIBLE);
                     }
                 }
-                // highlight the selected button
             }
         });
 
@@ -214,11 +233,15 @@ public class RecipeDetailsFragment extends Fragment {
         });
 
         ibShare.setOnClickListener(v -> {
-            generateSharableImage();
+            showShareRecipeDialog();
+        });
+
+        ibShoppingList.setOnClickListener(v -> {
+            launchAddToShoppingListDialog();
         });
     }
 
-    private void generateSharableImage() {
+    private void generateSharableImageAndShareRecipe() {
         showProgressBar();
         JSONObject body = buildJSONBody();
         RestClient client = new RestClient(getContext());
@@ -354,13 +377,98 @@ public class RecipeDetailsFragment extends Fragment {
         return instructions.toString();
     }
 
+    private void launchAddToShoppingListDialog() {
+        addShoppingIngredientsDialogView = getLayoutInflater().
+                inflate(R.layout.add_ingredients_dialog, null, false);
+
+        JSONArray shoppingIngredients = recipe.getExtendedIngredients();
+
+        rvDialogIngredients = addShoppingIngredientsDialogView.findViewById(R.id.rvDialogIngredients);
+        shoppingIngredientsDialogAdapter = new RecipeIngredientsAdapter(shoppingIngredients, getContext());
+        rvDialogIngredients.setAdapter(shoppingIngredientsDialogAdapter);
+        rvDialogIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new RecipeIngredientsAdapter.SwipeHelper(shoppingIngredientsDialogAdapter, rvDialogIngredients));
+        itemTouchHelper.attachToRecyclerView(rvDialogIngredients);
+
+        materialAlertDialogBuilder.setView(addShoppingIngredientsDialogView);
+        materialAlertDialogBuilder.setTitle("Add ingredients to shopping list");
+        materialAlertDialogBuilder.setMessage("Swipe left to remove ingredient from recipe");
+        materialAlertDialogBuilder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showProgressBar();
+
+                List<ShoppingItem> shoppingItems = new ArrayList<>();
+                List<String> shoppingItemIds = new ArrayList<>();
+                for (int i = 0; i < shoppingIngredients.length(); ++i){
+                    JSONObject ingredientFields = shoppingIngredients.optJSONObject(i);
+                    ShoppingItem shoppingItem = new ShoppingItem(ingredientFields);
+                    shoppingItems.add(shoppingItem);
+                }
+
+                ShoppingItem.saveAllInBackground(shoppingItems, new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null){
+                            for (ShoppingItem shoppingItem : shoppingItems){
+                                shoppingItemIds.add(shoppingItem.getObjectId());
+                            }
+
+                            ParseUser.getCurrentUser().addAll(SHOPPING_LIST, shoppingItemIds);
+                            ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    hideProgressBar();
+                                    if (e == null){
+                                        ((MainActivity) requireActivity()).setCartItemCount(shoppingItemIds.size());
+                                        Toast.makeText(getContext(), "Ingredients added to shopping list", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(getContext(), "Error adding ingredients to shopping list", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        } else {
+                            Toast.makeText(getContext(), "Error saving shopping items", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                dialog.dismiss();
+            }
+        });
+        materialAlertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        materialAlertDialogBuilder.show();
+    }
+
+    public void showShareRecipeDialog() {
+        materialAlertDialogBuilder.setTitle("Share recipe");
+        materialAlertDialogBuilder.setMessage("Share this recipe with your friends!");
+        materialAlertDialogBuilder.setPositiveButton("Share", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                generateSharableImageAndShareRecipe();
+            }
+        });
+        materialAlertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        materialAlertDialogBuilder.show();
+    }
+
     public void showProgressBar() {
-        // Show progress item
         progressIndicator.setVisibility(View.VISIBLE);
     }
 
     public void hideProgressBar() {
-        // Hide progress item
         progressIndicator.setVisibility(View.GONE);
     }
 }

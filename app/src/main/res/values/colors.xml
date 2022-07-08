@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="make_meals_blue">#3897f0</color>
     <color name="inactive_text_color">#C3C8DD</color>
+    <color name="colorAccent">#D81B60</color>
 </resources>
