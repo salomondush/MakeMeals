@@ -28,7 +28,6 @@ import java.util.Objects;
  * create an instance of this fragment.
  */
 public class RecipesListFragment extends Fragment {
-    private RecyclerView rvRecipeList;
     private RecipeAdapter recipeAdapter;
 
     // TODO: Rename parameter arguments, choose names that match
@@ -81,7 +80,7 @@ public class RecipesListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        rvRecipeList = view.findViewById(R.id.rvRecipeList);
+        RecyclerView rvRecipeList = view.findViewById(R.id.rvRecipeList);
         recipeAdapter = new RecipeAdapter(recipes, getContext());
 
 

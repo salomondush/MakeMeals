@@ -26,7 +26,6 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class FavoritesFragment extends Fragment {
-    private List<Recipe> favoriteRecipes;
     private Fragment recipesListFragment;
     private CircularProgressIndicator progressIndicator;
 
@@ -84,7 +83,7 @@ public class FavoritesFragment extends Fragment {
 
         progressIndicator = view.findViewById(R.id.progressIndicator);
 
-        favoriteRecipes = new ArrayList<>();
+        List<Recipe> favoriteRecipes = new ArrayList<>();
         recipesListFragment = RecipesListFragment.newInstance(favoriteRecipes);
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.add(R.id.flFavoriteRecipesContainer, recipesListFragment).commit();

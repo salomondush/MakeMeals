@@ -102,7 +102,6 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
                                 // show error and reverse toggle
                                 Toast.makeText(context, "Error saving recipe", Toast.LENGTH_SHORT).show();
                                 tbSave.setChecked(!tbSave.isChecked());
-                                Log.e("RecipeAdapter", "Error saving recipe: ", e);
                             }
                         }
                     });

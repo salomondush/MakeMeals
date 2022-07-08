@@ -77,9 +77,6 @@ public class RecipeDetailsFragment extends Fragment {
     private LinearLayout llIngredients;
     private LinearLayout llInstructions;
     private Recipe recipe;
-    private View addShoppingIngredientsDialogView;
-    private RecyclerView rvDialogIngredients;
-    private RecipeIngredientsAdapter shoppingIngredientsDialogAdapter;
 
 
     // material popup
@@ -250,7 +247,6 @@ public class RecipeDetailsFragment extends Fragment {
             client.getSharableImage(body, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    Log.i(TAG, "onSuccess: " + response.optString("imageUrl"));
                     String imageUrl = response.optString("imageUrl");
                     Intent shareIntent = new Intent(Intent.ACTION_SEND);
                     shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -378,13 +374,13 @@ public class RecipeDetailsFragment extends Fragment {
     }
 
     private void launchAddToShoppingListDialog() {
-        addShoppingIngredientsDialogView = getLayoutInflater().
+        View addShoppingIngredientsDialogView = getLayoutInflater().
                 inflate(R.layout.add_ingredients_dialog, null, false);
 
         JSONArray shoppingIngredients = recipe.getExtendedIngredients();
 
-        rvDialogIngredients = addShoppingIngredientsDialogView.findViewById(R.id.rvDialogIngredients);
-        shoppingIngredientsDialogAdapter = new RecipeIngredientsAdapter(shoppingIngredients, getContext());
+        RecyclerView rvDialogIngredients = addShoppingIngredientsDialogView.findViewById(R.id.rvDialogIngredients);
+        RecipeIngredientsAdapter shoppingIngredientsDialogAdapter = new RecipeIngredientsAdapter(shoppingIngredients, getContext());
         rvDialogIngredients.setAdapter(shoppingIngredientsDialogAdapter);
         rvDialogIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
 

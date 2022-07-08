@@ -26,8 +26,8 @@ import org.json.JSONObject;
 import java.util.Objects;
 
 public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredientsAdapter.ViewHolder> {
-    private JSONArray ingredients;
-    private Context context;
+    private final JSONArray ingredients;
+    private final Context context;
     private RecipeIngredientItemBinding binding;
 
     public RecipeIngredientsAdapter(JSONArray ingredients, Context context) {
@@ -57,7 +57,6 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
         final private ImageView ivIngredientImage;
         private final TextView tvDetailIngredientName;
         private final TextView tvIngredientQuantity;
-        private final CheckBox cbSelectIngredient;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -65,7 +64,6 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
             tvDetailIngredientName = binding.tvDetailIngredientName;
             tvIngredientQuantity = binding.tvIngredientQuantity;
             ivIngredientImage = binding.ivIngredientImage;
-            cbSelectIngredient = binding.cbSelectIngredient;
         }
 
         public void bind(JSONObject ingredient) {

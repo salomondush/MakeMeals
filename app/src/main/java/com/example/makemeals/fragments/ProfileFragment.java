@@ -25,8 +25,6 @@ import java.io.File;
  * create an instance of this fragment.
  */
 public class ProfileFragment extends Fragment {
-    private TextView tvProfileUsername;
-    private ImageView ivProfileImage;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -79,8 +77,8 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        tvProfileUsername = view.findViewById(R.id.tvProfileUsername);
-        ivProfileImage = view.findViewById(R.id.ivProfileImage);
+        TextView tvProfileUsername = view.findViewById(R.id.tvProfileUsername);
+        ImageView ivProfileImage = view.findViewById(R.id.ivProfileImage);
 
         tvProfileUsername.setText(ParseUser.getCurrentUser().getUsername());
 

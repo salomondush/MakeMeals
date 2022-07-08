@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapter.ViewHolder>{
-    private List<ShoppingItem> shoppingItems;
-    private Context context;
+    private final List<ShoppingItem> shoppingItems;
+    private final Context context;
     private RecipeIngredientItemBinding binding;
     private OnItemClickListener isCheckedListener;
 

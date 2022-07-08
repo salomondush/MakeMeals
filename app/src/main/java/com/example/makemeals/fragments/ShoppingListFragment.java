@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.makemeals.MainActivity;
 import com.example.makemeals.R;
@@ -51,7 +52,6 @@ public class ShoppingListFragment extends Fragment {
     public final int CHECKED_ITEMS_INITIAL_VALUE = 0;
     private List<ShoppingItem> shoppingList;
     private ShoppingListAdapter shoppingListAdapter;
-    private FragmentShoppingListBinding binding;
     private MaterialButton btnClearShoppingList;
     private CircularProgressIndicator progressIndicator;
     private int checkedItems;
@@ -111,7 +111,7 @@ public class ShoppingListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         checkedItems = CHECKED_ITEMS_INITIAL_VALUE;
-        binding = FragmentShoppingListBinding.bind(view);
+        com.example.makemeals.databinding.FragmentShoppingListBinding binding = FragmentShoppingListBinding.bind(view);
         btnClearShoppingList = binding.btnClearShoppingList;
         tvUncheckedCount = binding.tvUncheckedCount;
         tvCheckedCount = binding.tvCheckedCount;
@@ -185,10 +185,9 @@ public class ShoppingListFragment extends Fragment {
                             hideProgressBar();
                             shoppingList.addAll(shoppingItems);
                             shoppingListAdapter.notifyDataSetChanged();
-
                            initializeShoppingListState();
                         } else {
-                            Log.e(TAG, "Error getting shopping list: " + err.getMessage());
+                            Toast.makeText(getContext(), "Error getting shopping list", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -228,11 +227,11 @@ public class ShoppingListFragment extends Fragment {
                         ((MainActivity) requireActivity()).setCartItemCount(0);
                         resetShoppingListState();
                     } else {
-                        Log.e(TAG, "Error deleting shopping items: " + err.getMessage());
+                        Toast.makeText(getContext(), "Error deleting shopping items", Toast.LENGTH_SHORT).show();
                     }
                 });
             } else {
-                Log.e(TAG, "Error clearing shopping list: " + e.getMessage());
+                Toast.makeText(getContext(), "Error clearing shopping list", Toast.LENGTH_SHORT).show();
             }
         }));
     }

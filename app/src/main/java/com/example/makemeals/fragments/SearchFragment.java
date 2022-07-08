@@ -47,16 +47,11 @@ import cz.msebera.android.httpclient.Header;
  */
 public class SearchFragment extends Fragment {
     private static final String TAG = "SearchFragment";
-    private RecyclerView rvSearchIngredients;
     private IngredientsPageAdapter ingredientsPageAdapter;
     private List<Ingredient> ingredients;
     private List<String> searchIngredientsNames;
-    private List<Recipe> resultRecipes;
-    private MaterialButton searchButton;
     private AutoCompleteTextView recipeDiet;
     private AutoCompleteTextView recipeType;
-    private ImageButton ibHideSearchBlock;
-    private TextView tvSearchBar;
     private LinearLayout llSearchResultBlock;
     private LinearLayout llSearchBlock;
     private Fragment recipesListFragment;
@@ -122,15 +117,15 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        searchButton = view.findViewById(R.id.searchButton);
+        MaterialButton searchButton = view.findViewById(R.id.searchButton);
         recipeDiet = view.findViewById(R.id.recipeDiet);
         recipeType = view.findViewById(R.id.recipeType);
-        rvSearchIngredients = view.findViewById(R.id.rvSearchIngredients);
+        RecyclerView rvSearchIngredients = view.findViewById(R.id.rvSearchIngredients);
         progressIndicator = view.findViewById(R.id.progressIndicator);
-        tvSearchBar = view.findViewById(R.id.tvSearchBar);
+        TextView tvSearchBar = view.findViewById(R.id.tvSearchBar);
         llSearchResultBlock = view.findViewById(R.id.llSearchResultBlock);
         llSearchBlock = view.findViewById(R.id.llSearchBlock);
-        ibHideSearchBlock = view.findViewById(R.id.ibHideSearchBlock);
+        ImageButton ibHideSearchBlock = view.findViewById(R.id.ibHideSearchBlock);
 
         // set and attach ingredients adapter to rvSearchIngredients recyclerView
         ingredients = new ArrayList<>();
@@ -140,7 +135,7 @@ public class SearchFragment extends Fragment {
         rvSearchIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // initialize the child fragment that displays result recipes in a recyclerView
-        resultRecipes = new ArrayList<>();
+        List<Recipe> resultRecipes = new ArrayList<>();
         recipesListFragment = RecipesListFragment.newInstance(resultRecipes);
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.add(R.id.flSearchResultsContainer, recipesListFragment).commit();
