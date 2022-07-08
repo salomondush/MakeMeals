@@ -22,4 +22,11 @@
         app:showAsAction="always"
         android:icon="@drawable/favorites_icon_selector"
         android:title="@string/favorites" />
+
+    <item
+        android:id="@+id/profile"
+        android:enabled="true"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/profile_icon_selector"
+        android:title="@string/home" />
 </menu>

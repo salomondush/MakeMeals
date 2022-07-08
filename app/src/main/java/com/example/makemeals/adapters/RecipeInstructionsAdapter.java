@@ -15,16 +15,13 @@ import com.example.makemeals.databinding.InstructionItemBinding;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.List;
-import java.util.Objects;
-
-public class RecipeDetailsInstructionsAdapter extends RecyclerView.Adapter<RecipeDetailsInstructionsAdapter.ViewHolder> {
+public class RecipeInstructionsAdapter extends RecyclerView.Adapter<RecipeInstructionsAdapter.ViewHolder> {
 
     final private JSONArray instructions;
     final private Context context;
     private InstructionItemBinding binding;
 
-    public RecipeDetailsInstructionsAdapter(JSONArray instructions, Context context) {
+    public RecipeInstructionsAdapter(JSONArray instructions, Context context) {
         this.instructions = instructions;
         this.context = context;
     }

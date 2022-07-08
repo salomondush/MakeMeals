@@ -33,7 +33,7 @@ import com.codepath.asynchttpclient.RequestHeaders;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.makemeals.R;
-import com.example.makemeals.adapters.IngredientsAdapter;
+import com.example.makemeals.adapters.IngredientsPageAdapter;
 import com.example.makemeals.adapters.IngredientsDialogAdapter;
 import com.example.makemeals.models.Ingredient;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -65,21 +65,15 @@ import okhttp3.RequestBody;
 public class IngredientsFragment extends Fragment {
     private static final String TAG = "IngredientsFragment";
     private RecyclerView rvIngredients;
-    private RecyclerView rvDialogIngredients;
-    private IngredientsAdapter adapter;
-    private IngredientsDialogAdapter dialogAdapter;
+    private IngredientsPageAdapter adapter;
     private List<Ingredient> ingredients;
-    private List<String> dialogIngredients; // todo: change later to Ingredient
+    private List<String> dialogIngredients;
     private EditText etIngredientName;
     private ImageButton addButton;
     private ImageButton cameraButton;
-    private ImageButton galleryButton;
-    private ImageButton btnAddIngredient;
     private RelativeLayout addLayout;
-    private View addIngredientsDialogView;
 
     private File photoFile;
-    final private String PHOTO_FILE_NAME = "photo.jpg";
 
 
     public static final String REST_URL = "http://172.23.178.111:3200/file/analyse";
@@ -149,21 +143,21 @@ public class IngredientsFragment extends Fragment {
         rvIngredients = view.findViewById(R.id.rvIngredients);
         addButton = view.findViewById(R.id.addButton);
         addLayout = view.findViewById(R.id.addLayout);
-        btnAddIngredient = view.findViewById(R.id.btnAddIngredient);
+        ImageButton btnAddIngredient = view.findViewById(R.id.btnAddIngredient);
         etIngredientName = view.findViewById(R.id.etIngredientName);
         progressIndicator = view.findViewById(R.id.progressIndicator);
-        galleryButton = view.findViewById(R.id.galleryButton);
+        ImageButton galleryButton = view.findViewById(R.id.galleryButton);
 
         ingredients = new ArrayList<>();
-        adapter = new IngredientsAdapter(ingredients, getContext(), false);
+        adapter = new IngredientsPageAdapter(ingredients, getContext(), false);
         rvIngredients.setAdapter(adapter);
         rvIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new IngredientsAdapter.SwipeHelper(adapter, rvIngredients));
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new IngredientsPageAdapter.SwipeHelper(adapter, rvIngredients));
         itemTouchHelper.attachToRecyclerView(rvIngredients);
 
 
-        adapter.setOnRemoveIngredientClickListener(new IngredientsAdapter.OnItemClickListener() {
+        adapter.setOnRemoveIngredientClickListener(new IngredientsPageAdapter.OnItemClickListener() {
 
             @Override
             public void onItemClick(View itemView, int position) {
@@ -255,6 +249,7 @@ public class IngredientsFragment extends Fragment {
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Create a File reference for future access
+        String PHOTO_FILE_NAME = "photo.jpg";
         photoFile = getPhotoFileUri(PHOTO_FILE_NAME);
 
         // wrap File object into a content provider
@@ -289,13 +284,13 @@ public class IngredientsFragment extends Fragment {
     }
 
     private void launchAddIngredientDialog(List<String> ingredientItems) {
-        addIngredientsDialogView = getLayoutInflater().
-                        inflate(R.layout.add_ingredients_dialog, null, false);
+        View addIngredientsDialogView = getLayoutInflater().
+                inflate(R.layout.add_ingredients_dialog, null, false);
 
         dialogIngredients = new ArrayList<>(ingredientItems);
 
-        rvDialogIngredients = addIngredientsDialogView.findViewById(R.id.rvDialogIngredients);
-        dialogAdapter = new IngredientsDialogAdapter(dialogIngredients, getContext());
+        RecyclerView rvDialogIngredients = addIngredientsDialogView.findViewById(R.id.rvDialogIngredients);
+        IngredientsDialogAdapter dialogAdapter = new IngredientsDialogAdapter(dialogIngredients, getContext());
         rvDialogIngredients.setAdapter(dialogAdapter);
         rvDialogIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -304,6 +299,7 @@ public class IngredientsFragment extends Fragment {
 
         materialAlertDialogBuilder.setView(addIngredientsDialogView);
         materialAlertDialogBuilder.setTitle("Add ingredients");
+        materialAlertDialogBuilder.setMessage("Swipe left to remove ingredient from recipe");
         materialAlertDialogBuilder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

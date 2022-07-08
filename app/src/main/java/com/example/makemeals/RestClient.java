@@ -51,8 +51,6 @@ public class RestClient extends AsyncHttpClient {
         addHeader("Authorization", bearerToken);
         addHeader("Content-Type", "application/json");
 
-        Log.i("RestClient", "body: " + body.toString());
-
         try {
             HttpEntity entity = new StringEntity(body.toString());
             // make request

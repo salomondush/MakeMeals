@@ -15,8 +15,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class InstructionStepsAdapter extends RecyclerView.Adapter<InstructionStepsAdapter.ViewHolder> {
-    private JSONArray steps;
-    private Context context;
+    private final JSONArray steps;
+    private final Context context;
     private InstructionStepItemBinding binding;
 
     public InstructionStepsAdapter(JSONArray steps, Context context) {

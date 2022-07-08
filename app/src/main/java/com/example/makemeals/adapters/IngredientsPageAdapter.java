@@ -1,16 +1,11 @@
 package com.example.makemeals.adapters;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.makemeals.databinding.IngredientItemBinding;
 import com.example.makemeals.models.Ingredient;
-import com.google.android.material.slider.Slider;
 import com.google.android.material.snackbar.Snackbar;
 import com.parse.DeleteCallback;
 import com.parse.ParseException;
@@ -28,7 +22,7 @@ import com.parse.SaveCallback;
 
 import java.util.List;
 
-public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.ViewHolder> {
+public class IngredientsPageAdapter extends RecyclerView.Adapter<IngredientsPageAdapter.ViewHolder> {
     final private List<Ingredient> ingredients;
     final private Context context;
     private IngredientItemBinding binding;
@@ -36,7 +30,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     private OnItemClickListener onSelectIngredientListener;
     final private boolean isSearchIngredient;
 
-    public IngredientsAdapter(List<Ingredient> ingredients, Context context, boolean isSearchIngredient) {
+    public IngredientsPageAdapter(List<Ingredient> ingredients, Context context, boolean isSearchIngredient) {
         this.ingredients = ingredients;
         this.context = context;
         this.isSearchIngredient = isSearchIngredient;
@@ -44,13 +38,13 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
 
     @NonNull
     @Override
-    public IngredientsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public IngredientsPageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         binding = IngredientItemBinding.inflate(LayoutInflater.from(context), parent, false);
-        return new IngredientsAdapter.ViewHolder(binding.getRoot());
+        return new IngredientsPageAdapter.ViewHolder(binding.getRoot());
     }
 
     @Override
-    public void onBindViewHolder(@NonNull IngredientsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull IngredientsPageAdapter.ViewHolder holder, int position) {
         Ingredient ingredient = ingredients.get(position);
         holder.bind(ingredient);
     }
@@ -120,10 +114,10 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     }
 
     public static class SwipeHelper extends ItemTouchHelper.SimpleCallback{
-        private final IngredientsAdapter adapter;
+        private final IngredientsPageAdapter adapter;
         private final RecyclerView parentView;
 
-        public SwipeHelper(IngredientsAdapter adapter, RecyclerView parentView) {
+        public SwipeHelper(IngredientsPageAdapter adapter, RecyclerView parentView) {
             super(0, ItemTouchHelper.LEFT);
             this.adapter = adapter;
             this.parentView = parentView;

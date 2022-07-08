@@ -4,6 +4,7 @@ import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,7 +43,6 @@ public class Recipe extends ParseObject {
         setReadyInMinutes(jsonObject.getInt("readyInMinutes"));
         setServings(jsonObject.getInt("servings"));
         setExtendedIngredients(jsonObject.getJSONArray("extendedIngredients"));
-//        setNutrition(jsonObject.getJSONObject("nutrition"));
         setAnalyzedInstructions(jsonObject.getJSONArray("analyzedInstructions"));
         setFavorite(false);
         setSaved(false);
@@ -164,14 +164,6 @@ public class Recipe extends ParseObject {
     public void setExtendedIngredients(JSONArray extendedIngredients) {
         put(EXTENDED_INGREDIENTS, extendedIngredients);
     }
-
-//    public JSONObject getNutrition() {
-//        return getJSONObject(NUTRITION);
-//    }
-
-//    public void setNutrition(JSONObject nutrition) {
-//        put(NUTRITION, nutrition);
-//    }
 
     public JSONArray getAnalyzedInstructions() {
         return getJSONArray(ANALYZED_INSTRUCTIONS);

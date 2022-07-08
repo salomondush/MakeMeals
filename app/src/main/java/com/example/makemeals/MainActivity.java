@@ -7,8 +7,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.example.makemeals.databinding.ActivityMainBinding;
 import com.example.makemeals.fragments.FavoritesFragment;
@@ -17,20 +20,30 @@ import com.example.makemeals.fragments.IngredientsFragment;
 import com.example.makemeals.fragments.ProfileFragment;
 import com.example.makemeals.fragments.RecipeDetailsFragment;
 import com.example.makemeals.fragments.SearchFragment;
+import com.example.makemeals.fragments.ShoppingListFragment;
 import com.example.makemeals.models.Recipe;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-    final FragmentManager fragmentManager = getSupportFragmentManager();
-    private BottomNavigationView bottomNavigationView;
-    private ActivityMainBinding binding;
-
+    private final FragmentManager fragmentManager = getSupportFragmentManager();
+    private final int MAX_NOTIFICATIONS = 99;
+    private TextView textCartItemCount;
+    // todo: change to dynamically show the number of items in the cart
+    private int cartItemCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        com.example.makemeals.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        cartItemCount = 0;
+        getShoppingListCount();
 
         // Find the toolbar view inside the activity layout
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -39,9 +52,9 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
-        bottomNavigationView = binding.bottomNavigation;
+        BottomNavigationView bottomNavigationView = binding.bottomNavigation;
 
-        bottomNavigationView.setOnItemSelectedListener( item -> {
+        bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment fragment;
             switch (item.getItemId()) {
                 case R.id.search:
@@ -49,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.favorites:
                     fragment = new FavoritesFragment();
+                    break;
+                case R.id.profile:
+                    fragment = new ProfileFragment();
                     break;
                 case R.id.home:
                 default:
@@ -70,20 +86,32 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        final MenuItem menuItem = menu.findItem(R.id.shoppingCart);
+        View actionView = menuItem.getActionView();
+        textCartItemCount = (TextView) actionView.findViewById(R.id.tvShoppingCount);
+        setupBadge();
+
+        actionView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onOptionsItemSelected(menuItem);
+            }
+        });
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.profile){
-            // navigate to the ProfileFragment
-            Fragment fragment = new ProfileFragment();
-            fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
-        } else if (item.getItemId() == R.id.ingredients){
+       if (item.getItemId() == R.id.ingredients){
             Fragment fragment = new IngredientsFragment();
             fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
-        }
-        return super.onOptionsItemSelected(item);
+       } else if (item.getItemId() == R.id.shoppingCart){
+            Fragment fragment = new ShoppingListFragment();
+            fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+       }
+       return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -101,5 +129,44 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.flContainer, fragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    private void setupBadge() {
+
+        if (textCartItemCount != null) {
+            if (cartItemCount == 0) {
+                if (textCartItemCount.getVisibility() != View.GONE) {
+                    textCartItemCount.setVisibility(View.GONE);
+                }
+            } else {
+                textCartItemCount.setText(String.valueOf(Math.min(cartItemCount, MAX_NOTIFICATIONS)));
+                if (textCartItemCount.getVisibility() != View.VISIBLE) {
+                    textCartItemCount.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+    }
+
+    public void getShoppingListCount(){
+        ParseUser.getQuery().getInBackground(ParseUser.getCurrentUser().getObjectId(), new GetCallback<ParseUser>() {
+            @Override
+            public void done(ParseUser object, ParseException e) {
+                if (e == null) {
+                    // add all the ingredients from object to the shopping list
+                    setCartItemCount(Objects.requireNonNull(object.getJSONArray("shoppingList")).length());
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public int getCartItemCount() {
+        return cartItemCount;
+    }
+
+    public void setCartItemCount(int mCartItemCount) {
+        this.cartItemCount = mCartItemCount;
+        setupBadge();
     }
 }

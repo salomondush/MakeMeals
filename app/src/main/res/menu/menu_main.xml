@@ -5,14 +5,15 @@
     <item
         android:id="@+id/ingredients"
         android:enabled="true"
-        app:showAsAction="always"
-        android:icon="@drawable/ingredients_icon"
-        android:title="@string/home"
-        />
-    <item
-        android:id="@+id/profile"
-        android:enabled="true"
         app:showAsAction="ifRoom"
-        android:icon="@drawable/profile_icon_make_meals"
+        android:icon="@drawable/ingredients_icon"
         android:title="@string/home" />
+
+    <item
+        android:id="@+id/shoppingCart"
+        android:enabled="true"
+        app:showAsAction="always"
+        android:icon="@drawable/shopping_cart_icon"
+        app:actionLayout="@layout/notification_layout"
+        android:title="@string/cart" />
 </menu>

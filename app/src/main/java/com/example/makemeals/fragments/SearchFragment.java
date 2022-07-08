@@ -4,9 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,24 +12,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.makemeals.R;
 import com.example.makemeals.RestClient;
-import com.example.makemeals.adapters.IngredientsAdapter;
-import com.example.makemeals.adapters.RecipeAdapter;
+import com.example.makemeals.adapters.IngredientsPageAdapter;
 import com.example.makemeals.models.Ingredient;
 import com.example.makemeals.models.Recipe;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.datepicker.OnSelectionChangedListener;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.parse.FindCallback;
@@ -54,16 +47,11 @@ import cz.msebera.android.httpclient.Header;
  */
 public class SearchFragment extends Fragment {
     private static final String TAG = "SearchFragment";
-    private RecyclerView rvSearchIngredients;
-    private IngredientsAdapter ingredientsAdapter;
+    private IngredientsPageAdapter ingredientsPageAdapter;
     private List<Ingredient> ingredients;
     private List<String> searchIngredientsNames;
-    private List<Recipe> resultRecipes;
-    private MaterialButton searchButton;
     private AutoCompleteTextView recipeDiet;
     private AutoCompleteTextView recipeType;
-    private ImageButton ibHideSearchBlock;
-    private TextView tvSearchBar;
     private LinearLayout llSearchResultBlock;
     private LinearLayout llSearchBlock;
     private Fragment recipesListFragment;
@@ -129,25 +117,25 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        searchButton = view.findViewById(R.id.searchButton);
+        MaterialButton searchButton = view.findViewById(R.id.searchButton);
         recipeDiet = view.findViewById(R.id.recipeDiet);
         recipeType = view.findViewById(R.id.recipeType);
-        rvSearchIngredients = view.findViewById(R.id.rvSearchIngredients);
+        RecyclerView rvSearchIngredients = view.findViewById(R.id.rvSearchIngredients);
         progressIndicator = view.findViewById(R.id.progressIndicator);
-        tvSearchBar = view.findViewById(R.id.tvSearchBar);
+        TextView tvSearchBar = view.findViewById(R.id.tvSearchBar);
         llSearchResultBlock = view.findViewById(R.id.llSearchResultBlock);
         llSearchBlock = view.findViewById(R.id.llSearchBlock);
-        ibHideSearchBlock = view.findViewById(R.id.ibHideSearchBlock);
+        ImageButton ibHideSearchBlock = view.findViewById(R.id.ibHideSearchBlock);
 
         // set and attach ingredients adapter to rvSearchIngredients recyclerView
         ingredients = new ArrayList<>();
         searchIngredientsNames = new ArrayList<>();
-        ingredientsAdapter = new IngredientsAdapter(ingredients, getContext(), true);
-        rvSearchIngredients.setAdapter(ingredientsAdapter);
+        ingredientsPageAdapter = new IngredientsPageAdapter(ingredients, getContext(), true);
+        rvSearchIngredients.setAdapter(ingredientsPageAdapter);
         rvSearchIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // initialize the child fragment that displays result recipes in a recyclerView
-        resultRecipes = new ArrayList<>();
+        List<Recipe> resultRecipes = new ArrayList<>();
         recipesListFragment = RecipesListFragment.newInstance(resultRecipes);
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.add(R.id.flSearchResultsContainer, recipesListFragment).commit();
@@ -169,7 +157,7 @@ public class SearchFragment extends Fragment {
             }
         });
 
-        ingredientsAdapter.setOnSelectIngredientClickListener(new IngredientsAdapter.OnItemClickListener() {
+        ingredientsPageAdapter.setOnSelectIngredientClickListener(new IngredientsPageAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View itemView, int position) {
                 if (searchIngredientsNames.contains(ingredients.get(position).getName())) {
@@ -230,7 +218,7 @@ public class SearchFragment extends Fragment {
             public void done(List<Ingredient> objects, ParseException e) {
                 if (e == null) {
                     ingredients.addAll(objects);
-                    ingredientsAdapter.notifyDataSetChanged();
+                    ingredientsPageAdapter.notifyDataSetChanged();
                     hideProgressBar();
                 } else {
                     e.printStackTrace();

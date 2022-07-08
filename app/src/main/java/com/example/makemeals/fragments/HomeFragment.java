@@ -28,7 +28,6 @@ import java.util.List;
  */
 public class HomeFragment extends Fragment {
 
-    private List<Recipe> savedRecipes;
     private Fragment recipesListFragment;
     private CircularProgressIndicator progressIndicator;
 
@@ -88,7 +87,7 @@ public class HomeFragment extends Fragment {
 
         progressIndicator = view.findViewById(R.id.progressIndicator);
 
-        savedRecipes = new ArrayList<>();
+        List<Recipe> savedRecipes = new ArrayList<>();
         recipesListFragment = RecipesListFragment.newInstance(savedRecipes);
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.add(R.id.flSavedRecipesContainer, recipesListFragment).commit();
@@ -114,12 +113,10 @@ public class HomeFragment extends Fragment {
     }
 
     public void showProgressBar() {
-        // Show progress item
         progressIndicator.setVisibility(View.VISIBLE);
     }
 
     public void hideProgressBar() {
-        // Hide progress item
         progressIndicator.setVisibility(View.GONE);
     }
 }
