@@ -23,16 +23,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredientsAdapter.ViewHolder> {
     private final JSONArray ingredients;
+    private List<ViewHolder> views;
     private final Context context;
     private RecipeIngredientItemBinding binding;
 
     public RecipeIngredientsAdapter(JSONArray ingredients, Context context) {
         this.ingredients = ingredients;
         this.context = context;
+        views = new ArrayList<>();
     }
 
     @NonNull
@@ -46,6 +50,13 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
     public void onBindViewHolder(@NonNull RecipeIngredientsAdapter.ViewHolder holder, int position) {
         JSONObject ingredient = ingredients.optJSONObject(position);
         holder.bind(ingredient);
+        views.add(holder);
+    }
+
+    public void scaleAll(float scale) {
+        for (ViewHolder holder : views) {
+            holder.scale(scale);
+        }
     }
 
     @Override
@@ -57,6 +68,7 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
         final private ImageView ivIngredientImage;
         private final TextView tvDetailIngredientName;
         private final TextView tvIngredientQuantity;
+        private CheckBox cbIngredient;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -77,6 +89,11 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
                     .centerCrop()
                     .transform(new RoundedCorners(Constant.IMAGE_RADIUS))
                     .into(ivIngredientImage);
+        }
+
+        public void scale(float scale) {
+            ivIngredientImage.setScaleX(scale);
+            ivIngredientImage.setScaleY(scale);
         }
     }
 

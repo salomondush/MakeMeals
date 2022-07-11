@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,10 +19,16 @@ public class InstructionStepsAdapter extends RecyclerView.Adapter<InstructionSte
     private final JSONArray steps;
     private final Context context;
     private InstructionStepItemBinding binding;
+    private boolean withCheckBox;
 
-    public InstructionStepsAdapter(JSONArray steps, Context context) {
+    public InstructionStepsAdapter(JSONArray steps, Context context, boolean withCheckBox) {
         this.steps = steps;
         this.context = context;
+        this.withCheckBox = withCheckBox;
+    }
+
+    public InstructionStepsAdapter(JSONArray steps, Context context) {
+        this(steps, context, false);
     }
 
     @NonNull
@@ -49,7 +56,23 @@ public class InstructionStepsAdapter extends RecyclerView.Adapter<InstructionSte
             super(itemView);
             tvInstructionStepNumber = binding.tvInstructionStepNumber;
             tvInstructionStepText = binding.tvInstructionStepText;
+            CheckBox cbInstructionStep = binding.cbInstructionStep;
+
+            if (withCheckBox) {
+                cbInstructionStep.setVisibility(View.VISIBLE);
+            } else {
+                cbInstructionStep.setVisibility(View.GONE);
+            }
+
+//            tvInstructionStepNumber.setTextSize(textSize);
+//            tvInstructionStepText.setTextSize(textSize);
         }
+
+//        public void setTextSize(int textSize) {
+//            this.textSize = textSize;
+//            tvInstructionStepNumber.setTextSize(textSize);
+//            tvInstructionStepText.setTextSize(textSize);
+//        }
 
         public void bind(JSONObject step) {
             tvInstructionStepNumber.setText(String.format("%s.", step.optInt("number")));

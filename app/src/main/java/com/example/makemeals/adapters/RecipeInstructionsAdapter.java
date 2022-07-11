@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,10 +21,16 @@ public class RecipeInstructionsAdapter extends RecyclerView.Adapter<RecipeInstru
     final private JSONArray instructions;
     final private Context context;
     private InstructionItemBinding binding;
+    private boolean withCheckBox;
 
-    public RecipeInstructionsAdapter(JSONArray instructions, Context context) {
-        this.instructions = instructions;
+    public RecipeInstructionsAdapter(JSONArray ingredients, Context context, boolean withCheckBox) {
+        this.instructions = ingredients;
         this.context = context;
+        this.withCheckBox = withCheckBox;
+    }
+
+    public RecipeInstructionsAdapter(JSONArray ingredients, Context context) {
+        this(ingredients, context, false);
     }
 
     @NonNull
@@ -61,7 +68,7 @@ public class RecipeInstructionsAdapter extends RecyclerView.Adapter<RecipeInstru
 
             JSONArray steps = instruction.optJSONArray("steps");
             if (steps != null) {
-                InstructionStepsAdapter instructionStepsAdapter = new InstructionStepsAdapter(steps, context);
+                InstructionStepsAdapter instructionStepsAdapter = new InstructionStepsAdapter(steps, context, withCheckBox);
                 rvInstructionSteps.setAdapter(instructionStepsAdapter);
                 rvInstructionSteps.setLayoutManager(new LinearLayoutManager(context));
             }

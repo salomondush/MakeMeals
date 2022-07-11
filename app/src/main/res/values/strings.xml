@@ -55,4 +55,6 @@
     <string name="unchecked">Unchecked</string>
     <string name="clear_list">Clear list</string>
     <string name="checked">checked</string>
+    <string name="cancel">Cancel</string>
+    <string name="share">Share</string>
 </resources>
