@@ -32,6 +32,7 @@ import com.example.makemeals.MainActivity;
 import com.example.makemeals.R;
 import com.example.makemeals.adapters.RecipeIngredientsAdapter;
 import com.example.makemeals.adapters.RecipeInstructionsAdapter;
+import com.example.makemeals.customClasses.PinchRecyclerView;
 import com.example.makemeals.databinding.FragmentShareRecipeBinding;
 import com.example.makemeals.models.Recipe;
 import com.google.android.material.button.MaterialButton;
@@ -54,11 +55,8 @@ public class ShareRecipeFragment extends Fragment {
     private ConstraintLayout llSharableRecipeInfo;
     private static final String ARG_PARAM1 = "recipe";
 
-    // these PointF objects are used to record the point(s) the user is touching
-//    PointF start = new PointF();
     float oldDistImage = 1f;
     float oldDistLlNutritionInfo = 1f;
-    float oldDistIngredients = 1f;
 
     static final int NONE = 0;
     static final int DRAG = 1;
@@ -246,19 +244,11 @@ public class ShareRecipeFragment extends Fragment {
                             if (newDist > 5f) {
                                 float scale = newDist / oldDistImage;
 
-                                // if scale > 1, zoom in image. If scale < 1, zoom out image based on midpoint of image
-                                if (scale > 1) {
-                                    ivRecipeImage.setScaleX(scale);
-                                    ivRecipeImage.setScaleY(scale);
+                                Log.i("TAG", "scale: " + scale);
 
-                                } else {
-                                    float midX = ivRecipeImage.getX() + ivRecipeImage.getWidth() / 2f;
-                                    float midY = ivRecipeImage.getY() + ivRecipeImage.getHeight() / 2f;
-                                    ivRecipeImage.setScaleX(scale);
-                                    ivRecipeImage.setScaleY(scale);
-                                    ivRecipeImage.setX(midX - ivRecipeImage.getWidth() / 2f);
-                                    ivRecipeImage.setY(midY - ivRecipeImage.getHeight() / 2f);
-                                }
+                                // if scale > 1, zoom in image. If scale < 1, zoom out image based on midpoint of image
+                                ivRecipeImage.setScaleX(scale);
+                                ivRecipeImage.setScaleY(scale);
                             }
                         }
                         break;
@@ -307,8 +297,8 @@ public class ShareRecipeFragment extends Fragment {
         });
 
 
-        RecyclerView rvRecipeDetailIngredients = binding.rvRecipeDetailIngredients;
-        RecyclerView rvRecipeDetailInstructions = binding.rvRecipeDetailInstructions;
+        PinchRecyclerView rvRecipeDetailIngredients = binding.rvRecipeDetailIngredients;
+        PinchRecyclerView rvRecipeDetailInstructions = binding.rvRecipeDetailInstructions;
 
 
         Glide.with(requireContext()).load(recipe.getImageUrl())
@@ -331,78 +321,14 @@ public class ShareRecipeFragment extends Fragment {
         RecipeInstructionsAdapter recipeInstructionsAdapter = new RecipeInstructionsAdapter(recipe.getAnalyzedInstructions(), getContext());
         rvRecipeDetailInstructions.setAdapter(recipeInstructionsAdapter);
         rvRecipeDetailInstructions.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        //  detect pinch to zoom on recycler view and resize all items in recycler view
-        rvRecipeDetailIngredients.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                ScaleGestureDetector scaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.OnScaleGestureListener() {
-                    @Override
-                    public boolean onScale(ScaleGestureDetector detector) {
-                        scale *= detector.getScaleFactor();
-                        scale = Math.max(0.1f, Math.min(scale, 5.0f));
-                        rvRecipeDetailIngredients.setScaleX(scale);
-                        rvRecipeDetailIngredients.setScaleY(scale);
-                        return true;
-                    }
-
-                    @Override
-                    public boolean onScaleBegin(ScaleGestureDetector detector) {
-                        return true;
-                    }
-
-                    @Override
-                    public void onScaleEnd(ScaleGestureDetector detector) {
-                    }
-                });
-                scaleGestureDetector.onTouchEvent(event);
-
-                switch (event.getAction() & MotionEvent.ACTION_MASK) {
-                    case MotionEvent.ACTION_MOVE:
-                        if (mode == ZOOM) {
-                            float newDist = spacing(event);
-                            if (newDist > 5f) {
-                                float scale = newDist / oldDistLlNutritionInfo;
-
-                                Log.i("TAG", "scale: " + scale);
-
-                                // if scale > 1, zoom in image. If scale < 1, zoom out image based on midpoint of image
-                                if (scale > 1) {
-                                    // scale up all items in recycler view
-                                    recipeIngredientsAdapter.scaleAll(1.2f);
-                                } else {
-                                    // scale down all items in recycler view
-
-                                }
-                            }
-                        }
-                        break;
-
-                    case MotionEvent.ACTION_POINTER_UP: // second finger up
-                        mode = NONE;
-                        break;
-
-                    case MotionEvent.ACTION_POINTER_DOWN: // first and second finger down
-                        // distance between two fingers
-                        Log.i("TAG", "ingredients ACTION_POINTER_DOWN");
-                        oldDistImage = spacing(event);
-                        if (oldDistImage > 5f) {
-                            mode = ZOOM;
-                        }
-                        break;
-                }
-                return true;
-            }
-        });
     }
 
-    /*
-     * --------------------------------------------------------------------------
-     * Method: spacing Parameters: MotionEvent Returns: float Description:
-     * checks the spacing between the two fingers on touch
-     * ----------------------------------------------------
-     */
 
+    /**
+     * checks the spacing between the two fingers on touch
+     * @param event
+     * @return distance between two fingers as a float
+     */
     private float spacing(MotionEvent event)
     {
         float x = event.getX(0) - event.getX(1);

@@ -32,7 +32,6 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private final FragmentManager fragmentManager = getSupportFragmentManager();
-    private final int MAX_NOTIFICATIONS = 99;
     private TextView textCartItemCount;
     // todo: change to dynamically show the number of items in the cart
     private int cartItemCount;
@@ -148,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
                     textCartItemCount.setVisibility(View.GONE);
                 }
             } else {
+                int MAX_NOTIFICATIONS = 99;
                 textCartItemCount.setText(String.valueOf(Math.min(cartItemCount, MAX_NOTIFICATIONS)));
                 if (textCartItemCount.getVisibility() != View.VISIBLE) {
                     textCartItemCount.setVisibility(View.VISIBLE);

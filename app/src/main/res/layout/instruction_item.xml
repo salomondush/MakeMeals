@@ -8,10 +8,12 @@
         android:id="@+id/tvInstructionItemText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="14sp"
         android:text="@string/instructions_text_placeholder"
         android:textColor="@color/black" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:nestedScrollingEnabled="false"
         android:id="@+id/rvInstructionSteps"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
