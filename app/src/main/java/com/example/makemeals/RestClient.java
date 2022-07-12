@@ -19,9 +19,7 @@ import cz.msebera.android.httpclient.entity.StringEntity;
 
 public class RestClient extends AsyncHttpClient {
     public static final String SPOONACULAR_BASE_URL = "https://api.spoonacular.com/";
-    public static final String DYNAPICTURES_BASE_URL = "https://api.dynapictures.com/designs/25851a4c32";
     public static final String SPN_API_KEY = BuildConfig.SPN_API_KEY;
-    public static final String DNP_API_KEY = BuildConfig.DNP_API_KEY;
     public static final int MAX_RESULTS = 10;
     Context context;
 
@@ -45,19 +43,4 @@ public class RestClient extends AsyncHttpClient {
         get(searchUrl, params, handler);
     }
 
-    public void getSharableImage(JSONObject body, JsonHttpResponseHandler handler) {
-        // attach bearer token to request
-        String bearerToken = String.format("Bearer %s", DNP_API_KEY);
-        addHeader("Authorization", bearerToken);
-        addHeader("Content-Type", "application/json");
-
-        try {
-            HttpEntity entity = new StringEntity(body.toString());
-            // make request
-            post(context, DYNAPICTURES_BASE_URL, entity, "application/json", handler);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-    }
 }

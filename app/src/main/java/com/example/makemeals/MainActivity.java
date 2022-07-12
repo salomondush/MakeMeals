@@ -26,6 +26,7 @@ import com.example.makemeals.fragments.IngredientsFragment;
 import com.example.makemeals.fragments.ProfileFragment;
 import com.example.makemeals.fragments.RecipeDetailsFragment;
 import com.example.makemeals.fragments.SearchFragment;
+import com.example.makemeals.fragments.ShareRecipeFragment;
 import com.example.makemeals.fragments.ShoppingListFragment;
 import com.example.makemeals.models.Recipe;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        com.example.makemeals.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         tvOnlineStatus = binding.tvOnlineStatus;
@@ -179,6 +180,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void showRecipeDetails(Recipe recipe) {
         Fragment fragment = RecipeDetailsFragment.newInstance(recipe);
+        fragmentManager.beginTransaction()
+                .replace(R.id.flContainer, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    public void showRecipeSharingFragment(Recipe recipe) {
+        Fragment fragment = ShareRecipeFragment.newInstance(recipe);
         fragmentManager.beginTransaction()
                 .replace(R.id.flContainer, fragment)
                 .addToBackStack(null)

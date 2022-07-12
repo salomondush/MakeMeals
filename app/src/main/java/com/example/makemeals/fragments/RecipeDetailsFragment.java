@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -68,7 +69,6 @@ import cz.msebera.android.httpclient.Header;
  * create an instance of this fragment.
  */
 public class RecipeDetailsFragment extends Fragment {
-    private static final String TAG = "RecipeDetailsFragment";
     public static final String SHOPPING_LIST = "shoppingList";
     private CircularProgressIndicator progressIndicator;
     private ToggleButton tbSave;
@@ -157,9 +157,9 @@ public class RecipeDetailsFragment extends Fragment {
                 .into(ivRecipeImage);
         tvRecipeTitle.setText(recipe.getTitle());
         tvReadyInTime.setText(MessageFormat.format("{0}m", recipe.getReadyInMinutes()));
-        tvTypes.setText(getDietDishTypesStringFromRecipe());
+        tvTypes.setText(getDishTypesStringFromRecipe(recipe));
         tvServings.setText(String.valueOf(recipe.getServings()));
-        tvDiets.setText(getDietStringFromRecipe());
+        tvDiets.setText(getDietStringFromRecipe(recipe));
 
         // get ingredients from jsonArray and display them using adapter
         RecipeIngredientsAdapter recipeIngredientsAdapter = new RecipeIngredientsAdapter(recipe.getExtendedIngredients(), getContext());
@@ -167,7 +167,7 @@ public class RecipeDetailsFragment extends Fragment {
         rvRecipeDetailIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // get instructions from jsonArray and display them using adapter
-        RecipeInstructionsAdapter recipeInstructionsAdapter = new RecipeInstructionsAdapter(recipe.getAnalyzedInstructions(), getContext());
+        RecipeInstructionsAdapter recipeInstructionsAdapter = new RecipeInstructionsAdapter(recipe.getAnalyzedInstructions(), getContext(), true);
         rvRecipeDetailInstructions.setAdapter(recipeInstructionsAdapter);
         rvRecipeDetailInstructions.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -230,7 +230,7 @@ public class RecipeDetailsFragment extends Fragment {
         });
 
         ibShare.setOnClickListener(v -> {
-            showShareRecipeDialog();
+            ((MainActivity) requireActivity()).showRecipeSharingFragment(recipe);
         });
 
         ibShoppingList.setOnClickListener(v -> {
@@ -238,104 +238,8 @@ public class RecipeDetailsFragment extends Fragment {
         });
     }
 
-    private void generateSharableImageAndShareRecipe() {
-        showProgressBar();
-        JSONObject body = buildJSONBody();
-        RestClient client = new RestClient(getContext());
 
-        if (body != null) {
-            client.getSharableImage(body, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    String imageUrl = response.optString("imageUrl");
-                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                    shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    shareIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    shareIntent.setType("image/jpeg");
-
-                    // get image from url and share it
-                    Glide.with(requireContext())
-                            .load(imageUrl)
-                            .into(new SimpleTarget<Drawable>() {
-                                @Override
-                                public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                                    Bitmap bitmap = ((BitmapDrawable) resource).getBitmap();
-
-                                    String path = MediaStore.Images.Media.insertImage(requireContext().getContentResolver(),
-                                            bitmap, recipe.getTitle(), null);
-                                    Uri bmpUri = Uri.parse(path);
-                                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                                    shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
-                                    shareIntent.setType("image/*");
-                                    requireContext().startActivity(Intent.createChooser(shareIntent, "Share Image"));
-                                    hideProgressBar();
-                                }
-                            });
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    Toast.makeText(getContext(), "Error generating sharable image", Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else {
-            Toast.makeText(getContext(), "Error generating sharable image", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private JSONObject buildJSONBody(){
-        JSONObject body = new JSONObject();
-        JSONArray params = new JSONArray();
-
-        try {
-            params.put(0, new JSONObject().put("name", "recipeImage")
-                    .put("imageUrl", recipe.getImageUrl()));
-
-            params.put(1, new JSONObject().put("name", "readyIn")
-                    .put("text", recipe.getReadyInMinutes() + " m<br>"));
-
-            params.put(2, new JSONObject().put("name", "types")
-                    .put("text", recipe.getDishTypes().join(",")));
-
-            params.put(3, new JSONObject().put("name", "diet")
-                    .put("text", recipe.getDiets().join(",")));
-
-            params.put(4, new JSONObject().put("name", "servings")
-                    .put("text", recipe.getServings()));
-
-            params.put(5, new JSONObject().put("name", "instructions")
-                    .put("text", getInstructionsString()));
-
-            params.put(6, new JSONObject().put("name", "ingredients")
-                    .put("text", getIngredientsString()));
-
-            body.put("params", params);
-            body.put("format", "jpeg");
-            body.put("metadata", "some text");
-
-            return body;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private String getIngredientsString(){
-        StringBuilder ingredients = new StringBuilder();
-        JSONArray ingredientsArray = recipe.getExtendedIngredients();
-        for (int i = 0; i < ingredientsArray.length(); i++) {
-            JSONObject ingredient = ingredientsArray.optJSONObject(i);
-
-            JSONObject measure = Objects.requireNonNull(ingredient.optJSONObject("measures")).optJSONObject("us");
-            String quantity = Objects.requireNonNull(measure).optInt("amount") + " " + measure.optString("unitShort");
-
-            ingredients.append("- ").append(ingredient.optString("name")).append(" (")
-                    .append(quantity).append(")<br>");
-        }
-        return ingredients.toString();
-    }
-
-    private String getDietStringFromRecipe(){
+    public static String getDietStringFromRecipe(Recipe recipe){
         StringBuilder diets = new StringBuilder();
         for (int i = 0; i < recipe.getDiets().length(); ++i){
             diets.append(recipe.getDiets().optString(i));
@@ -346,7 +250,7 @@ public class RecipeDetailsFragment extends Fragment {
         return diets.toString();
     }
 
-    private String getDietDishTypesStringFromRecipe(){
+    public static String getDishTypesStringFromRecipe(Recipe recipe){
         StringBuilder types = new StringBuilder();
         for (int i = 0; i < recipe.getDishTypes().length(); ++i){
             types.append(recipe.getDishTypes().optString(i));
@@ -355,22 +259,6 @@ public class RecipeDetailsFragment extends Fragment {
             }
         }
         return types.toString();
-    }
-
-    private String getInstructionsString(){
-        StringBuilder instructions = new StringBuilder();
-        JSONArray instructionsArray = recipe.getAnalyzedInstructions();
-
-        for (int i = 0; i < instructionsArray.length(); i++) {
-            JSONObject instruction = instructionsArray.optJSONObject(i);
-            instructions.append("<b>").append(instruction.optString("name")).append("</b><br>");
-
-            for (int j = 0; j < Objects.requireNonNull(instruction.optJSONArray("steps")).length(); j++) {
-                JSONObject step = Objects.requireNonNull(instruction.optJSONArray("steps")).optJSONObject(j);
-                instructions.append(step.optInt("number")).append(". ").append(step.optString("step")).append("<br>");
-            }
-        }
-        return instructions.toString();
     }
 
     private void launchAddToShoppingListDialog() {
@@ -442,23 +330,6 @@ public class RecipeDetailsFragment extends Fragment {
         materialAlertDialogBuilder.show();
     }
 
-    public void showShareRecipeDialog() {
-        materialAlertDialogBuilder.setTitle("Share recipe");
-        materialAlertDialogBuilder.setMessage("Share this recipe with your friends!");
-        materialAlertDialogBuilder.setPositiveButton("Share", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                generateSharableImageAndShareRecipe();
-            }
-        });
-        materialAlertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        materialAlertDialogBuilder.show();
-    }
 
     public void showProgressBar() {
         progressIndicator.setVisibility(View.VISIBLE);
