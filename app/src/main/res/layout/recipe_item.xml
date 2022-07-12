@@ -16,6 +16,7 @@
     <LinearLayout
         android:layout_marginStart="10dp"
         android:layout_width="wrap_content"
+        android:layout_weight="1"
         android:orientation="vertical"
         android:layout_height="wrap_content">
         <TextView
@@ -28,13 +29,14 @@
 
 <!--        Nution Summary Block-->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:orientation="horizontal"
             android:layout_height="wrap_content">
 
 <!--            Cals and Carbs Block-->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="0.3"
                 android:orientation="vertical"
                 android:layout_height="wrap_content">
 
@@ -47,14 +49,23 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="13sp"
                         android:text="@string/cals" />
 
                     <TextView
                         android:id="@+id/calsValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="13sp"
                         android:layout_marginStart="3dp"
                         android:text="@string/calsValuePlaceholder" />
+
+                    <TextView
+                        android:id="@+id/calsUnit"
+                        android:textSize="13sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/kcal" />
 
                 </LinearLayout>
                 <!-- Carbs Block -->
@@ -66,30 +77,25 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="13sp"
                         android:text="@string/carbs" />
 
                     <TextView
                         android:id="@+id/carbsValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="13sp"
                         android:layout_marginStart="3dp"
                         android:text="@string/carbsValuePlaceholder" />
                     <TextView
+                        android:id="@+id/carbsUnit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="13sp"
                         android:text="@string/grams_unit" />
 
                 </LinearLayout>
-            </LinearLayout>
 
-<!--            Proteins and Fats Block-->
-            <LinearLayout
-                android:layout_marginStart="10dp"
-                android:layout_width="wrap_content"
-                android:orientation="vertical"
-                android:layout_height="wrap_content">
-
-<!--                Proteins block-->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:orientation="horizontal"
@@ -97,19 +103,24 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="13sp"
                         android:text="@string/proteins" />
+
                     <TextView
                         android:id="@+id/proteinsValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="13sp"
                         android:layout_marginStart="3dp"
                         android:text="@string/proteinsValuePlaceholder" />
                     <TextView
+                        android:id="@+id/proteinsUnit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="13sp"
                         android:text="@string/grams_unit" />
                 </LinearLayout>
-<!--                Fats block-->
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:orientation="horizontal"
@@ -117,26 +128,43 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="13sp"
                         android:text="@string/fat" />
+
                     <TextView
                         android:id="@+id/fatsValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="3dp"
+                        android:textSize="13sp"
                         android:text="@string/fatsValuePlaceholder" />
                     <TextView
+                        android:id="@+id/fatsUnit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="13sp"
                         android:text="@string/grams_unit" />
                 </LinearLayout>
             </LinearLayout>
+
+<!--&lt;!&ndash;            Proteins and Fats Block&ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:layout_marginStart="5dp"-->
+<!--                android:layout_width="85dp"-->
+<!--                android:orientation="vertical"-->
+<!--                android:layout_height="wrap_content">-->
+
+<!--&lt;!&ndash;                Proteins block&ndash;&gt;-->
+
+<!--&lt;!&ndash;                Fats block&ndash;&gt;-->
+<!--            </LinearLayout>-->
             <!--Save Recipe Button. Todo: change button to save-->
             <ToggleButton
                 android:id="@+id/tbSave"
                 android:layout_width="23dp"
                 android:layout_height="23dp"
-                android:layout_marginStart="25dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="20dp"
                 android:checked="false"
                 android:background="@drawable/save_icon_selector"
                 android:text=""
@@ -147,7 +175,7 @@
                 android:id="@+id/tbFavorite"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:layout_marginStart="10dp"
+                android:layout_marginEnd="15dp"
                 android:checked="false"
                 android:background="@drawable/favorites_icon_selector"
                 android:text=""

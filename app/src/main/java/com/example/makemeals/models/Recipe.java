@@ -26,7 +26,7 @@ public class Recipe extends ParseObject {
     public static final String READY_IN = "readyInMinutes";
     public static final String SERVINGS = "servings";
     public static final String EXTENDED_INGREDIENTS = "extendedIngredients";
-//    public static final String NUTRITION = "nutrition";
+    public static final String NUTRIENTS = "nutrients";
     public static final String ANALYZED_INSTRUCTIONS = "analyzedInstructions";
 
     // implement the default constructor
@@ -42,6 +42,7 @@ public class Recipe extends ParseObject {
         setDishTypes(jsonObject.getJSONArray("dishTypes"));
         setReadyInMinutes(jsonObject.getInt("readyInMinutes"));
         setServings(jsonObject.getInt("servings"));
+        setNutrients(jsonObject.getJSONObject("nutrition").getJSONArray("nutrients"));
         setExtendedIngredients(jsonObject.getJSONArray("extendedIngredients"));
         setAnalyzedInstructions(jsonObject.getJSONArray("analyzedInstructions"));
         setFavorite(false);
@@ -171,5 +172,13 @@ public class Recipe extends ParseObject {
 
     public void setAnalyzedInstructions(JSONArray analyzedInstructions) {
         put(ANALYZED_INSTRUCTIONS, analyzedInstructions);
+    }
+
+    public JSONArray getNutrients() {
+        return getJSONArray(NUTRIENTS);
+    }
+
+    public void setNutrients(JSONArray nutrients) {
+        put(NUTRIENTS, nutrients);
     }
 }
