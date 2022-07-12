@@ -6,7 +6,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.os.Bundle;
+import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,12 +34,14 @@ import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
+import org.w3c.dom.Text;
+
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private final FragmentManager fragmentManager = getSupportFragmentManager();
+    private TextView tvOnlineStatus;
     private TextView textCartItemCount;
-    // todo: change to dynamically show the number of items in the cart
     private int cartItemCount;
 
     @Override
@@ -41,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        tvOnlineStatus = binding.tvOnlineStatus;
 
         cartItemCount = 0;
         getShoppingListCount();
@@ -79,6 +89,51 @@ public class MainActivity extends AppCompatActivity {
         });
 
         bottomNavigationView.setSelectedItemId(R.id.home);
+
+
+
+        NetworkRequest networkRequest = new NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+                .build();
+
+        ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
+            // run on ui thread
+
+            @Override
+            public void onAvailable(@NonNull Network network) {
+                super.onAvailable(network);
+                // run on ui thread
+                runOnUiThread(() -> {
+                    tvOnlineStatus.setVisibility(View.GONE);
+                });
+            }
+
+            @Override
+            public void onLost(@NonNull Network network) {
+                super.onLost(network);
+                runOnUiThread(() -> {
+                    tvOnlineStatus.setVisibility(View.VISIBLE);
+                });
+            }
+
+            @Override
+            public void onCapabilitiesChanged(@NonNull Network network, @NonNull NetworkCapabilities networkCapabilities) {
+                super.onCapabilitiesChanged(network, networkCapabilities);
+                final boolean unmetered = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED);
+            }
+        };
+
+        ConnectivityManager connectivityManager =  getSystemService(ConnectivityManager.class);
+        connectivityManager.requestNetwork(networkRequest, networkCallback);
+
+        // show if the device is online or not
+        if (connectivityManager.getActiveNetworkInfo() != null) {
+            tvOnlineStatus.setVisibility(View.GONE);
+        } else {
+            tvOnlineStatus.setVisibility(View.VISIBLE);
+        }
     }
 
     // Menu icons are inflated just as they were with actionbar
