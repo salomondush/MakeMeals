@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.makemeals.Constant;
 import com.example.makemeals.R;
 import com.example.makemeals.models.Recipe;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
@@ -84,7 +85,7 @@ public class FavoritesFragment extends Fragment {
         progressIndicator = view.findViewById(R.id.progressIndicator);
 
         List<Recipe> favoriteRecipes = new ArrayList<>();
-        recipesListFragment = RecipesListFragment.newInstance(favoriteRecipes);
+        recipesListFragment = RecipesListFragment.newInstance(favoriteRecipes, Constant.FAVORITES);
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.add(R.id.flFavoriteRecipesContainer, recipesListFragment).commit();
         queryFavoriteRecipes();

@@ -59,4 +59,5 @@
     <string name="share">Share</string>
     <string name="offline">offline</string>
     <string name="kcal">kcal</string>
+    <string name="recipe_image">recipe image</string>
 </resources>

@@ -10,12 +10,13 @@
         android:id="@+id/recipeImage"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        tools:srcCompat="@tools:sample/avatars" />
+        tools:srcCompat="@tools:sample/avatars"
+        android:contentDescription="@string/recipe_image" />
 
 <!--    Recipe Item Details Block-->
     <LinearLayout
         android:layout_marginStart="10dp"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
         android:layout_height="wrap_content">
@@ -29,18 +30,17 @@
 
 <!--        Nution Summary Block-->
         <LinearLayout
+            android:id="@+id/llNutritionInfo"
             android:layout_width="match_parent"
             android:orientation="horizontal"
             android:layout_height="wrap_content">
 
-<!--            Cals and Carbs Block-->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_weight="0.3"
                 android:orientation="vertical"
                 android:layout_height="wrap_content">
 
-<!--                Cals Block-->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:orientation="horizontal"
@@ -68,7 +68,6 @@
                         android:text="@string/kcal" />
 
                 </LinearLayout>
-                <!-- Carbs Block -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:orientation="horizontal"
@@ -147,18 +146,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-<!--&lt;!&ndash;            Proteins and Fats Block&ndash;&gt;-->
-<!--            <LinearLayout-->
-<!--                android:layout_marginStart="5dp"-->
-<!--                android:layout_width="85dp"-->
-<!--                android:orientation="vertical"-->
-<!--                android:layout_height="wrap_content">-->
-
-<!--&lt;!&ndash;                Proteins block&ndash;&gt;-->
-
-<!--&lt;!&ndash;                Fats block&ndash;&gt;-->
-<!--            </LinearLayout>-->
-            <!--Save Recipe Button. Todo: change button to save-->
             <ToggleButton
                 android:id="@+id/tbSave"
                 android:layout_width="23dp"
