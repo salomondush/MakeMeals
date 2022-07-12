@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.makemeals.Constant;
 import com.example.makemeals.R;
 import com.example.makemeals.RestClient;
 import com.example.makemeals.adapters.IngredientsPageAdapter;
@@ -136,7 +137,7 @@ public class SearchFragment extends Fragment {
 
         // initialize the child fragment that displays result recipes in a recyclerView
         List<Recipe> resultRecipes = new ArrayList<>();
-        recipesListFragment = RecipesListFragment.newInstance(resultRecipes);
+        recipesListFragment = RecipesListFragment.newInstance(resultRecipes, Constant.SEARCH);
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.add(R.id.flSearchResultsContainer, recipesListFragment).commit();
 

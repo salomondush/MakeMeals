@@ -9,7 +9,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Parcelable;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -33,11 +36,11 @@ public class RecipesListFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String PAGE = "page";
 
     // TODO: Rename and change types of parameters
     private List<Recipe> recipes;
-    private String mParam2;
+    private int page;
 
     public RecipesListFragment() {
         // Required empty public constructor
@@ -51,11 +54,12 @@ public class RecipesListFragment extends Fragment {
      * @return A new instance of fragment RecipesListFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static RecipesListFragment newInstance(List<Recipe> recipes) {
+    public static RecipesListFragment newInstance(List<Recipe> recipes, int page) {
         RecipesListFragment fragment = new RecipesListFragment();
         Bundle args = new Bundle();
         // initialize the recipes list
         args.putParcelableArrayList(ARG_PARAM1, (ArrayList<? extends Parcelable>) recipes);
+        args.putInt(PAGE, page);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,7 +69,7 @@ public class RecipesListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             recipes = getArguments().getParcelableArrayList(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
+            page = getArguments().getInt(PAGE);
         }
     }
 
@@ -81,7 +85,7 @@ public class RecipesListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         RecyclerView rvRecipeList = view.findViewById(R.id.rvRecipeList);
-        recipeAdapter = new RecipeAdapter(recipes, getContext());
+        recipeAdapter = new RecipeAdapter(recipes, getContext(), page);
 
 
         recipeAdapter.setOnItemClickListener(new RecipeAdapter.OnItemClickListener() {
@@ -100,6 +104,7 @@ public class RecipesListFragment extends Fragment {
     }
 
     public void updateRecipes(List<Recipe> recipes) {
+//        recipes.clear();
         this.recipes.addAll(recipes);
         recipeAdapter.notifyDataSetChanged();
     }
