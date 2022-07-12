@@ -24,6 +24,8 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
+import org.json.JSONArray;
+
 import java.util.List;
 
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder> {
@@ -71,6 +73,14 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
         final private TextView recipeTitle;
         final private ToggleButton tbSave;
         final private ToggleButton tbFavorite;
+        private final TextView calsValue;
+        private final TextView proteinsValue;
+        private final TextView carbsValue;
+        private final TextView fatsValue;
+        TextView calsUnit;
+        TextView carbsUnit;
+        TextView proteinsUnit;
+        TextView fatsUnit;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -78,6 +88,14 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             recipeTitle = binding.recipeTitle;
             tbSave = binding.tbSave;
             tbFavorite = binding.tbFavorite;
+            calsValue = binding.calsValue;
+            proteinsValue = binding.proteinsValue;
+            carbsValue = binding.carbsValue;
+            fatsValue = binding.fatsValue;
+            calsUnit = binding.calsUnit;
+            carbsUnit = binding.carbsUnit;
+            proteinsUnit = binding.proteinsUnit;
+            fatsUnit = binding.fatsUnit;
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -132,6 +150,29 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
         }
 
         public void bind(Recipe recipe) {
+
+            JSONArray nutrients = recipe.getNutrients();
+            for (int i = 0; i < nutrients.length(); i++) {
+                try {
+                    if (nutrients.getJSONObject(i).getString("name").equals("Calories")) {
+                        calsValue.setText(nutrients.getJSONObject(i).getString("amount"));
+                        calsUnit.setText(nutrients.getJSONObject(i).getString("unit"));
+                    } else if (nutrients.getJSONObject(i).getString("name").equals("Protein")) {
+                        proteinsValue.setText(nutrients.getJSONObject(i).getString("amount"));
+                        proteinsUnit.setText(nutrients.getJSONObject(i).getString("unit"));
+                    } else if (nutrients.getJSONObject(i).getString("name").equals("Carbohydrates")) {
+                        carbsValue.setText(nutrients.getJSONObject(i).getString("amount"));
+                        carbsUnit.setText(nutrients.getJSONObject(i).getString("unit"));
+                    } else if (nutrients.getJSONObject(i).getString("name").equals("Fat")) {
+                        fatsValue.setText(nutrients.getJSONObject(i).getString("amount"));
+                        fatsUnit.setText(nutrients.getJSONObject(i).getString("unit"));
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(context, "Error getting nutrients", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+
             recipeTitle.setText(recipe.getTitle());
             tbSave.setChecked(recipe.getSaved());
             tbFavorite.setChecked(recipe.getFavorite());
