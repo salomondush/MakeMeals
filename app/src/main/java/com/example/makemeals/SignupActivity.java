@@ -19,19 +19,17 @@ public class SignupActivity extends AppCompatActivity {
     private EditText signupUsername;
     private EditText signupPassword;
     private EditText getSignupPasswordConfirm;
-    private Button signupButton;
-    private ActivitySignupBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivitySignupBinding.inflate(getLayoutInflater());
+        com.example.makemeals.databinding.ActivitySignupBinding binding = ActivitySignupBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         signupUsername = binding.signupUsername;
         signupPassword = binding.signupPassword;
         getSignupPasswordConfirm = binding.confirmSignupPassword;
-        signupButton = binding.signupButton;
+        Button signupButton = binding.signupButton;
 
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,7 +41,7 @@ public class SignupActivity extends AppCompatActivity {
                 if (password.equals(confirmPassword)){
                     signupUser(username, password);
                 } else {
-                    Toast.makeText(SignupActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignupActivity.this, R.string.passwords_do_not_match, Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -61,7 +59,7 @@ public class SignupActivity extends AppCompatActivity {
                     Toast.makeText(SignupActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
                     goToMainActivity();
-                    Toast.makeText(SignupActivity.this, "Successfully signed up", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignupActivity.this, R.string.sign_up_successful, Toast.LENGTH_SHORT).show();
                 }
             }
         });

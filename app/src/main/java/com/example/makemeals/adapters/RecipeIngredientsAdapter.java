@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.makemeals.Constant;
+import com.example.makemeals.R;
 import com.example.makemeals.databinding.RecipeIngredientItemBinding;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -29,14 +30,12 @@ import java.util.Objects;
 
 public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredientsAdapter.ViewHolder> {
     private final JSONArray ingredients;
-    private List<ViewHolder> views;
     private final Context context;
     private RecipeIngredientItemBinding binding;
 
     public RecipeIngredientsAdapter(JSONArray ingredients, Context context) {
         this.ingredients = ingredients;
         this.context = context;
-        views = new ArrayList<>();
     }
 
     @NonNull
@@ -50,13 +49,6 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
     public void onBindViewHolder(@NonNull RecipeIngredientsAdapter.ViewHolder holder, int position) {
         JSONObject ingredient = ingredients.optJSONObject(position);
         holder.bind(ingredient);
-        views.add(holder);
-    }
-
-    public void scaleAll(float scale) {
-        for (ViewHolder holder : views) {
-            holder.scale(scale);
-        }
     }
 
     @Override
@@ -134,8 +126,8 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
         ingredients.remove(position);
         notifyItemRemoved(position);
 
-        Snackbar snackbar = Snackbar.make(parentView, "Ingredient deleted", Snackbar.LENGTH_LONG)
-                .setAction("UNDO", new View.OnClickListener() {
+        Snackbar snackbar = Snackbar.make(parentView, context.getString(R.string.ingredient_deleted), Snackbar.LENGTH_LONG)
+                .setAction(context.getString(R.string.undo), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         restoreItem(parentView, ingredient, position);

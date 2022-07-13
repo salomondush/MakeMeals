@@ -195,7 +195,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupBadge() {
-
         if (textCartItemCount != null) {
             if (cartItemCount == 0) {
                 if (textCartItemCount.getVisibility() != View.GONE) {

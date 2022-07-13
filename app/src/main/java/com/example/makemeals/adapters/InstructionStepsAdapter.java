@@ -19,7 +19,7 @@ public class InstructionStepsAdapter extends RecyclerView.Adapter<InstructionSte
     private final JSONArray steps;
     private final Context context;
     private InstructionStepItemBinding binding;
-    private boolean withCheckBox;
+    private final boolean withCheckBox;
 
     public InstructionStepsAdapter(JSONArray steps, Context context, boolean withCheckBox) {
         this.steps = steps;
@@ -63,20 +63,14 @@ public class InstructionStepsAdapter extends RecyclerView.Adapter<InstructionSte
             } else {
                 cbInstructionStep.setVisibility(View.GONE);
             }
-
-//            tvInstructionStepNumber.setTextSize(textSize);
-//            tvInstructionStepText.setTextSize(textSize);
         }
 
-//        public void setTextSize(int textSize) {
-//            this.textSize = textSize;
-//            tvInstructionStepNumber.setTextSize(textSize);
-//            tvInstructionStepText.setTextSize(textSize);
-//        }
-
         public void bind(JSONObject step) {
-            tvInstructionStepNumber.setText(String.format("%s.", step.optInt("number")));
-            tvInstructionStepText.setText(step.optString("step"));
+            String stepNumber = "number";
+            String stepText = "step";
+
+            tvInstructionStepNumber.setText(String.format("%s.", step.optInt(stepNumber)));
+            tvInstructionStepText.setText(step.optString(stepText));
         }
     }
 }

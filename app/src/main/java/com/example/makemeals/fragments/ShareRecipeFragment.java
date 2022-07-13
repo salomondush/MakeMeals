@@ -47,21 +47,24 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class ShareRecipeFragment extends Fragment {
+    private static final String ARG_PARAM1 = "recipe";
+
     private Recipe recipe;
     private LinearLayout llNutritionInfo;
     private Float scale = 1f;
     private int currentX;
     private int currentY;
     private ConstraintLayout llSharableRecipeInfo;
-    private static final String ARG_PARAM1 = "recipe";
+    private final String SHARE_TYPE_IMAGE = "image/*";
 
-    float oldDistImage = 1f;
-    float oldDistLlNutritionInfo = 1f;
+    private float oldDistImage = 1f;
+    private float oldDistLlNutritionInfo = 1f;
+    private int mode = NONE;
+
 
     static final int NONE = 0;
     static final int DRAG = 1;
     static final int ZOOM = 2;
-    int mode = NONE;
 
     public ShareRecipeFragment() {
         // Required empty public constructor
@@ -70,11 +73,9 @@ public class ShareRecipeFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
      * @param recipe Parameter 1.
      * @return A new instance of fragment ShareRecipeFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static ShareRecipeFragment newInstance(Recipe recipe) {
         ShareRecipeFragment fragment = new ShareRecipeFragment();
         Bundle args = new Bundle();
@@ -163,18 +164,8 @@ public class ShareRecipeFragment extends Fragment {
                                 float scale = newDist / oldDistLlNutritionInfo;
 
                                 // if scale > 1, zoom in image. If scale < 1, zoom out image based on midpoint of image
-                                if (scale > 1) {
-                                    llNutritionInfo.setScaleX(scale);
-                                    llNutritionInfo.setScaleY(scale);
-
-                                } else {
-                                    float midX = llNutritionInfo.getX() + llNutritionInfo.getWidth() / 2f;
-                                    float midY = llNutritionInfo.getY() + llNutritionInfo.getHeight() / 2f;
-                                    llNutritionInfo.setScaleX(scale);
-                                    llNutritionInfo.setScaleY(scale);
-                                    llNutritionInfo.setX(midX - llNutritionInfo.getWidth() / 2f);
-                                    llNutritionInfo.setY(midY - llNutritionInfo.getHeight() / 2f);
-                                }
+                                llNutritionInfo.setScaleX(scale);
+                                llNutritionInfo.setScaleY(scale);
                             }
                         }
                         break;
@@ -187,7 +178,6 @@ public class ShareRecipeFragment extends Fragment {
 
                     case MotionEvent.ACTION_POINTER_DOWN: // first and second finger down
                         // distance between two fingers
-                        Log.i("TAG", "ACTION_POINTER_DOWN");
                         oldDistLlNutritionInfo = spacing(event);
                         if (oldDistLlNutritionInfo > 5f) {
                             mode = ZOOM;
@@ -243,9 +233,6 @@ public class ShareRecipeFragment extends Fragment {
                             float newDist = spacing(event);
                             if (newDist > 5f) {
                                 float scale = newDist / oldDistImage;
-
-                                Log.i("TAG", "scale: " + scale);
-
                                 // if scale > 1, zoom in image. If scale < 1, zoom out image based on midpoint of image
                                 ivRecipeImage.setScaleX(scale);
                                 ivRecipeImage.setScaleY(scale);
@@ -261,7 +248,6 @@ public class ShareRecipeFragment extends Fragment {
 
                     case MotionEvent.ACTION_POINTER_DOWN: // first and second finger down
                         // distance between two fingers
-                        Log.i("TAG", "ACTION_POINTER_DOWN");
                         oldDistImage = spacing(event);
                         if (oldDistImage > 5f) {
                             mode = ZOOM;
@@ -282,8 +268,8 @@ public class ShareRecipeFragment extends Fragment {
                 Uri bmpUri = Uri.parse(path);
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
-                shareIntent.setType("image/*");
-                requireContext().startActivity(Intent.createChooser(shareIntent, "Share Image"));
+                shareIntent.setType(SHARE_TYPE_IMAGE);
+                requireContext().startActivity(Intent.createChooser(shareIntent, requireContext().getString(R.string.share_image)));
             }
         });
 

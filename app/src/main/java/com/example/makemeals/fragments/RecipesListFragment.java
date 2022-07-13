@@ -33,12 +33,10 @@ import java.util.Objects;
 public class RecipesListFragment extends Fragment {
     private RecipeAdapter recipeAdapter;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
+    // the fragment initialization parameters
+    private static final String ARG_PARAM1 = "recipes";
     private static final String PAGE = "page";
 
-    // TODO: Rename and change types of parameters
     private List<Recipe> recipes;
     private int page;
 
@@ -49,11 +47,9 @@ public class RecipesListFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
      * @param recipes Parameter 1.
      * @return A new instance of fragment RecipesListFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static RecipesListFragment newInstance(List<Recipe> recipes, int page) {
         RecipesListFragment fragment = new RecipesListFragment();
         Bundle args = new Bundle();
@@ -104,7 +100,6 @@ public class RecipesListFragment extends Fragment {
     }
 
     public void updateRecipes(List<Recipe> recipes) {
-//        recipes.clear();
         this.recipes.addAll(recipes);
         recipeAdapter.notifyDataSetChanged();
     }

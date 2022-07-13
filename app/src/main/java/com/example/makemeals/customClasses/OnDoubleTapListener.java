@@ -5,7 +5,12 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-/*
+/** Used to detect double taps on a view
+ *
+ *  Implements the onTouch method and Overrides onDoubleTap method of the GestureDetector class
+ *  to define what happens when a double tap is detected
+ *
+ * Credit: https://guides.codepath.com/android/gestures-and-touch-events#double-tapping
 Usage:
   myView.setOnTouchListener(new OnDoubleTapListener(this) {
     @Override

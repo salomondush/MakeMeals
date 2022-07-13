@@ -1,22 +1,19 @@
 package com.example.makemeals;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.example.makemeals.models.Ingredient;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.ResponseHandlerInterface;
 
-import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import cz.msebera.android.httpclient.HttpEntity;
-import cz.msebera.android.httpclient.entity.StringEntity;
 
+/**
+ * Represents all Rest API calls that are not Parse Queries
+ * @author Salomon Dushimirimana
+ */
 public class RestClient extends AsyncHttpClient {
     public static final String SPOONACULAR_BASE_URL = "https://api.spoonacular.com/";
     public static final String SPN_API_KEY = BuildConfig.SPN_API_KEY;

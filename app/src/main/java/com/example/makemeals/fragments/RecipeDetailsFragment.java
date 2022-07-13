@@ -94,11 +94,9 @@ public class RecipeDetailsFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
      * @param recipe Parameter 1.
      * @return A new instance of fragment RecipeDetailsFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static RecipeDetailsFragment newInstance(Recipe recipe) {
         RecipeDetailsFragment fragment = new RecipeDetailsFragment();
         Bundle args = new Bundle();
@@ -202,11 +200,13 @@ public class RecipeDetailsFragment extends Fragment {
                 public void done(ParseException e) {
                     if (e != null){
                         tbSave.setChecked(!isChecked);
-                        Toast.makeText(getContext(), "Error " +
-                                (isChecked? "saving": "unsaving") + " recipe", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(),
+                                (isChecked? requireContext().getString(R.string.error_saving_recipe):
+                                        requireContext().getString(R.string.error_unsaving_recipe)), Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getContext(), "Recipe " +
-                                (isChecked? "saved": "unsaved"), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), (isChecked?
+                                requireContext().getString(R.string.recipe_saved):
+                                requireContext().getString(R.string.recipe_unsaved)), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -219,11 +219,12 @@ public class RecipeDetailsFragment extends Fragment {
                 public void done(ParseException e) {
                     if (e != null){
                         tbFavorite.setChecked(!isChecked);
-                        Toast.makeText(getContext(), "Error " +
-                                (isChecked? "favoriting": "unfavoriting") + " recipe", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), (isChecked? requireContext().getString(R.string.error_favoriting_recipe):
+                                requireContext().getString(R.string.error_unfavoriting_recipe)), Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getContext(), "Recipe " +
-                                (isChecked? "favorited": "unfavorited"), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), (isChecked?
+                                requireContext().getString(R.string.recipe_favorited):
+                                requireContext().getString(R.string.recipe_unfavorited)), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -276,9 +277,9 @@ public class RecipeDetailsFragment extends Fragment {
         itemTouchHelper.attachToRecyclerView(rvDialogIngredients);
 
         materialAlertDialogBuilder.setView(addShoppingIngredientsDialogView);
-        materialAlertDialogBuilder.setTitle("Add ingredients to shopping list");
-        materialAlertDialogBuilder.setMessage("Swipe left to remove ingredient from recipe");
-        materialAlertDialogBuilder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+        materialAlertDialogBuilder.setTitle(requireContext().getString(R.string.add_ingredients_to_shopping_list));
+        materialAlertDialogBuilder.setMessage(requireContext().getString(R.string.swipe_left_to_remove_item));
+        materialAlertDialogBuilder.setPositiveButton(requireContext().getString(R.string.add), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 showProgressBar();
@@ -306,14 +307,14 @@ public class RecipeDetailsFragment extends Fragment {
                                     hideProgressBar();
                                     if (e == null){
                                         ((MainActivity) requireActivity()).setCartItemCount(shoppingItemIds.size());
-                                        Toast.makeText(getContext(), "Ingredients added to shopping list", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), requireContext().getString(R.string.ingredients_added_to_shopping_list), Toast.LENGTH_SHORT).show();
                                     } else {
-                                        Toast.makeText(getContext(), "Error adding ingredients to shopping list", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), requireContext().getString(R.string.error_adding_ingredients_to_shopping_list), Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
                         } else {
-                            Toast.makeText(getContext(), "Error saving shopping items", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), requireContext().getString(R.string.error_saving_shopping_items), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -321,7 +322,7 @@ public class RecipeDetailsFragment extends Fragment {
                 dialog.dismiss();
             }
         });
-        materialAlertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        materialAlertDialogBuilder.setNegativeButton(requireContext().getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -331,11 +332,11 @@ public class RecipeDetailsFragment extends Fragment {
     }
 
 
-    public void showProgressBar() {
+    private void showProgressBar() {
         progressIndicator.setVisibility(View.VISIBLE);
     }
 
-    public void hideProgressBar() {
+    private void hideProgressBar() {
         progressIndicator.setVisibility(View.GONE);
     }
 }

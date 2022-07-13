@@ -10,11 +10,20 @@ import android.view.ScaleGestureDetector;
 import androidx.recyclerview.widget.RecyclerView;
 
 // more info https://stackoverflow.com/questions/47550749/scalegesturedetector-doesnot-work-over-recyclerview
+
+/**
+ * Extends RecyclerView to support pinch zoom of recycler view items.
+ *
+ * Overrides the onScale method to adjust the scale factor and overrides the onDraw method to
+ * to apply the translation and scale factor
+ *
+ * Credit: https://stackoverflow.com/questions/47550749/scalegesturedetector-doesnot-work-over-recyclerview
+ */
 public class PinchRecyclerView extends RecyclerView {
-    private ScaleGestureDetector mScaleDetector;
-    private float mScaleFactor = 1.f;
-    private float mPosX;
-    private float mPosY;
+    private ScaleGestureDetector scaleDetector;
+    private float scaleFactor = 1.f;
+    private float posX;
+    private float posY;
     private float width;
     private float height;
 
@@ -22,19 +31,19 @@ public class PinchRecyclerView extends RecyclerView {
     public PinchRecyclerView(Context context) {
         super(context);
         if (!isInEditMode())
-            mScaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
+            scaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
     }
 
     public PinchRecyclerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         if (!isInEditMode())
-            mScaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
+            scaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
     }
 
     public PinchRecyclerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         if (!isInEditMode())
-            mScaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
+            scaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
     }
 
     @Override
@@ -57,7 +66,7 @@ public class PinchRecyclerView extends RecyclerView {
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent ev) {
         super.onTouchEvent(ev);
-        mScaleDetector.onTouchEvent(ev);
+        scaleDetector.onTouchEvent(ev);
         return true;
     }
 
@@ -65,20 +74,20 @@ public class PinchRecyclerView extends RecyclerView {
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.saveLayer(0, 0, width, height, null, Canvas.ALL_SAVE_FLAG);
-        canvas.translate(mPosX, mPosY);
-        canvas.scale(mScaleFactor, mScaleFactor);
+        canvas.translate(posX, posY);
+        canvas.scale(scaleFactor, scaleFactor);
         canvas.restore();
     }
 
     @Override
     protected void dispatchDraw(@NonNull Canvas canvas) {
         canvas.saveLayer(0, 0, width, height, null, Canvas.ALL_SAVE_FLAG);
-        if (mScaleFactor == 1.0f) {
-            mPosX = 0.0f;
-            mPosY = 0.0f;
+        if (scaleFactor == 1.0f) {
+            posX = 0.0f;
+            posY = 0.0f;
         }
-        canvas.translate(mPosX, mPosY);
-        canvas.scale(mScaleFactor, mScaleFactor);
+        canvas.translate(posX, posY);
+        canvas.scale(scaleFactor, scaleFactor);
         super.dispatchDraw(canvas);
         canvas.restore();
         invalidate();
@@ -88,9 +97,9 @@ public class PinchRecyclerView extends RecyclerView {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
 
-            // get the scale factor and apply it to the current scale
-            mScaleFactor *= detector.getScaleFactor();
-            mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 3.0f));
+            // adjust the scale factor and apply it to the current scale
+            scaleFactor *= detector.getScaleFactor();
+            scaleFactor = Math.max(0.1f, Math.min(scaleFactor, 3.0f));
 
             invalidate();
             return true;
