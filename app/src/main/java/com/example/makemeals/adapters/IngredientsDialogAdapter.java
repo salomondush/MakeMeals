@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.makemeals.R;
 import com.example.makemeals.databinding.DialogIngredientItemBinding;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -66,7 +67,7 @@ public class IngredientsDialogAdapter extends RecyclerView.Adapter<IngredientsDi
                     if (!hasFocus) {
                         String ingredientName = etIngredientName.getText().toString();
                         if (ingredientName.isEmpty()) {
-                            etIngredientName.setError("Ingredient name is required");
+                            etIngredientName.setError(context.getString(R.string.ingredient_name_is_required));
                         } else {
                             ingredients.set(getAdapterPosition(), ingredientName);
                         }
@@ -117,8 +118,8 @@ public class IngredientsDialogAdapter extends RecyclerView.Adapter<IngredientsDi
         ingredients.remove(position);
         notifyItemRemoved(position);
 
-        Snackbar snackbar = Snackbar.make(parentView, "Ingredient deleted", Snackbar.LENGTH_LONG)
-                .setAction("UNDO", new View.OnClickListener() {
+        Snackbar snackbar = Snackbar.make(parentView, context.getString(R.string.ingredient_deleted), Snackbar.LENGTH_LONG)
+                .setAction(context.getString(R.string.undo), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         restoreItem(parentView, ingredient, position);

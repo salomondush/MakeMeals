@@ -31,7 +31,7 @@ public class HomeFragment extends Fragment {
 
     private Fragment recipesListFragment;
     private CircularProgressIndicator progressIndicator;
-
+    private static final String SAVED = "saved";
 
     public static final int REQUEST_LIMIT = 20;
 
@@ -82,8 +82,8 @@ public class HomeFragment extends Fragment {
         // only get 20 most recent Recipes
         query.setLimit(REQUEST_LIMIT);
         query.orderByDescending(Recipe.KEY_CREATED_AT);
-        query.whereEqualTo("user", ParseUser.getCurrentUser());
-        query.whereEqualTo("saved", true);
+        query.whereEqualTo(Constant.USER, ParseUser.getCurrentUser());
+        query.whereEqualTo(SAVED, true);
         query.findInBackground((recipes, e) -> {
             if (e == null) {
                 hideProgressBar();

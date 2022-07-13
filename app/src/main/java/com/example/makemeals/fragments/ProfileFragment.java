@@ -63,7 +63,8 @@ public class ProfileFragment extends Fragment {
 
         tvProfileUsername.setText(ParseUser.getCurrentUser().getUsername());
 
-        ParseFile image = ParseUser.getCurrentUser().getParseFile("profileImage");
+        String PROFILE_IMAGE = "profileImage";
+        ParseFile image = ParseUser.getCurrentUser().getParseFile(PROFILE_IMAGE);
 
         if (image != null) {
             Glide.with(requireContext()).load(image.getUrl())

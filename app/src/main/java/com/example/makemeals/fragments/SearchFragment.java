@@ -57,6 +57,7 @@ public class SearchFragment extends Fragment {
     private Fragment recipesListFragment;
     private CircularProgressIndicator progressIndicator;
 
+    private static final String RESULTS = "results";
     private static final List<String> DIET_OPTIONS = Arrays.asList("Gluten Free", "Ketogenic",
             "Vegetarian", "Lacto-Vegetarian", "Ovo-Vegetarian", "Vegan", "Pescetarian",
             "Paleo", "Primal", "Whole30", "Low FODMAP");
@@ -173,7 +174,7 @@ public class SearchFragment extends Fragment {
                 super.onSuccess(statusCode, headers, response);
 
                 try {
-                    ((RecipesListFragment) recipesListFragment).updateRecipes(Recipe.fromJsonArray(response.getJSONArray("results")));
+                    ((RecipesListFragment) recipesListFragment).updateRecipes(Recipe.fromJsonArray(response.getJSONArray(RESULTS)));
                     hideProgressBar();
                     hideSearchBlock();
                 } catch (JSONException e) {

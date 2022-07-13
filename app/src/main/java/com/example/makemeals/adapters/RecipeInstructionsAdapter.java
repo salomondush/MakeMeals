@@ -63,10 +63,12 @@ public class RecipeInstructionsAdapter extends RecyclerView.Adapter<RecipeInstru
         }
 
         public void bind(JSONObject instruction) {
+            String instructionName = "name";
+            String instructionSteps = "steps";
 
-            tvInstructionItemText.setText(instruction.optString("name"));
+            tvInstructionItemText.setText(instruction.optString(instructionName));
 
-            JSONArray steps = instruction.optJSONArray("steps");
+            JSONArray steps = instruction.optJSONArray(instructionSteps);
             if (steps != null) {
                 InstructionStepsAdapter instructionStepsAdapter = new InstructionStepsAdapter(steps, context, withCheckBox);
                 rvInstructionSteps.setAdapter(instructionStepsAdapter);

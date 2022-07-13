@@ -77,7 +77,6 @@ public class IngredientsFragment extends Fragment {
 
     private File photoFile;
 
-
     public static final String REST_URL = "http://172.23.178.111:3200/file/analyse";
     public static final int MINIMUM_LENGTH = 2;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
@@ -178,7 +177,7 @@ public class IngredientsFragment extends Fragment {
             public void onClick(View v) {
                 String ingredientName = etIngredientName.getText().toString();
                 if (ingredientName.isEmpty()) {
-                    etIngredientName.setError("Ingredient name is required");
+                    etIngredientName.setError(requireContext().getString(R.string.ingredient_name_is_required));
                     return;
                 }
                 Ingredient ingredient = new Ingredient();
@@ -354,9 +353,11 @@ public class IngredientsFragment extends Fragment {
 
         RequestBody body = RequestBody.create(byteArray, MediaType.parse(FORMAT));
 
+        String FILE_NAME = "image.jpg";
+        String IMAGE_FIELD_NAME = "image";
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("image", "image.jpg", body)
+                .addFormDataPart(IMAGE_FIELD_NAME, FILE_NAME, body)
                 .build();
 
         client.post(REST_URL, new RequestHeaders(), new RequestParams(), requestBody, new JsonHttpResponseHandler() {

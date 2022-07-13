@@ -92,13 +92,19 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
         public void bind(ShoppingItem shoppingItem) {
             JSONObject ingredientFields = shoppingItem.getFields();
-            tvDetailIngredientName.setText(ingredientFields.optString("name"));
+            String name = "name";
+            String measures = "measures";
+            String unitType = "us";
+            String shortUnit = "unitShort";
+            String amount = "amount";
+            String imageField = "image";
 
-            JSONObject measure = Objects.requireNonNull(ingredientFields.optJSONObject("measures")).optJSONObject("us");
-            String quantity = Objects.requireNonNull(measure).optInt("amount") + " " + measure.optString("unitShort");
+            tvDetailIngredientName.setText(ingredientFields.optString(name));
+            JSONObject measure = Objects.requireNonNull(ingredientFields.optJSONObject(measures)).optJSONObject(unitType);
+            String quantity = Objects.requireNonNull(measure).optInt(amount) + " " + measure.optString(shortUnit);
             tvIngredientQuantity.setText(quantity);
 
-            String image = ingredientFields.optString("image");
+            String image = ingredientFields.optString(imageField);
             ;
             Glide.with(context).load(Constant.IMAGE_BASE_URL + image)
                     .centerCrop()

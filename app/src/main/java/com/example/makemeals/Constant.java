@@ -7,4 +7,6 @@ public class Constant {
     public final static int SEARCH = 1;
     public final static int FAVORITES = 2;
     public final static int NEUTRAL = -1;
+    public final static String OBJECT_ID = "objectId";
+    public final static String USER = "user";
 }

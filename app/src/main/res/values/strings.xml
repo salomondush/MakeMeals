@@ -94,4 +94,6 @@
     <string name="clear_shopping_list_confirmation">Are you sure you want to clear your shopping list?</string>
     <string name="error_deleting_shopping_items">Error deleting shopping items</string>
     <string name="error_clearing_shopping_list">Error clearing shopping list</string>
+    <string name="share_image">Share Image</string>
+    <string name="ingredient_name_is_required">Ingredient name is required</string>
 </resources>

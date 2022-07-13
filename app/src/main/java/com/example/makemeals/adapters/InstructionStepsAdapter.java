@@ -66,8 +66,11 @@ public class InstructionStepsAdapter extends RecyclerView.Adapter<InstructionSte
         }
 
         public void bind(JSONObject step) {
-            tvInstructionStepNumber.setText(String.format("%s.", step.optInt("number")));
-            tvInstructionStepText.setText(step.optString("step"));
+            String stepNumber = "number";
+            String stepText = "step";
+
+            tvInstructionStepNumber.setText(String.format("%s.", step.optInt(stepNumber)));
+            tvInstructionStepText.setText(step.optString(stepText));
         }
     }
 }

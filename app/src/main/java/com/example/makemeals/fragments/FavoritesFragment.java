@@ -29,6 +29,8 @@ import java.util.List;
 public class FavoritesFragment extends Fragment {
     private Fragment recipesListFragment;
     private CircularProgressIndicator progressIndicator;
+    private static final String FAVORITE = "favorite";
+
 
     public FavoritesFragment() {
         // Required empty public constructor
@@ -77,8 +79,8 @@ public class FavoritesFragment extends Fragment {
         // only get 20 most recent Recipes
         query.setLimit(HomeFragment.REQUEST_LIMIT);
         query.orderByDescending(Recipe.KEY_CREATED_AT);
-        query.whereEqualTo("user", ParseUser.getCurrentUser());
-        query.whereEqualTo("favorite", true);
+        query.whereEqualTo(Constant.USER, ParseUser.getCurrentUser());
+        query.whereEqualTo(FAVORITE, true);
         query.findInBackground((recipes, e) -> {
             if (e == null) {
                 hideProgressBar();

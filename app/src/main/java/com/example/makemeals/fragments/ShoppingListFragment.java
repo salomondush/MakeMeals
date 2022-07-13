@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.makemeals.Constant;
 import com.example.makemeals.MainActivity;
 import com.example.makemeals.R;
 import com.example.makemeals.adapters.RecipeIngredientsAdapter;
@@ -47,8 +48,10 @@ import java.util.Objects;
  * create an instance of this fragment.
  */
 public class ShoppingListFragment extends Fragment {
-    public final String SHOPPING_LIST_KEY = "shoppingList";
     public final int CHECKED_ITEMS_INITIAL_VALUE = 0;
+
+    private final String SHOPPING_LIST_KEY = "shoppingList";
+    private final String SHOPPING_ITEM = "ShoppingItem";
     private List<ShoppingItem> shoppingList;
     private ShoppingListAdapter shoppingListAdapter;
     private MaterialButton btnClearShoppingList;
@@ -150,8 +153,8 @@ public class ShoppingListFragment extends Fragment {
                     ((MainActivity) requireActivity()).setCartItemCount(cartItemIdCount);
 
                     // get shoppingItems from Parse with matching ids
-                    ParseQuery<ShoppingItem> query = ParseQuery.getQuery("ShoppingItem");
-                    query.whereContainedIn("objectId", shoppingListIds);
+                    ParseQuery<ShoppingItem> query = ParseQuery.getQuery(SHOPPING_ITEM);
+                    query.whereContainedIn(Constant.OBJECT_ID, shoppingListIds);
                     query.findInBackground((shoppingItems, err) -> {
 
                         for (ShoppingItem shoppingItem : shoppingItems) {
@@ -195,8 +198,8 @@ public class ShoppingListFragment extends Fragment {
         currentUser.saveInBackground((e -> {
             if (e == null) {
                 // delete shopping items from ShoppingItem table
-                ParseQuery<ShoppingItem> query = ParseQuery.getQuery("ShoppingItem");
-                query.whereContainedIn("objectId", shoppingListIds);
+                ParseQuery<ShoppingItem> query = ParseQuery.getQuery(SHOPPING_ITEM);
+                query.whereContainedIn(Constant.OBJECT_ID, shoppingListIds);
                 query.findInBackground((shoppingItems, err) -> {
                     if (err == null) {
                         for (ShoppingItem shoppingItem : shoppingItems) {
