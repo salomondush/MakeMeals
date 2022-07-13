@@ -63,16 +63,7 @@ public class InstructionStepsAdapter extends RecyclerView.Adapter<InstructionSte
             } else {
                 cbInstructionStep.setVisibility(View.GONE);
             }
-
-//            tvInstructionStepNumber.setTextSize(textSize);
-//            tvInstructionStepText.setTextSize(textSize);
         }
-
-//        public void setTextSize(int textSize) {
-//            this.textSize = textSize;
-//            tvInstructionStepNumber.setTextSize(textSize);
-//            tvInstructionStepText.setTextSize(textSize);
-//        }
 
         public void bind(JSONObject step) {
             tvInstructionStepNumber.setText(String.format("%s.", step.optInt("number")));
