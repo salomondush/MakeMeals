@@ -18,14 +18,11 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText loginUsername;
     private EditText loginPassword;
-    private TextView loginSignup;
-    private Button loginButton;
-    private ActivityLoginBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        com.example.makemeals.databinding.ActivityLoginBinding binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         if (ParseUser.getCurrentUser() != null){
@@ -34,8 +31,8 @@ public class LoginActivity extends AppCompatActivity {
 
         loginUsername = binding.loginUsername;
         loginPassword = binding.loginPassword;
-        loginButton = binding.loginButton;
-        loginSignup = binding.loginSignup;
+        Button loginButton = binding.loginButton;
+        TextView loginSignup = binding.loginSignup;
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 // check if username and password are not empty
                 if (username.isEmpty() || password.isEmpty()){
-                    Toast.makeText(LoginActivity.this, "Username and password are required", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, R.string.username_password_required, Toast.LENGTH_SHORT).show();
                 } else {
                     loginUser(username, password);
                 }
@@ -69,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
                 goToMainActivity();
-                Toast.makeText(LoginActivity.this, "Successfully logged in", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, R.string.login_successful, Toast.LENGTH_SHORT).show();
 
             }
         });

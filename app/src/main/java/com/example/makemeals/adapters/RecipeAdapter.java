@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.makemeals.Constant;
+import com.example.makemeals.R;
 import com.example.makemeals.customClasses.OnDoubleTapListener;
 import com.example.makemeals.databinding.RecipeItemBinding;
 import com.example.makemeals.models.Recipe;
@@ -36,6 +37,13 @@ import java.util.List;
 import cz.msebera.android.httpclient.cookie.params.CookieSpecPNames;
 
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder> {
+    private static final String NAME = "name";
+    private static final String UNIT = "unit";
+    private static final String AMOUNT = "amount";
+    private static final String CALORIES = "Calories";
+    private static final String PROTEIN =  "Protein";
+    private static final String FAT = "Fat";
+    private static final String CARBS = "Carbohydrates";
     final private List<Recipe> recipes;
     final private Context context;
     private RecipeItemBinding binding;
@@ -150,7 +158,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
                                 }
                             } else {
                                 // show error and reverse toggle
-                                Toast.makeText(context, "Error saving recipe", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, context.getString(R.string.error_saving_recipe), Toast.LENGTH_SHORT).show();
                                 tbSave.setChecked(!tbSave.isChecked());
                             }
                         }
@@ -185,7 +193,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
                         }
                     } else {
                         // show error and reverse toggle
-                        Toast.makeText(context, "Error favoriting recipe", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, context.getString(R.string.error_favoriting_recipe), Toast.LENGTH_SHORT).show();
                         tbFavorite.setChecked(!tbSave.isChecked());
                     }
                 }
@@ -197,21 +205,21 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             JSONArray nutrients = recipe.getNutrients();
             for (int i = 0; i < nutrients.length(); i++) {
                 try {
-                    if (nutrients.getJSONObject(i).getString("name").equals("Calories")) {
-                        calsValue.setText(nutrients.getJSONObject(i).getString("amount"));
-                        calsUnit.setText(nutrients.getJSONObject(i).getString("unit"));
-                    } else if (nutrients.getJSONObject(i).getString("name").equals("Protein")) {
-                        proteinsValue.setText(nutrients.getJSONObject(i).getString("amount"));
-                        proteinsUnit.setText(nutrients.getJSONObject(i).getString("unit"));
-                    } else if (nutrients.getJSONObject(i).getString("name").equals("Carbohydrates")) {
-                        carbsValue.setText(nutrients.getJSONObject(i).getString("amount"));
-                        carbsUnit.setText(nutrients.getJSONObject(i).getString("unit"));
-                    } else if (nutrients.getJSONObject(i).getString("name").equals("Fat")) {
-                        fatsValue.setText(nutrients.getJSONObject(i).getString("amount"));
-                        fatsUnit.setText(nutrients.getJSONObject(i).getString("unit"));
+                    if (nutrients.getJSONObject(i).getString(NAME).equals(CALORIES)) {
+                        calsValue.setText(nutrients.getJSONObject(i).getString(AMOUNT));
+                        calsUnit.setText(nutrients.getJSONObject(i).getString(UNIT));
+                    } else if (nutrients.getJSONObject(i).getString(NAME).equals(PROTEIN)) {
+                        proteinsValue.setText(nutrients.getJSONObject(i).getString(AMOUNT));
+                        proteinsUnit.setText(nutrients.getJSONObject(i).getString(UNIT));
+                    } else if (nutrients.getJSONObject(i).getString(NAME).equals(CARBS)) {
+                        carbsValue.setText(nutrients.getJSONObject(i).getString(AMOUNT));
+                        carbsUnit.setText(nutrients.getJSONObject(i).getString(UNIT));
+                    } else if (nutrients.getJSONObject(i).getString(NAME).equals(FAT)) {
+                        fatsValue.setText(nutrients.getJSONObject(i).getString(AMOUNT));
+                        fatsUnit.setText(nutrients.getJSONObject(i).getString(UNIT));
                     }
                 } catch (Exception e) {
-                    Toast.makeText(context, "Error getting nutrients", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getString(R.string.error_getting_nutrients), Toast.LENGTH_SHORT).show();
                 }
             }
 

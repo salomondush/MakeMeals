@@ -21,7 +21,7 @@ public class RecipeInstructionsAdapter extends RecyclerView.Adapter<RecipeInstru
     final private JSONArray instructions;
     final private Context context;
     private InstructionItemBinding binding;
-    private boolean withCheckBox;
+    private final boolean withCheckBox;
 
     public RecipeInstructionsAdapter(JSONArray ingredients, Context context, boolean withCheckBox) {
         this.instructions = ingredients;

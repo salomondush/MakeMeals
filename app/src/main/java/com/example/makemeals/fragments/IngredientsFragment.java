@@ -64,6 +64,8 @@ import okhttp3.RequestBody;
  */
 public class IngredientsFragment extends Fragment {
     private static final String TAG = "IngredientsFragment";
+    private static final String USER = "user";
+    private static final String FORMAT = "image/jpeg";
     private RecyclerView rvIngredients;
     private IngredientsPageAdapter adapter;
     private List<Ingredient> ingredients;
@@ -87,15 +89,6 @@ public class IngredientsFragment extends Fragment {
     // material popup
     private MaterialAlertDialogBuilder materialAlertDialogBuilder;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     public IngredientsFragment() {
         // Required empty public constructor
     }
@@ -103,17 +96,11 @@ public class IngredientsFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment IngredientsFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static IngredientsFragment newInstance(String param1, String param2) {
+    public static IngredientsFragment newInstance() {
         IngredientsFragment fragment = new IngredientsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -121,10 +108,6 @@ public class IngredientsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -241,7 +224,7 @@ public class IngredientsFragment extends Fragment {
             // Load the taken image into a preview
 
         } else { // Result was a failure
-            Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), requireContext().getString(R.string.picture_not_taken), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -276,7 +259,7 @@ public class IngredientsFragment extends Fragment {
 
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
-            Toast.makeText(requireContext(), "Failed to create directory", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), requireContext().getString(R.string.failed_to_create_directory), Toast.LENGTH_SHORT).show();
         }
 
         // Return the file target for the photo based on filename
@@ -298,9 +281,9 @@ public class IngredientsFragment extends Fragment {
         itemTouchHelper.attachToRecyclerView(rvDialogIngredients);
 
         materialAlertDialogBuilder.setView(addIngredientsDialogView);
-        materialAlertDialogBuilder.setTitle("Add ingredients");
-        materialAlertDialogBuilder.setMessage("Swipe left to remove ingredient from recipe");
-        materialAlertDialogBuilder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+        materialAlertDialogBuilder.setTitle(requireContext().getString(R.string.add_ingredients));
+        materialAlertDialogBuilder.setMessage(requireContext().getString(R.string.swipe_left_to_remove_item));
+        materialAlertDialogBuilder.setPositiveButton(requireContext().getString(R.string.add), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 showProgressBar();
@@ -333,7 +316,7 @@ public class IngredientsFragment extends Fragment {
                 dialog.dismiss();
             }
         });
-        materialAlertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        materialAlertDialogBuilder.setNegativeButton(requireContext().getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -345,7 +328,7 @@ public class IngredientsFragment extends Fragment {
     private void queryIngredients() {
         showProgressBar();
         ParseQuery<Ingredient> query = ParseQuery.getQuery(Ingredient.class);
-        query.whereEqualTo("user", ParseUser.getCurrentUser());
+        query.whereEqualTo(USER, ParseUser.getCurrentUser());
         query.findInBackground(new FindCallback<Ingredient>() {
             @Override
             public void done(List<Ingredient> objects, ParseException e) {
@@ -369,7 +352,7 @@ public class IngredientsFragment extends Fragment {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         byte[] byteArray = stream.toByteArray();
 
-        RequestBody body = RequestBody.create(byteArray, MediaType.parse("image/jpeg"));
+        RequestBody body = RequestBody.create(byteArray, MediaType.parse(FORMAT));
 
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
@@ -389,7 +372,7 @@ public class IngredientsFragment extends Fragment {
 
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                Toast.makeText(getContext(), "Failed to get image text", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), requireContext().getString(R.string.failed_to_get_image_text), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -409,12 +392,12 @@ public class IngredientsFragment extends Fragment {
         return items;
     }
 
-    public void showProgressBar() {
+    private void showProgressBar() {
         // Show progress item
         progressIndicator.setVisibility(View.VISIBLE);
     }
 
-    public void hideProgressBar() {
+    private void hideProgressBar() {
         // Hide progress item
         progressIndicator.setVisibility(View.GONE);
     }

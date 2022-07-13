@@ -29,14 +29,12 @@ import java.util.Objects;
 
 public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredientsAdapter.ViewHolder> {
     private final JSONArray ingredients;
-    private List<ViewHolder> views;
     private final Context context;
     private RecipeIngredientItemBinding binding;
 
     public RecipeIngredientsAdapter(JSONArray ingredients, Context context) {
         this.ingredients = ingredients;
         this.context = context;
-        views = new ArrayList<>();
     }
 
     @NonNull
@@ -50,13 +48,6 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
     public void onBindViewHolder(@NonNull RecipeIngredientsAdapter.ViewHolder holder, int position) {
         JSONObject ingredient = ingredients.optJSONObject(position);
         holder.bind(ingredient);
-        views.add(holder);
-    }
-
-    public void scaleAll(float scale) {
-        for (ViewHolder holder : views) {
-            holder.scale(scale);
-        }
     }
 
     @Override

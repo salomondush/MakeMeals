@@ -9,7 +9,6 @@
     <string name="search_meals">Search Meals</string>
     <string name="favorites">favorites</string>
     <string name="logo">logo</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hello_search_query_blank_fragment">Hello Search Query Blank Fragment</string>
     <string name="hello_blank_recipe_details_fragment">Hello recipe details fragment</string>
@@ -60,4 +59,39 @@
     <string name="offline">offline</string>
     <string name="kcal">kcal</string>
     <string name="recipe_image">recipe image</string>
+    <string name="username_password_required">Username and password are required</string>
+    <string name="login_successful">Login successful</string>
+    <string name="passwords_do_not_match">Passwords do not match</string>
+    <string name="sign_up_successful">Sign up successful</string>
+    <string name="error">Error</string>
+    <string name="ingredient_deleted">Ingredient deleted</string>
+    <string name="undo">Undo</string>
+    <string name="error_deleting_ingredient">Error deleting ingredient</string>
+    <string name="error_saving_recipe">Error saving recipe</string>
+    <string name="error_unsaving_recipe">Error unsaving recipe</string>
+    <string name="error_favoriting_recipe">Error favoriting recipe</string>
+    <string name="error_unfavoriting_recipe">Error unfavoriting recipe</string>
+    <string name="error_getting_nutrients">Error getting nutrients</string>
+    <string name="recipe_saved">Recipe Saved</string>
+    <string name="recipe_unsaved">Recipe Unsaved</string>
+    <string name="recipe_favorited">Recipe Favorited</string>
+    <string name="recipe_unfavorited">Recipe Unfavorited</string>
+    <string name="picture_not_taken">Picture wasn\'t taken!</string>
+    <string name="failed_to_create_directory">Failed to create directory</string>
+    <string name="add_ingredients">Add ingredients</string>
+    <string name="swipe_left_to_remove_item">Swipe left to remove item</string>
+    <string name="add">Add</string>
+    <string name="failed_to_get_image_text">Failed to get image text</string>
+    <string name="add_ingredients_to_shopping_list">Add ingredients to shopping list</string>
+    <string name="ingredients_added_to_shopping_list">Ingredients added to shopping list</string>
+    <string name="error_adding_ingredients_to_shopping_list">Error adding ingredients to shopping list</string>
+    <string name="error_saving_shopping_items">Error saving shopping items</string>
+    <string name="error_searching_recipes">Error searching recipes</string>
+    <string name="error_getting_shopping_list">Error getting shopping list</string>
+    <string name="clear_shopping_list">Clear Shopping List</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="clear_shopping_list_confirmation">Are you sure you want to clear your shopping list?</string>
+    <string name="error_deleting_shopping_items">Error deleting shopping items</string>
+    <string name="error_clearing_shopping_list">Error clearing shopping list</string>
 </resources>

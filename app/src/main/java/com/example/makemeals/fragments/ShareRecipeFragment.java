@@ -70,7 +70,6 @@ public class ShareRecipeFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
      * @param recipe Parameter 1.
      * @return A new instance of fragment ShareRecipeFragment.
      */
@@ -187,7 +186,6 @@ public class ShareRecipeFragment extends Fragment {
 
                     case MotionEvent.ACTION_POINTER_DOWN: // first and second finger down
                         // distance between two fingers
-                        Log.i("TAG", "ACTION_POINTER_DOWN");
                         oldDistLlNutritionInfo = spacing(event);
                         if (oldDistLlNutritionInfo > 5f) {
                             mode = ZOOM;
@@ -243,9 +241,6 @@ public class ShareRecipeFragment extends Fragment {
                             float newDist = spacing(event);
                             if (newDist > 5f) {
                                 float scale = newDist / oldDistImage;
-
-                                Log.i("TAG", "scale: " + scale);
-
                                 // if scale > 1, zoom in image. If scale < 1, zoom out image based on midpoint of image
                                 ivRecipeImage.setScaleX(scale);
                                 ivRecipeImage.setScaleY(scale);
@@ -261,7 +256,6 @@ public class ShareRecipeFragment extends Fragment {
 
                     case MotionEvent.ACTION_POINTER_DOWN: // first and second finger down
                         // distance between two fingers
-                        Log.i("TAG", "ACTION_POINTER_DOWN");
                         oldDistImage = spacing(event);
                         if (oldDistImage > 5f) {
                             mode = ZOOM;

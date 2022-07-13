@@ -19,7 +19,7 @@ public class InstructionStepsAdapter extends RecyclerView.Adapter<InstructionSte
     private final JSONArray steps;
     private final Context context;
     private InstructionStepItemBinding binding;
-    private boolean withCheckBox;
+    private final boolean withCheckBox;
 
     public InstructionStepsAdapter(JSONArray steps, Context context, boolean withCheckBox) {
         this.steps = steps;

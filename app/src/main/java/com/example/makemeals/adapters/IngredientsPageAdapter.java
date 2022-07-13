@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.makemeals.R;
 import com.example.makemeals.databinding.IngredientItemBinding;
 import com.example.makemeals.models.Ingredient;
 import com.google.android.material.snackbar.Snackbar;
@@ -144,7 +145,7 @@ public class IngredientsPageAdapter extends RecyclerView.Adapter<IngredientsPage
             @Override
             public void done(ParseException e) {
                 if (e != null) {
-                    Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, context.getString(R.string.error) + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
                 ingredients.add(position, newIngredient);
                 notifyItemInserted(position);
@@ -162,17 +163,16 @@ public class IngredientsPageAdapter extends RecyclerView.Adapter<IngredientsPage
                     ingredients.remove(position);
                     notifyItemRemoved(position);
 
-                    Snackbar snackbar = Snackbar.make(parentView, "Ingredient deleted", Snackbar.LENGTH_LONG)
-                            .setAction("UNDO", new View.OnClickListener() {
+                    Snackbar snackbar = Snackbar.make(parentView, context.getString(R.string.ingredient_deleted), Snackbar.LENGTH_LONG)
+                            .setAction(context.getString(R.string.undo), new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     restoreItem(parentView, ingredient, position);
                                 }
                             });
-                    // todo: set a better color
                     snackbar.show();
                 } else {
-                    Toast.makeText(context, "Error deleting ingredient", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getString(R.string.error_deleting_ingredient), Toast.LENGTH_SHORT).show();
                 }
             }
         });
