@@ -143,7 +143,10 @@ public class ShoppingListFragment extends Fragment {
     private void getShoppingList() {
        // get shopping list field from the current user
         showProgressBar();
-        ParseUser.getQuery().getInBackground(ParseUser.getCurrentUser().getObjectId(), new GetCallback<ParseUser>() {
+
+        ParseUser.getQuery()
+                .setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK)
+                .getInBackground(ParseUser.getCurrentUser().getObjectId(), new GetCallback<ParseUser>() {
             @Override
             public void done(ParseUser object, ParseException e) {
                 if (e == null) {
@@ -155,21 +158,24 @@ public class ShoppingListFragment extends Fragment {
                     // get shoppingItems from Parse with matching ids
                     ParseQuery<ShoppingItem> query = ParseQuery.getQuery(SHOPPING_ITEM);
                     query.whereContainedIn(Constant.OBJECT_ID, shoppingListIds);
+                    query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
                     query.findInBackground((shoppingItems, err) -> {
 
-                        for (ShoppingItem shoppingItem : shoppingItems) {
-                            if (shoppingItem.getIsChecked()) {
-                                incrementCheckedItems();
-                            }
-                        }
+                        resetShoppingListState();
 
-                        if (err == null) {
+                        if (err == null && shoppingItems != null) {
                             // add all the shopping items to the shopping list
                             hideProgressBar();
+                            shoppingList.clear();
                             shoppingList.addAll(shoppingItems);
                             shoppingListAdapter.notifyDataSetChanged();
-                           initializeShoppingListState();
-                        } else {
+
+                            for (ShoppingItem shoppingItem : shoppingItems) {
+                                if (shoppingItem.getIsChecked()) {
+                                    incrementCheckedItems();
+                                }
+                            }
+                        } else if (shoppingItems != null) {
                             Toast.makeText(getContext(), requireContext().getString(R.string.error_getting_shopping_list), Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -229,7 +235,7 @@ public class ShoppingListFragment extends Fragment {
 
     private void resetShoppingListState() {
         checkedItems = CHECKED_ITEMS_INITIAL_VALUE;
-        tvUncheckedCount.setText(String.valueOf(checkedItems));
+        tvUncheckedCount.setText(String.valueOf(Math.max(checkedItems, 0)));
         tvCheckedCount.setText(String.valueOf(shoppingList.size() - checkedItems));
     }
 
