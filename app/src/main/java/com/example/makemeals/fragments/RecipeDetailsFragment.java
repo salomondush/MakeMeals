@@ -266,7 +266,7 @@ public class RecipeDetailsFragment extends Fragment {
         View addShoppingIngredientsDialogView = getLayoutInflater().
                 inflate(R.layout.add_ingredients_dialog, null, false);
 
-        JSONArray shoppingIngredients = recipe.getExtendedIngredients();
+        List<JSONObject> shoppingIngredients = recipe.getExtendedIngredients();
 
         RecyclerView rvDialogIngredients = addShoppingIngredientsDialogView.findViewById(R.id.rvDialogIngredients);
         RecipeIngredientsAdapter shoppingIngredientsDialogAdapter = new RecipeIngredientsAdapter(shoppingIngredients, getContext());
@@ -286,8 +286,8 @@ public class RecipeDetailsFragment extends Fragment {
 
                 List<ShoppingItem> shoppingItems = new ArrayList<>();
                 List<String> shoppingItemIds = new ArrayList<>();
-                for (int i = 0; i < shoppingIngredients.length(); ++i){
-                    JSONObject ingredientFields = shoppingIngredients.optJSONObject(i);
+                for (int i = 0; i < shoppingIngredients.size(); ++i){
+                    JSONObject ingredientFields = shoppingIngredients.get(i);
                     ShoppingItem shoppingItem = new ShoppingItem(ingredientFields);
                     shoppingItems.add(shoppingItem);
                 }

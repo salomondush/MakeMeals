@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @ParseClassName("Recipe")
 public class Recipe extends ParseObject {
@@ -76,6 +77,14 @@ public class Recipe extends ParseObject {
             recipes.add(newInstanceIfNotExists(jsonArray.getJSONObject(i)));
         }
         return recipes;
+    }
+
+    public static List<JSONObject> getExtendedIngredientsFromJsonArray(JSONArray jsonArray) {
+        List<JSONObject> extendedIngredients = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            extendedIngredients.add(jsonArray.optJSONObject(i));
+        }
+        return extendedIngredients;
     }
 
     public int getSpnId() {
@@ -158,8 +167,8 @@ public class Recipe extends ParseObject {
         put(SERVINGS, servings);
     }
 
-    public JSONArray getExtendedIngredients() {
-        return getJSONArray(EXTENDED_INGREDIENTS);
+    public List<JSONObject> getExtendedIngredients() {
+        return getExtendedIngredientsFromJsonArray(Objects.requireNonNull(getJSONArray(EXTENDED_INGREDIENTS)));
     }
 
     public void setExtendedIngredients(JSONArray extendedIngredients) {

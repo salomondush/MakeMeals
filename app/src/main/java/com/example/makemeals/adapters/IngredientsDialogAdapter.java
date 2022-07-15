@@ -1,6 +1,9 @@
 package com.example.makemeals.adapters;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,16 +64,22 @@ public class IngredientsDialogAdapter extends RecyclerView.Adapter<IngredientsDi
             tvDialogIngredientDate = binding.tvDialogIngredientDate;
             tvIngredientQuantity = binding.tvIngredientQuantity;
 
-            etIngredientName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            etIngredientName.addTextChangedListener(new TextWatcher() {
                 @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (!hasFocus) {
-                        String ingredientName = etIngredientName.getText().toString();
-                        if (ingredientName.isEmpty()) {
-                            etIngredientName.setError(context.getString(R.string.ingredient_name_is_required));
-                        } else {
-                            ingredients.set(getAdapterPosition(), ingredientName);
-                        }
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    String ingredientName = s.toString();
+                    if (ingredientName.isEmpty()) {
+                        etIngredientName.setError(context.getString(R.string.ingredient_name_is_required));
+                    } else {
+                        ingredients.set(getAdapterPosition(), ingredientName);
                     }
                 }
             });
