@@ -10,7 +10,8 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginEnd="10dp"
-        tools:srcCompat="@tools:sample/avatars" />
+        tools:srcCompat="@tools:sample/avatars"
+        android:contentDescription="@string/ingredient_image" />
 
     <LinearLayout
         android:id="@+id/ingredient"
@@ -35,7 +36,7 @@
         android:visibility="visible"
         android:layout_gravity="center"
         android:textSize="11sp"
-        android:text="1 Large"
+        android:text="@string/quantity"
         android:textColor="@color/black"/>
 
     <CheckBox

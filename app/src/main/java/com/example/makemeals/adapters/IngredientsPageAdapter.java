@@ -55,17 +55,27 @@ public class IngredientsPageAdapter extends RecyclerView.Adapter<IngredientsPage
         return ingredients.size();
     }
 
-    // Define the method that allows the parent activity or fragment to define the listener
+    /**
+     * This method allows the parent activity or fragment to define a remove ingredient click listener.
+     *
+     * @param listener
+     */
     public void setOnRemoveIngredientClickListener(OnItemClickListener listener) {
         this.removeIngredientClickListener = listener;
     }
 
-    // Define the method that allows the parent activity or fragment to define the listener
+    /**
+     * This method allows the parent activity or fragment to define a select ingredient listener
+     *
+     * @param listener
+     */
     public void setOnSelectIngredientClickListener(OnItemClickListener listener) {
         this.onSelectIngredientListener = listener;
     }
 
-    // Define the listener interface
+    /**
+     * This method defines the listener interface
+     */
     public interface OnItemClickListener {
         void onItemClick(View itemView, int position);
     }
@@ -92,9 +102,9 @@ public class IngredientsPageAdapter extends RecyclerView.Adapter<IngredientsPage
                 }
             });
 
-            cbSelectIngredient.setOnClickListener(new View.OnClickListener(){
+            cbSelectIngredient.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v){
+                public void onClick(View v) {
                     onSelectIngredientListener.onItemClick(itemView, getAdapterPosition());
                 }
             });
@@ -104,7 +114,7 @@ public class IngredientsPageAdapter extends RecyclerView.Adapter<IngredientsPage
             name.setText(ingredient.getName());
             date.setText(ingredient.getCreatedAt().toString());
 
-            if (isSearchIngredient){
+            if (isSearchIngredient) {
                 removeIngredient.setVisibility(View.GONE);
                 cbSelectIngredient.setVisibility(View.VISIBLE);
             } else {
@@ -114,7 +124,7 @@ public class IngredientsPageAdapter extends RecyclerView.Adapter<IngredientsPage
         }
     }
 
-    public static class SwipeHelper extends ItemTouchHelper.SimpleCallback{
+    public static class SwipeHelper extends ItemTouchHelper.SimpleCallback {
         private final IngredientsPageAdapter adapter;
         private final RecyclerView parentView;
 

@@ -94,7 +94,7 @@
                         android:id="@+id/tvTypes"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="alskdjf;aasdfasdfasdfasdfasdfl" />
+                        android:text="@string/lunch_main_course" />
                 </LinearLayout>
             </LinearLayout>
             <!--2nd block-->
@@ -211,7 +211,7 @@
         android:orientation="horizontal">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCancelSharing"
+            android:id="@+id/buttonCancelSharing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
@@ -223,7 +223,7 @@
             app:cornerRadius="4dp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnShareRecipe"
+            android:id="@+id/buttonShareRecipe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"

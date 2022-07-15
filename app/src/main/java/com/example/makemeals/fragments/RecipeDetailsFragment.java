@@ -173,15 +173,15 @@ public class RecipeDetailsFragment extends Fragment {
             @Override
             public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
                 if (isChecked){
-                    if (checkedId == R.id.btnNutrition) {
+                    if (checkedId == R.id.buttonNutrition) {
                         llNutritionInfo.setVisibility(View.VISIBLE);
                         llIngredients.setVisibility(View.GONE);
                         llInstructions.setVisibility(View.GONE);
-                    } else if (checkedId == R.id.btnIngredients) {
+                    } else if (checkedId == R.id.buttonIngredients) {
                         llNutritionInfo.setVisibility(View.GONE);
                         llIngredients.setVisibility(View.VISIBLE);
                         llInstructions.setVisibility(View.GONE);
-                    } else if (checkedId == R.id.btnInstructions) {
+                    } else if (checkedId == R.id.buttonInstructions) {
                         llNutritionInfo.setVisibility(View.GONE);
                         llIngredients.setVisibility(View.GONE);
                         llInstructions.setVisibility(View.VISIBLE);

@@ -23,7 +23,7 @@ import org.json.JSONObject;
 import java.util.List;
 import java.util.Objects;
 
-public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapter.ViewHolder>{
+public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapter.ViewHolder> {
     private final List<ShoppingItem> shoppingItems;
     private final Context context;
     private RecipeIngredientItemBinding binding;
@@ -34,12 +34,18 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         this.context = context;
     }
 
-    // Define the listener interface
+    /**
+     * Define the listener interface for click events on items.
+     */
     public interface OnItemClickListener {
         void onItemClick(View itemView, int position);
     }
 
-    // Define the method that allows the parent activity or fragment to define the listener
+    /**
+     * Allows the parent activity or fragment to define an onChecked click  listener for the
+     * checkbox.
+     * @param isCheckedListener
+     */
     public void setOnIsCheckedListener(OnItemClickListener isCheckedListener) {
         this.isCheckedListener = isCheckedListener;
     }
@@ -89,7 +95,6 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         }
 
 
-
         public void bind(ShoppingItem shoppingItem) {
             JSONObject ingredientFields = shoppingItem.getFields();
             String name = "name";
@@ -111,7 +116,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                     .transform(new RoundedCorners(Constant.IMAGE_RADIUS))
                     .into(ivIngredientImage);
 
-            if (shoppingItem.getIsChecked()){
+            if (shoppingItem.getIsChecked()) {
                 cbSelectIngredient.setChecked(true);
                 tvDetailIngredientName.setPaintFlags(tvDetailIngredientName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             } else {

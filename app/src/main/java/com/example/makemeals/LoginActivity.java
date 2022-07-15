@@ -25,7 +25,7 @@ public class LoginActivity extends AppCompatActivity {
         com.example.makemeals.databinding.ActivityLoginBinding binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        if (ParseUser.getCurrentUser() != null){
+        if (ParseUser.getCurrentUser() != null) {
             goToMainActivity();
         }
 
@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
                 String password = loginPassword.getText().toString();
 
                 // check if username and password are not empty
-                if (username.isEmpty() || password.isEmpty()){
+                if (username.isEmpty() || password.isEmpty()) {
                     Toast.makeText(LoginActivity.this, R.string.username_password_required, Toast.LENGTH_SHORT).show();
                 } else {
                     loginUser(username, password);
@@ -67,13 +67,12 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 goToMainActivity();
                 Toast.makeText(LoginActivity.this, R.string.login_successful, Toast.LENGTH_SHORT).show();
-
             }
         });
     }
 
     private void goToMainActivity() {
-        Intent  intent = new Intent(LoginActivity.this, MainActivity.class);
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
     }

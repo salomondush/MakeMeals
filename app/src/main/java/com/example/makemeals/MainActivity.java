@@ -65,32 +65,9 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNavigationView = binding.bottomNavigation;
 
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            Fragment fragment;
-            switch (item.getItemId()) {
-                case R.id.search:
-                    fragment = new SearchFragment();
-                    break;
-                case R.id.favorites:
-                    fragment = new FavoritesFragment();
-                    break;
-                case R.id.profile:
-                    fragment = new ProfileFragment();
-                    break;
-                case R.id.home:
-                default:
-                    fragment = new HomeFragment();
-                    break;
-            }
-            fragmentManager.beginTransaction()
-                    .replace(R.id.flContainer, fragment)
-                    .addToBackStack(null)
-                    .commit();
-            return true;
-        });
+        bottomNavigationView.setOnItemSelectedListener(this::onNavigationItemSelected);
 
         bottomNavigationView.setSelectedItemId(R.id.home);
-
 
 
         NetworkRequest networkRequest = new NetworkRequest.Builder()
@@ -126,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        ConnectivityManager connectivityManager =  getSystemService(ConnectivityManager.class);
+        ConnectivityManager connectivityManager = getSystemService(ConnectivityManager.class);
         connectivityManager.requestNetwork(networkRequest, networkCallback);
 
         // show if the device is online or not
@@ -137,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Menu icons are inflated just as they were with actionbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -160,14 +136,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-       if (item.getItemId() == R.id.ingredients){
+        if (item.getItemId() == R.id.ingredients) {
             Fragment fragment = new IngredientsFragment();
             fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
-       } else if (item.getItemId() == R.id.shoppingCart){
+        } else if (item.getItemId() == R.id.shoppingCart) {
             Fragment fragment = new ShoppingListFragment();
             fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
-       }
-       return super.onOptionsItemSelected(item);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -211,20 +187,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void getShoppingListCount(){
+    public void getShoppingListCount() {
         ParseUser.getQuery()
                 .setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK)
                 .getInBackground(ParseUser.getCurrentUser().getObjectId(), new GetCallback<ParseUser>() {
-            @Override
-            public void done(ParseUser object, ParseException e) {
-                if (e == null) {
-                    // add all the ingredients from object to the shopping list
-                    setCartItemCount(Objects.requireNonNull(object.getJSONArray("shoppingList")).length());
-                } else {
-                    e.printStackTrace();
-                }
-            }
-        });
+                    @Override
+                    public void done(ParseUser object, ParseException e) {
+                        if (e == null) {
+                            // add all the ingredients from object to the shopping list
+                            setCartItemCount(Objects.requireNonNull(object.getJSONArray("shoppingList")).length());
+                        } else {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 
     public int getCartItemCount() {
@@ -239,5 +215,29 @@ public class MainActivity extends AppCompatActivity {
     public void incrementCartItemCount(int count) {
         cartItemCount += count;
         setupBadge();
+    }
+
+    private boolean onNavigationItemSelected(MenuItem item) {
+        Fragment fragment;
+        switch (item.getItemId()) {
+            case R.id.search:
+                fragment = new SearchFragment();
+                break;
+            case R.id.favorites:
+                fragment = new FavoritesFragment();
+                break;
+            case R.id.profile:
+                fragment = new ProfileFragment();
+                break;
+            case R.id.home:
+            default:
+                fragment = new HomeFragment();
+                break;
+        }
+        fragmentManager.beginTransaction()
+                .replace(R.id.flContainer, fragment)
+                .addToBackStack(null)
+                .commit();
+        return true;
     }
 }

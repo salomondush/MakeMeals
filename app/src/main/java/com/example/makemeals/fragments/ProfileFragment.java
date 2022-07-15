@@ -1,5 +1,6 @@
 package com.example.makemeals.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,9 +12,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.makemeals.LoginActivity;
 import com.example.makemeals.R;
+import com.example.makemeals.databinding.FragmentProfileBinding;
+import com.google.android.material.button.MaterialButton;
+import com.parse.LogOutCallback;
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
@@ -57,9 +64,28 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        FragmentProfileBinding binding = FragmentProfileBinding.bind(view);
 
-        TextView tvProfileUsername = view.findViewById(R.id.tvProfileUsername);
-        ImageView ivProfileImage = view.findViewById(R.id.ivProfileImage);
+        TextView tvProfileUsername = binding.tvProfileUsername;
+        ImageView ivProfileImage = binding.ivProfileImage;
+        MaterialButton logoutButton = binding.logoutButton;
+
+        logoutButton.setOnClickListener(v -> {
+            ParseUser.logOutInBackground(new LogOutCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e != null) {
+                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Intent intent = new Intent(getContext(), LoginActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        requireActivity().finish();
+                        Toast.makeText(getContext(), "Logged out", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        });
 
         tvProfileUsername.setText(ParseUser.getCurrentUser().getUsername());
 
