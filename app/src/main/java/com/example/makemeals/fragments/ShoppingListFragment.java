@@ -19,7 +19,6 @@ import android.widget.Toast;
 import com.example.makemeals.Constant;
 import com.example.makemeals.MainActivity;
 import com.example.makemeals.R;
-import com.example.makemeals.adapters.RecipeIngredientsAdapter;
 import com.example.makemeals.adapters.ShoppingListAdapter;
 import com.example.makemeals.databinding.FragmentShoppingListBinding;
 import com.example.makemeals.models.ShoppingItem;
@@ -237,12 +236,6 @@ public class ShoppingListFragment extends Fragment {
         checkedItems = CHECKED_ITEMS_INITIAL_VALUE;
         tvUncheckedCount.setText(String.valueOf(Math.max(checkedItems, 0)));
         tvCheckedCount.setText(String.valueOf(shoppingList.size() - checkedItems));
-    }
-
-    private void initializeShoppingListState(){
-        btnClearShoppingList.setEnabled(checkedItems == shoppingList.size());
-        tvCheckedCount.setText(String.valueOf(checkedItems));
-        tvUncheckedCount.setText(String.valueOf(shoppingList.size() - checkedItems));
     }
 
     private void incrementCheckedItems() {

@@ -29,11 +29,11 @@ import java.util.List;
 import java.util.Objects;
 
 public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredientsAdapter.ViewHolder> {
-    private final JSONArray ingredients;
+    private final List<JSONObject> ingredients;
     private final Context context;
     private RecipeIngredientItemBinding binding;
 
-    public RecipeIngredientsAdapter(JSONArray ingredients, Context context) {
+    public RecipeIngredientsAdapter(List<JSONObject> ingredients, Context context) {
         this.ingredients = ingredients;
         this.context = context;
     }
@@ -47,13 +47,13 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
 
     @Override
     public void onBindViewHolder(@NonNull RecipeIngredientsAdapter.ViewHolder holder, int position) {
-        JSONObject ingredient = ingredients.optJSONObject(position);
+        JSONObject ingredient = ingredients.get(position);
         holder.bind(ingredient);
     }
 
     @Override
     public int getItemCount() {
-        return ingredients.length();
+        return ingredients.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -112,17 +112,13 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
     }
 
     private void restoreItem(RecyclerView parentView, JSONObject ingredient, int position) {
-        try {
-            ingredients.put(position, ingredient);
-            notifyItemInserted(position);
-            parentView.scrollToPosition(position);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        ingredients.add(position, ingredient);
+        notifyItemInserted(position);
+        parentView.scrollToPosition(position);
     }
 
     private void deleteItem(RecyclerView parentView, int position) {
-        JSONObject ingredient = ingredients.optJSONObject(position);
+        JSONObject ingredient = ingredients.get(position);
         ingredients.remove(position);
         notifyItemRemoved(position);
 
