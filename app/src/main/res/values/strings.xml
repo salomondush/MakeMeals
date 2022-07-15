@@ -97,4 +97,5 @@
     <string name="share_image">Share Image</string>
     <string name="ingredient_name_is_required">Ingredient name is required</string>
     <string name="_0">0</string>
+    <string name="error_getting_search_ingredients">Error getting search ingredients</string>
 </resources>
