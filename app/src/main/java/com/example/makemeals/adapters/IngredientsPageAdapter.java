@@ -140,7 +140,7 @@ public class IngredientsPageAdapter extends RecyclerView.Adapter<IngredientsPage
 
         Ingredient newIngredient = new Ingredient();
         newIngredient.setName(ingredient.getName());
-        newIngredient.setCreatedAt(ingredient.getCreatedAt());
+        newIngredient.setUser(ingredient.getUser());
         newIngredient.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
