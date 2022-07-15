@@ -306,7 +306,7 @@ public class RecipeDetailsFragment extends Fragment {
                                 public void done(ParseException e) {
                                     hideProgressBar();
                                     if (e == null){
-                                        ((MainActivity) requireActivity()).setCartItemCount(shoppingItemIds.size());
+                                        ((MainActivity) requireActivity()).incrementCartItemCount(shoppingItemIds.size());
                                         Toast.makeText(getContext(), requireContext().getString(R.string.ingredients_added_to_shopping_list), Toast.LENGTH_SHORT).show();
                                     } else {
                                         Toast.makeText(getContext(), requireContext().getString(R.string.error_adding_ingredients_to_shopping_list), Toast.LENGTH_SHORT).show();

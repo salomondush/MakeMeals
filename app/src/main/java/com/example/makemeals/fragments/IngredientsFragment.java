@@ -328,15 +328,17 @@ public class IngredientsFragment extends Fragment {
         showProgressBar();
         ParseQuery<Ingredient> query = ParseQuery.getQuery(Ingredient.class);
         query.whereEqualTo(USER, ParseUser.getCurrentUser());
+        query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
         query.findInBackground(new FindCallback<Ingredient>() {
             @Override
             public void done(List<Ingredient> objects, ParseException e) {
                 if (e == null) {
+                    ingredients.clear();
                     ingredients.addAll(objects);
                     adapter.notifyDataSetChanged();
                     hideProgressBar();
                 } else {
-                    e.printStackTrace();
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });

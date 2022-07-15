@@ -100,6 +100,7 @@ public class RecipesListFragment extends Fragment {
     }
 
     public void updateRecipes(List<Recipe> recipes) {
+        this.recipes.clear();
         this.recipes.addAll(recipes);
         recipeAdapter.notifyDataSetChanged();
     }

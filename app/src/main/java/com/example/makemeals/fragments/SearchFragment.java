@@ -193,15 +193,17 @@ public class SearchFragment extends Fragment {
     private void querySearchIngredients() {
         showProgressBar();
         ParseQuery<Ingredient> query = ParseQuery.getQuery(Ingredient.class);
+        query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
         query.findInBackground(new FindCallback<Ingredient>() {
             @Override
             public void done(List<Ingredient> objects, ParseException e) {
-                if (e == null) {
+                if (e == null && objects != null) {
+                    ingredients.clear();
                     ingredients.addAll(objects);
                     ingredientsPageAdapter.notifyDataSetChanged();
                     hideProgressBar();
-                } else {
-                    e.printStackTrace();
+                } else if (objects != null) {
+                    Toast.makeText(getContext(), requireContext().getString(R.string.error_getting_search_ingredients), Toast.LENGTH_SHORT).show();
                 }
             }
         });

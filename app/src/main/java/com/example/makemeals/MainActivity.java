@@ -32,6 +32,7 @@ import com.example.makemeals.models.Recipe;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import org.w3c.dom.Text;
@@ -211,7 +212,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getShoppingListCount(){
-        ParseUser.getQuery().getInBackground(ParseUser.getCurrentUser().getObjectId(), new GetCallback<ParseUser>() {
+        ParseUser.getQuery()
+                .setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK)
+                .getInBackground(ParseUser.getCurrentUser().getObjectId(), new GetCallback<ParseUser>() {
             @Override
             public void done(ParseUser object, ParseException e) {
                 if (e == null) {
@@ -230,6 +233,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void setCartItemCount(int mCartItemCount) {
         this.cartItemCount = mCartItemCount;
+        setupBadge();
+    }
+
+    public void incrementCartItemCount(int count) {
+        cartItemCount += count;
         setupBadge();
     }
 }

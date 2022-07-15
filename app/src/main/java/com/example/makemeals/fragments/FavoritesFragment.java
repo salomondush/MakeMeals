@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.makemeals.Constant;
 import com.example.makemeals.R;
@@ -76,6 +77,7 @@ public class FavoritesFragment extends Fragment {
     private void queryFavoriteRecipes() {
         showProgressBar();
         ParseQuery<Recipe> query = ParseQuery.getQuery(Recipe.class);
+        query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
         // only get 20 most recent Recipes
         query.setLimit(HomeFragment.REQUEST_LIMIT);
         query.orderByDescending(Recipe.KEY_CREATED_AT);
@@ -86,7 +88,7 @@ public class FavoritesFragment extends Fragment {
                 hideProgressBar();
                 ((RecipesListFragment) recipesListFragment).updateRecipes(recipes);
             } else {
-                e.printStackTrace();
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
