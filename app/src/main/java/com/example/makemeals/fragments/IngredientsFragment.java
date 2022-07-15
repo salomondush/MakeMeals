@@ -182,6 +182,7 @@ public class IngredientsFragment extends Fragment {
                 }
                 Ingredient ingredient = new Ingredient();
                 ingredient.setName(ingredientName);
+                ingredient.setUser(ParseUser.getCurrentUser());
                 ingredient.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
@@ -295,6 +296,7 @@ public class IngredientsFragment extends Fragment {
                     if (!ingredientName.isEmpty()) {
                         Ingredient ingredient = new Ingredient();
                         ingredient.setName(ingredientName);
+                        ingredient.setUser(ParseUser.getCurrentUser());
                         newIngredients.add(ingredient);
                     }
                 }
