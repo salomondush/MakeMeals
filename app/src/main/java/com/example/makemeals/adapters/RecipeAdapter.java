@@ -41,7 +41,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     private static final String UNIT = "unit";
     private static final String AMOUNT = "amount";
     private static final String CALORIES = "Calories";
-    private static final String PROTEIN =  "Protein";
+    private static final String PROTEIN = "Protein";
     private static final String FAT = "Fat";
     private static final String CARBS = "Carbohydrates";
     final private List<Recipe> recipes;
@@ -74,12 +74,18 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     }
 
 
-    // Define the listener interface
+    /**
+     * Defines the listener interface for click events.
+     */
     public interface OnItemClickListener {
         void onItemClick(View itemView, int position);
     }
 
-    // Define the method that allows the parent activity or fragment to define the listener
+    /**
+     * Allows the parent activity or fragment to define a click callback listener.
+     *
+     * @param listener
+     */
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.onItemClickListener = listener;
     }
@@ -127,7 +133,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
                 }
             });
 
-            // set on double click listener for the recipe image
+            // set on double click listener for the recipe image to favorite/unfavorite the recipe
             recipeImage.setOnTouchListener(new OnDoubleTapListener(context) {
                 @Override
                 public void onDoubleTap(MotionEvent e) {
@@ -174,17 +180,17 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             });
         }
 
-        private void favoriteRecipe(int position){
+        private void favoriteRecipe(int position) {
             Recipe recipe = recipes.get(position);
             // update or save the recipe
             recipe.setFavorite(!recipe.getFavorite());
             recipe.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
-                    if (e == null){
+                    if (e == null) {
                         // update in recipes list
                         if (page == Constant.FAVORITES) {
-                            if (!tbFavorite.isChecked()){
+                            if (!tbFavorite.isChecked()) {
                                 recipes.remove(position);
                                 notifyItemRemoved(getAdapterPosition());
                             }

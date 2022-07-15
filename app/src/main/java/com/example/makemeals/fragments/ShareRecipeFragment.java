@@ -113,8 +113,8 @@ public class ShareRecipeFragment extends Fragment {
         TextView tvServings = binding.tvServings;
         TextView tvDiets = binding.tvDiets;
         llNutritionInfo = binding.llNutritionInfo;
-        MaterialButton btnShareRecipe = binding.btnShareRecipe;
-        MaterialButton btnCancelSharing = binding.btnCancelSharing;
+        MaterialButton buttonShareRecipe = binding.buttonShareRecipe;
+        MaterialButton buttonCancelSharing = binding.buttonCancelSharing;
         llSharableRecipeInfo = binding.llSharableRecipeInfo;
 
 
@@ -259,7 +259,7 @@ public class ShareRecipeFragment extends Fragment {
         });
 
 
-        btnShareRecipe.setOnClickListener(new View.OnClickListener() {
+        buttonShareRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bitmap bitmap = getBitmapFromView(llSharableRecipeInfo);
@@ -273,7 +273,7 @@ public class ShareRecipeFragment extends Fragment {
             }
         });
 
-        btnCancelSharing.setOnClickListener(new View.OnClickListener() {
+        buttonCancelSharing.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {

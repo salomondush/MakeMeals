@@ -53,7 +53,7 @@ public class ShoppingListFragment extends Fragment {
     private final String SHOPPING_ITEM = "ShoppingItem";
     private List<ShoppingItem> shoppingList;
     private ShoppingListAdapter shoppingListAdapter;
-    private MaterialButton btnClearShoppingList;
+    private MaterialButton buttonClearShoppingList;
     private CircularProgressIndicator progressIndicator;
     private int checkedItems;
     private TextView tvUncheckedCount;
@@ -94,7 +94,7 @@ public class ShoppingListFragment extends Fragment {
 
         checkedItems = CHECKED_ITEMS_INITIAL_VALUE;
         FragmentShoppingListBinding binding = FragmentShoppingListBinding.bind(view);
-        btnClearShoppingList = binding.btnClearShoppingList;
+        buttonClearShoppingList = binding.buttonClearShoppingList;
         tvUncheckedCount = binding.tvUncheckedCount;
         tvCheckedCount = binding.tvCheckedCount;
         progressIndicator = binding.progressIndicator;
@@ -130,7 +130,7 @@ public class ShoppingListFragment extends Fragment {
             }
         });
 
-        btnClearShoppingList.setOnClickListener(new View.OnClickListener() {
+        buttonClearShoppingList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // show dialog to confirm clear shopping list
@@ -243,7 +243,7 @@ public class ShoppingListFragment extends Fragment {
         tvCheckedCount.setText(String.valueOf(checkedItems));
         tvUncheckedCount.setText(String.valueOf(shoppingList.size() - checkedItems));
         if (checkedItems == shoppingList.size()) {
-            btnClearShoppingList.setEnabled(true);
+            buttonClearShoppingList.setEnabled(true);
         }
     }
 
@@ -252,7 +252,7 @@ public class ShoppingListFragment extends Fragment {
         tvCheckedCount.setText(String.valueOf(checkedItems));
         tvUncheckedCount.setText(String.valueOf(shoppingList.size() - checkedItems));
         if (checkedItems == 0) {
-            btnClearShoppingList.setEnabled(false);
+            buttonClearShoppingList.setEnabled(false);
         }
     }
 }

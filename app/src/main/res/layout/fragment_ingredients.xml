@@ -34,7 +34,7 @@
             android:textColor="@color/black" />
 
         <ImageButton
-            android:id="@+id/btnAddIngredient"
+            android:id="@+id/buttonAddIngredient"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="10dp"

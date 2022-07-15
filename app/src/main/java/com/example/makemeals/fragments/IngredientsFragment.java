@@ -75,9 +75,9 @@ public class IngredientsFragment extends Fragment {
     private LinearLayout addLayout;
 
 
-    public static final String REST_URL = "http://172.20.9.185:3200/file/analyse";
-    public static final int MINIMUM_LENGTH = 2;
-    public static final int GALLERY_IMAGE_ACTIVITY_REQUEST_CODE = 3;
+    private static final String REST_URL = "http://172.20.9.185:3200/file/analyse";
+    private static final int MINIMUM_LENGTH = 2;
+    private static final int GALLERY_IMAGE_ACTIVITY_REQUEST_CODE = 3;
 
     private CircularProgressIndicator progressIndicator;
 
@@ -92,6 +92,7 @@ public class IngredientsFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
+     *
      * @return A new instance of fragment IngredientsFragment.
      */
     public static IngredientsFragment newInstance() {
@@ -122,7 +123,7 @@ public class IngredientsFragment extends Fragment {
         rvIngredients = view.findViewById(R.id.rvIngredients);
         addButton = view.findViewById(R.id.addButton);
         addLayout = view.findViewById(R.id.addLayout);
-        ImageButton btnAddIngredient = view.findViewById(R.id.btnAddIngredient);
+        ImageButton buttonAddIngredient = view.findViewById(R.id.buttonAddIngredient);
         etIngredientName = view.findViewById(R.id.etIngredientName);
         progressIndicator = view.findViewById(R.id.progressIndicator);
         ImageButton galleryButton = view.findViewById(R.id.galleryButton);
@@ -169,7 +170,7 @@ public class IngredientsFragment extends Fragment {
             }
         });
 
-        btnAddIngredient.setOnClickListener(new View.OnClickListener() {
+        buttonAddIngredient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String ingredientName = etIngredientName.getText().toString();
@@ -294,7 +295,12 @@ public class IngredientsFragment extends Fragment {
         });
     }
 
-    // method that takes an image from the camera and makes a query to the rest API to get the image's text
+    /**
+     * Method that takes an image from the camera and makes a query to the rest API to get the
+     * image's text
+     *
+     * @param bitmap
+     */
     private void getImageText(Bitmap bitmap) {
         AsyncHttpClient client = new AsyncHttpClient();
 
@@ -331,12 +337,12 @@ public class IngredientsFragment extends Fragment {
                         hideProgressBar();
                         Toast.makeText(getContext(), requireContext().getString(R.string.failed_to_get_image_text), Toast.LENGTH_SHORT).show();
                     }
-                 });
+                });
             }
         });
     }
 
-    private List<String> extractItemsFromCSV(String csv){
+    private List<String> extractItemsFromCSV(String csv) {
 
         List<String> items = new ArrayList<>();
 
