@@ -19,7 +19,8 @@
         <ImageView
             android:layout_width="147dp"
             android:layout_height="82dp"
-            android:src="@drawable/make_meals_logo" />
+            android:src="@drawable/make_meals_logo"
+            android:contentDescription="@string/logo" />
 
         <!-- Edit text provided to user to
             enter email, username or phone no.-->
@@ -28,7 +29,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp"
+            android:inputType="text"
             android:background="@drawable/background_edit_text"
+            android:autofillHints="username"
             android:hint="@string/username_placeholder"
             android:padding="12dp"
             android:singleLine="true"
@@ -41,6 +44,7 @@
             android:layout_marginTop="16dp"
             android:background="@drawable/background_edit_text"
             android:hint="@string/password"
+            android:autofillHints="password"
             android:inputType="textPassword"
             android:padding="12dp"
             android:singleLine="true"

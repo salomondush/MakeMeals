@@ -24,6 +24,7 @@
             android:id="@+id/etIngredientName"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:inputType="text"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
@@ -31,6 +32,7 @@
             android:layout_marginBottom="20dp"
             android:background="@color/white"
             android:hint="@string/ingredient_name_placeholder"
+            android:autofillHints="@string/ingredient_name_placeholder"
             android:textColor="@color/black" />
 
         <ImageButton
@@ -40,7 +42,8 @@
             android:layout_marginEnd="10dp"
             android:layout_gravity="center"
             android:layout_marginStart="10dp"
-            android:background="@drawable/make_meals_send_icon" />
+            android:background="@drawable/make_meals_send_icon"
+            android:contentDescription="@string/add_ingredient_icon" />
 
     </LinearLayout>
 

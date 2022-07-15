@@ -14,9 +14,11 @@
             android:id="@+id/etDialogIngredientName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="text"
             android:background="@color/white"
             android:hint="@string/ingredient_name"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:autofillHints="@string/ingredient_name" />
 
         <TextView
             android:id="@+id/tvDialogIngredientDate"

@@ -94,7 +94,7 @@
                         android:id="@+id/tvTypes"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="alskdjf;aasdfasdfasdfasdfasdfl" />
+                        android:text="@string/lunch_main_course" />
                 </LinearLayout>
             </LinearLayout>
             <!--2nd block-->

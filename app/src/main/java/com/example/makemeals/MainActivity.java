@@ -65,29 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNavigationView = binding.bottomNavigation;
 
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            Fragment fragment;
-            switch (item.getItemId()) {
-                case R.id.search:
-                    fragment = new SearchFragment();
-                    break;
-                case R.id.favorites:
-                    fragment = new FavoritesFragment();
-                    break;
-                case R.id.profile:
-                    fragment = new ProfileFragment();
-                    break;
-                case R.id.home:
-                default:
-                    fragment = new HomeFragment();
-                    break;
-            }
-            fragmentManager.beginTransaction()
-                    .replace(R.id.flContainer, fragment)
-                    .addToBackStack(null)
-                    .commit();
-            return true;
-        });
+        bottomNavigationView.setOnItemSelectedListener(this::onNavigationItemSelected);
 
         bottomNavigationView.setSelectedItemId(R.id.home);
 
@@ -237,5 +215,29 @@ public class MainActivity extends AppCompatActivity {
     public void incrementCartItemCount(int count) {
         cartItemCount += count;
         setupBadge();
+    }
+
+    private boolean onNavigationItemSelected(MenuItem item) {
+        Fragment fragment;
+        switch (item.getItemId()) {
+            case R.id.search:
+                fragment = new SearchFragment();
+                break;
+            case R.id.favorites:
+                fragment = new FavoritesFragment();
+                break;
+            case R.id.profile:
+                fragment = new ProfileFragment();
+                break;
+            case R.id.home:
+            default:
+                fragment = new HomeFragment();
+                break;
+        }
+        fragmentManager.beginTransaction()
+                .replace(R.id.flContainer, fragment)
+                .addToBackStack(null)
+                .commit();
+        return true;
     }
 }

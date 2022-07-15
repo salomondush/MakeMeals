@@ -98,4 +98,12 @@
     <string name="ingredient_name_is_required">Ingredient name is required</string>
     <string name="_0">0</string>
     <string name="error_getting_search_ingredients">Error getting search ingredients</string>
+    <string name="ingredient_image">ingredient_image</string>
+    <string name="quantity">1 Large</string>
+    <string name="share_button">share button</string>
+    <string name="shopping_list_button">shopping list button</string>
+    <string name="nutrition">Nutrition</string>
+    <string name="ingredients_selector">ingredients</string>
+    <string name="instructions_selector">Instructions</string>
+    <string name="add_ingredient_icon">add ingredient icon</string>
 </resources>
