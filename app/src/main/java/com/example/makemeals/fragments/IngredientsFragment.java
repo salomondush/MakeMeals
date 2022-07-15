@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -63,7 +64,6 @@ import okhttp3.RequestBody;
  * create an instance of this fragment.
  */
 public class IngredientsFragment extends Fragment {
-    private static final String TAG = "IngredientsFragment";
     private static final String USER = "user";
     private static final String FORMAT = "image/jpeg";
     private RecyclerView rvIngredients;
@@ -72,14 +72,11 @@ public class IngredientsFragment extends Fragment {
     private List<String> dialogIngredients;
     private EditText etIngredientName;
     private ImageButton addButton;
-    private ImageButton cameraButton;
-    private RelativeLayout addLayout;
+    private LinearLayout addLayout;
 
-    private File photoFile;
 
-    public static final String REST_URL = "http://172.23.178.111:3200/file/analyse";
+    public static final String REST_URL = "http://172.20.9.185:3200/file/analyse";
     public static final int MINIMUM_LENGTH = 2;
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
     public static final int GALLERY_IMAGE_ACTIVITY_REQUEST_CODE = 3;
 
     private CircularProgressIndicator progressIndicator;
@@ -215,55 +212,6 @@ public class IngredientsFragment extends Fragment {
                 e.printStackTrace();
             }
         }
-
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-
-            // by this point we have the camera photo on disk
-            Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-            // RESIZE BITMAP, see section below
-            // Load the taken image into a preview
-
-        } else { // Result was a failure
-            Toast.makeText(getContext(), requireContext().getString(R.string.picture_not_taken), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public void launchCamera(View view) {
-        // create Intent to take a picture and return control to the calling application
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Create a File reference for future access
-        String PHOTO_FILE_NAME = "photo.jpg";
-        photoFile = getPhotoFileUri(PHOTO_FILE_NAME);
-
-        // wrap File object into a content provider
-        // required for API >= 24
-        // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
-        Uri fileProvider = FileProvider.getUriForFile(requireContext(), "com.codepath.fileprovider", photoFile);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
-
-        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
-        // So as long as the result is not null, it's safe to use the intent.
-        if (intent.resolveActivity(requireContext().getPackageManager()) != null) {
-            // Start the image capture intent to take photo
-            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-        }
-    }
-
-
-    // Returns the File for a photo stored on disk given the fileName
-    public File getPhotoFileUri(String fileName) {
-        // Get safe storage directory for photos
-        // Use `getExternalFilesDir` on Context to access package-specific directories.
-        // This way, we don't need to request external read/write runtime permissions.
-        File mediaStorageDir = new File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
-
-        // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
-            Toast.makeText(requireContext(), requireContext().getString(R.string.failed_to_create_directory), Toast.LENGTH_SHORT).show();
-        }
-
-        // Return the file target for the photo based on filename
-        return new File(mediaStorageDir.getPath() + File.separator + fileName);
     }
 
     private void launchAddIngredientDialog(List<String> ingredientItems) {
@@ -377,7 +325,13 @@ public class IngredientsFragment extends Fragment {
 
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                Toast.makeText(getContext(), requireContext().getString(R.string.failed_to_get_image_text), Toast.LENGTH_SHORT).show();
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        hideProgressBar();
+                        Toast.makeText(getContext(), requireContext().getString(R.string.failed_to_get_image_text), Toast.LENGTH_SHORT).show();
+                    }
+                 });
             }
         });
     }
@@ -398,12 +352,10 @@ public class IngredientsFragment extends Fragment {
     }
 
     private void showProgressBar() {
-        // Show progress item
         progressIndicator.setVisibility(View.VISIBLE);
     }
 
     private void hideProgressBar() {
-        // Hide progress item
         progressIndicator.setVisibility(View.GONE);
     }
 }
