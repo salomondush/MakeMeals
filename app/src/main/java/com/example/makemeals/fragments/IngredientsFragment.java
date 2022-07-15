@@ -338,7 +338,7 @@ public class IngredientsFragment extends Fragment {
                     adapter.notifyDataSetChanged();
                     hideProgressBar();
                 } else {
-                    e.printStackTrace();
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
