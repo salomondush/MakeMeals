@@ -22,6 +22,25 @@
             android:background="@drawable/remove_icon"
             android:contentDescription="@string/remove_button_description" />
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/searchTextMenu"
+            android:layout_marginEnd="5dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:textColorHint="@color/inactive_text_color"
+            android:hint="@string/search_optional"
+            app:boxBackgroundColor="@color/white"
+            android:layout_height="wrap_content">
+
+            <AutoCompleteTextView
+                android:id="@+id/etSearchText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

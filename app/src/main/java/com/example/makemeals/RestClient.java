@@ -24,7 +24,8 @@ public class RestClient extends AsyncHttpClient {
         this.context = context;
     }
 
-    public void complexSearch(List<String> ingredients, String type, String diet, JsonHttpResponseHandler handler) {
+    public void complexSearch(List<String> ingredients, String type, String diet,
+     String query, JsonHttpResponseHandler handler) {
         String searchUrl = String.format("%s/recipes/complexSearch", SPOONACULAR_BASE_URL);
 
         RequestParams params = new RequestParams();
@@ -33,6 +34,7 @@ public class RestClient extends AsyncHttpClient {
         params.put("includeIngredients", String.join(",", ingredients));
         params.put("type", type);
         params.put("diet", diet);
+        params.put("query", query);
         params.put("fillIngredients", true);
         params.put("addRecipeInformation", true);
         params.put("addRecipeNutrition", true);

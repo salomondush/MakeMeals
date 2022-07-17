@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import com.example.makemeals.Constant;
 import com.example.makemeals.R;
 import com.example.makemeals.RestClient;
 import com.example.makemeals.adapters.IngredientsPageAdapter;
+import com.example.makemeals.databinding.FragmentSearchBinding;
 import com.example.makemeals.models.Ingredient;
 import com.example.makemeals.models.Recipe;
 import com.google.android.material.button.MaterialButton;
@@ -54,6 +56,7 @@ public class SearchFragment extends Fragment {
     private AutoCompleteTextView recipeType;
     private LinearLayout llSearchResultBlock;
     private LinearLayout llSearchBlock;
+    private AutoCompleteTextView etSearchText;
     private Fragment recipesListFragment;
     private CircularProgressIndicator progressIndicator;
 
@@ -64,6 +67,8 @@ public class SearchFragment extends Fragment {
 
     private static final List<String> TYPE_OPTIONS = Arrays.asList("main course", "side dish",
             "dessert", "appetizer", "salad", "breakfast", "soup", "beverage", "sauce", "drink");
+
+    private  List<String> searchOptions;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -96,16 +101,18 @@ public class SearchFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        FragmentSearchBinding binding = FragmentSearchBinding.bind(view);
 
-        MaterialButton searchButton = view.findViewById(R.id.searchButton);
-        recipeDiet = view.findViewById(R.id.recipeDiet);
-        recipeType = view.findViewById(R.id.recipeType);
-        RecyclerView rvSearchIngredients = view.findViewById(R.id.rvSearchIngredients);
-        progressIndicator = view.findViewById(R.id.progressIndicator);
-        TextView tvSearchBar = view.findViewById(R.id.tvSearchBar);
-        llSearchResultBlock = view.findViewById(R.id.llSearchResultBlock);
-        llSearchBlock = view.findViewById(R.id.llSearchBlock);
-        ImageButton ibHideSearchBlock = view.findViewById(R.id.ibHideSearchBlock);
+        MaterialButton searchButton = binding.searchButton;
+        recipeDiet = binding.recipeDiet;
+        recipeType = binding.recipeType;
+        RecyclerView rvSearchIngredients = binding.rvSearchIngredients;
+        progressIndicator = binding.progressIndicator;
+        TextView tvSearchBar = binding.tvSearchBar;
+        llSearchResultBlock = binding.llSearchResultBlock;
+        llSearchBlock = binding.llSearchBlock;
+        ImageButton ibHideSearchBlock = binding.ibHideSearchBlock;
+        etSearchText = binding.etSearchText;
 
         // set and attach ingredients adapter to rvSearchIngredients recyclerView
         ingredients = new ArrayList<>();
@@ -133,7 +140,9 @@ public class SearchFragment extends Fragment {
             public void onClick(View v) {
                 String type = recipeType.getText().toString();
                 String diet = recipeDiet.getText().toString();
-                searchRecipes(type, diet);
+                String query = etSearchText.getText().toString();
+                searchOptions.add(query);
+                searchRecipes(type, diet, query);
             }
         });
 
@@ -165,10 +174,11 @@ public class SearchFragment extends Fragment {
         querySearchIngredients();
     }
 
-    private void searchRecipes(String type, String diet) {
+    private void searchRecipes(String type, String diet, String query) {
         showProgressBar();
         RestClient restClient = new RestClient(getContext());
-        restClient.complexSearch(searchIngredientsNames, type, diet, new JsonHttpResponseHandler(){
+        restClient.complexSearch(searchIngredientsNames, type, diet, query,
+                new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 super.onSuccess(statusCode, headers, response);
