@@ -38,6 +38,7 @@ import com.parse.ParseUser;
 import org.w3c.dom.Text;
 
 import java.util.Objects;
+import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity {
     private final FragmentManager fragmentManager = getSupportFragmentManager();
@@ -235,6 +236,10 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         fragmentManager.beginTransaction()
+                .setCustomAnimations(
+                        R.anim.fade_in,
+                        R.anim.fade_out
+                )
                 .replace(R.id.flContainer, fragment)
                 .addToBackStack(null)
                 .commit();
