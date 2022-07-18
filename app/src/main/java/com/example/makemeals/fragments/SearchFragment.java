@@ -59,7 +59,6 @@ import okhttp3.Response;
  * create an instance of this fragment.
  */
 public class SearchFragment extends Fragment {
-    private static final String TAG =  "SearchFragment";
     private IngredientsPageAdapter ingredientsPageAdapter;
     private List<Ingredient> ingredients;
     private List<String> searchIngredientsNames;

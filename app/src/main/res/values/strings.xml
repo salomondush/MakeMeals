@@ -115,4 +115,7 @@
     <string name="error_getting_recommendations">Error getting recommendations</string>
     <string name="error_getting_recipes">Error getting recipes</string>
     <string name="connection_failed">Connection Failed</string>
+    <string name="error_saving_recommendation">Error Saving Recommendation</string>
+    <string name="saved">Saved</string>
+    <string name="favorite">Favorite</string>
 </resources>

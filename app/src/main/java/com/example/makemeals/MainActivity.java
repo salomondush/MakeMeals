@@ -187,20 +187,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void getShoppingListCount() {
+    private void getShoppingListCount() {
         ParseUser.getQuery()
-                .setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK)
-                .getInBackground(ParseUser.getCurrentUser().getObjectId(), new GetCallback<ParseUser>() {
-                    @Override
-                    public void done(ParseUser object, ParseException e) {
-                        if (e == null) {
-                            // add all the ingredients from object to the shopping list
-                            setCartItemCount(Objects.requireNonNull(object.getJSONArray("shoppingList")).length());
-                        } else {
-                            e.printStackTrace();
-                        }
+            .setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK)
+            .getInBackground(ParseUser.getCurrentUser().getObjectId(), new GetCallback<ParseUser>() {
+                @Override
+                public void done(ParseUser object, ParseException e) {
+                    if (e == null) {
+                        // add all the ingredients from object to the shopping list
+                        setCartItemCount(Objects.requireNonNull(object.getJSONArray("shoppingList")).length());
+                    } else {
+                        e.printStackTrace();
                     }
-                });
+                }
+            });
     }
 
     public int getCartItemCount() {

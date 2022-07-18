@@ -49,7 +49,6 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     private static final String PROTEIN = "Protein";
     private static final String FAT = "Fat";
     private static final String CARBS = "Carbohydrates";
-    private static final String TAG = "RecipeAdapter";
     final private List<Recipe> recipes;
     final private Context context;
     private RecipeItemBinding binding;
@@ -273,14 +272,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
                             @Override
                             public void done(ParseException e) {
                                 if (e != null) {
-                                    Log.i(TAG, "Error saving " +
-                                            "recommendation");
-                                } else {
-                                    Log.i(TAG, "Recommendation saved:" +
-                                            recommendation.getDiets().toString());
-
-                                    Log.i(TAG, "Recommendation saved:" +
-                                            recommendation.getCuisines().toString());
+                                    Toast.makeText(context, context.getString(R.string.error_saving_recommendation), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });

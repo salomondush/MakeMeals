@@ -47,7 +47,6 @@ public class HomeFragment extends Fragment {
     private CircularProgressIndicator progressIndicator;
     private List<HashMap<String, String>> categories;
     private RecommendationsAdapter recommendationsAdapter;
-    private String includeIngredients;
     private String mealType;
 
     private static final String BREAKFAST = "breakfast";
@@ -63,6 +62,7 @@ public class HomeFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
+     *
      * @return A new instance of fragment HomeFragment.
      */
     public static HomeFragment newInstance(String param1, String param2) {
@@ -126,6 +126,7 @@ public class HomeFragment extends Fragment {
     private void getUserRecommendations() {
         showProgressBar();
         ParseQuery<Recommendation> query = ParseQuery.getQuery(Recommendation.class);
+        query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
         query.whereEqualTo(Recommendation.USER, ParseUser.getCurrentUser());
         query.getFirstInBackground((recommendation, e) -> {
             hideProgressBar();
@@ -135,30 +136,11 @@ public class HomeFragment extends Fragment {
                 // get top recommendations from the two categories
                 addTopRecommendations(diets, cuisines);
 
-                showProgressBar();
-                ParseQuery.getQuery(Ingredient.class)
-                    .whereEqualTo(Constant.USER, ParseUser.getCurrentUser())
-                    .findInBackground((ingredients, err) -> {
-                        hideProgressBar();
-                        if (err == null && ingredients != null) {
-
-                            List<String> ingredientsList = new ArrayList<>();
-                            ingredients.forEach(ingredient -> {
-                                ingredientsList.add(ingredient.getName().trim());
-                            });
-                            includeIngredients = TextUtils.join(",", ingredientsList);
-
-                            // setup adapter and recycler view
-                            recommendationsAdapter = new RecommendationsAdapter(categories,
-                                    getContext(), includeIngredients, mealType);
-                            recommendationsRecyclerView.setAdapter(recommendationsAdapter);
-                            recommendationsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                        } else if (ingredients != null) {
-                            Toast.makeText(requireContext(),
-                                    requireContext().getString(R.string.error_getting_search_ingredients),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                });
+                // setup adapter and recycler view
+                recommendationsAdapter = new RecommendationsAdapter(categories,
+                        getContext(), mealType);
+                recommendationsRecyclerView.setAdapter(recommendationsAdapter);
+                recommendationsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             } else {
                 Toast.makeText(requireContext(),
                         requireContext().getString(R.string.error_getting_recommendations),

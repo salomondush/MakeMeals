@@ -44,19 +44,16 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class RecommendationsAdapter extends RecyclerView.Adapter<RecommendationsAdapter.ViewHolder>{
-    private static final String TAG =  "RecommendationsAdapter";
     private RecommendationItemBinding binding;
     private final List<HashMap<String, String>> categories;
     private final Context context;
-    private final String includeIngredients;
     private final OkHttpClient client;
     private final String mealType;
 
     public RecommendationsAdapter(List<HashMap<String, String>> categories, Context context,
-                                  String includeIngredients, String mealType) {
+                                  String mealType) {
         this.categories = categories;
         this.context = context;
-        this.includeIngredients = includeIngredients;
         client = new OkHttpClient();
         this.mealType = mealType;
     }
@@ -103,29 +100,7 @@ public class RecommendationsAdapter extends RecyclerView.Adapter<Recommendations
             recyclerViewRecommendedRecipes.setLayoutManager(new LinearLayoutManager(context,
                     LinearLayoutManager.HORIZONTAL, false));
 
-//            getRecipesByCategory(category);
-            querySavedRecipes();
-        }
-
-        private void querySavedRecipes() {
-            showProgressIndicator();
-            ParseQuery<Recipe> query = ParseQuery.getQuery(Recipe.class);
-            query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
-            // only get 20 most recent Recipes
-            query.setLimit(5);
-            query.orderByDescending(Recipe.KEY_CREATED_AT);
-            query.whereEqualTo(Constant.USER, ParseUser.getCurrentUser());
-            query.whereEqualTo("saved", true);
-            query.findInBackground((recipesResult, e) -> {
-                hideProgressIndicator();
-                if (e == null) {
-                    recipes.clear();
-                    recipes.addAll(recipesResult);
-                    recommendedRecipesAdapter.notifyDataSetChanged();
-                } else {
-                    Log.e(TAG, "querySavedRecipes: ", e);
-                }
-            });
+            getRecipesByCategory(category);
         }
 
         private void showProgressIndicator() {
@@ -195,8 +170,10 @@ public class RecommendationsAdapter extends RecyclerView.Adapter<Recommendations
                         }
 
                     } else {
-                        Toast.makeText(context, context.getString(R.string.error_getting_recipes),
-                                Toast.LENGTH_SHORT).show();
+                        ((Activity) context).runOnUiThread(() -> {
+                            Toast.makeText(context, context.getString(R.string.error_getting_recipes),
+                                    Toast.LENGTH_SHORT).show();
+                        });
                     }
                 }
             });
