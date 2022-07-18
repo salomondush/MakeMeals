@@ -8,9 +8,10 @@ import org.json.JSONObject;
 
 @ParseClassName("Recommendation")
 public class Recommendation extends ParseObject {
+    private static final String DIETS = "diets";
+    private static final String CUISINES = "cuisines";
+
     public static final String USER = "user";
-    public static final String DIETS = "diets";
-    public static final String CUISINES = "cuisines";
 
     public Recommendation() {
         super();

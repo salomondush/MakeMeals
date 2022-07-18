@@ -44,7 +44,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class RecommendationsAdapter extends RecyclerView.Adapter<RecommendationsAdapter.ViewHolder>{
-    private static final String TAG =  "RecommendationsAdapter";
     private RecommendationItemBinding binding;
     private final List<HashMap<String, String>> categories;
     private final Context context;
@@ -95,7 +94,9 @@ public class RecommendationsAdapter extends RecyclerView.Adapter<Recommendations
         }
 
         public void bind(HashMap<String, String> category) {
-            categoryTitleTextView.setText(category.containsKey("diet") ? category.get("diet") : category.get("cuisine"));
+            categoryTitleTextView.setText(category.containsKey(Constant.DIET) ?
+                    category.get(Constant.DIET) :
+                    category.get(Constant.CUISINE));
 
             recipes = new ArrayList<>();
             recommendedRecipesAdapter = new RecommendedRecipesAdapter(recipes, context);
@@ -103,29 +104,7 @@ public class RecommendationsAdapter extends RecyclerView.Adapter<Recommendations
             recyclerViewRecommendedRecipes.setLayoutManager(new LinearLayoutManager(context,
                     LinearLayoutManager.HORIZONTAL, false));
 
-//            getRecipesByCategory(category);
-            querySavedRecipes();
-        }
-
-        private void querySavedRecipes() {
-            showProgressIndicator();
-            ParseQuery<Recipe> query = ParseQuery.getQuery(Recipe.class);
-            query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
-            // only get 20 most recent Recipes
-            query.setLimit(5);
-            query.orderByDescending(Recipe.KEY_CREATED_AT);
-            query.whereEqualTo(Constant.USER, ParseUser.getCurrentUser());
-            query.whereEqualTo("saved", true);
-            query.findInBackground((recipesResult, e) -> {
-                hideProgressIndicator();
-                if (e == null) {
-                    recipes.clear();
-                    recipes.addAll(recipesResult);
-                    recommendedRecipesAdapter.notifyDataSetChanged();
-                } else {
-                    Log.e(TAG, "querySavedRecipes: ", e);
-                }
-            });
+            getRecipesByCategory(category);
         }
 
         private void showProgressIndicator() {
