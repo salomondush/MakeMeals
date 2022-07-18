@@ -34,13 +34,13 @@
         <entry key="app/src/main/res/layout/add_ingredients_popup.xml" value="0.29899902343750007" />
         <entry key="app/src/main/res/layout/dialog_ingredient_item.xml" value="0.13725490196078433" />
         <entry key="app/src/main/res/layout/fragment_favorites.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.21203703703703702" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.12598425196850394" />
         <entry key="app/src/main/res/layout/fragment_ingredients.xml" value="0.394403076171875" />
         <entry key="app/src/main/res/layout/fragment_listview.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/layout/fragment_recipe_details.xml" value="0.30663604736328126" />
         <entry key="app/src/main/res/layout/fragment_recipes_list.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/fragment_search.xml" value="0.26345609065155806" />
+        <entry key="app/src/main/res/layout/fragment_search.xml" value="0.29388669367890186" />
         <entry key="app/src/main/res/layout/fragment_search_query_child.xml" value="0.35963253445095483" />
         <entry key="app/src/main/res/layout/fragment_share_recipe.xml" value="0.3471527787975799" />
         <entry key="app/src/main/res/layout/fragment_shopping_list.xml" value="0.4395150600335537" />
@@ -53,6 +53,8 @@
         <entry key="app/src/main/res/layout/recipe_detail_ingredient_item.xml" value="0.3790523690773067" />
         <entry key="app/src/main/res/layout/recipe_ingredient_item.xml" value="0.1" />
         <entry key="app/src/main/res/layout/recipe_item.xml" value="0.38048858642578126" />
+        <entry key="app/src/main/res/layout/recommendation_item.xml" value="0.31411183675130205" />
+        <entry key="app/src/main/res/layout/recommendation_recipe_item.xml" value="0.3645833333333333" />
         <entry key="app/src/main/res/layout/toolbar_main.xml" value="0.45401272243923607" />
         <entry key="app/src/main/res/layout/trial.xml" value="0.14231923421223958" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.3136016845703125" />
@@ -61,7 +63,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_16" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

@@ -19,18 +19,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.makemeals.Constant;
 import com.example.makemeals.R;
 import com.example.makemeals.customClasses.OnDoubleTapListener;
 import com.example.makemeals.databinding.RecipeItemBinding;
 import com.example.makemeals.models.Recipe;
+import com.example.makemeals.models.Recommendation;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -44,6 +49,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     private static final String PROTEIN = "Protein";
     private static final String FAT = "Fat";
     private static final String CARBS = "Carbohydrates";
+    private static final String TAG = "RecipeAdapter";
     final private List<Recipe> recipes;
     final private Context context;
     private RecipeItemBinding binding;
@@ -146,29 +152,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             tbSave.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Recipe recipe = recipes.get(getAdapterPosition());
-                    // update or save the recipe
-                    recipe.setSaved(!recipe.getSaved());
-                    recipe.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e == null) {
-                                // update in recipes list
-                                if (page == Constant.HOME) {
-                                    if (!tbSave.isChecked()) {
-                                        recipes.remove(getAdapterPosition());
-                                        notifyItemRemoved(getAdapterPosition());
-                                    }
-                                } else {
-                                    recipes.set(getAdapterPosition(), recipe);
-                                }
-                            } else {
-                                // show error and reverse toggle
-                                Toast.makeText(context, context.getString(R.string.error_saving_recipe), Toast.LENGTH_SHORT).show();
-                                tbSave.setChecked(!tbSave.isChecked());
-                            }
-                        }
-                    });
+                    saveRecipe(getAdapterPosition());
+
                 }
             });
 
@@ -176,6 +161,34 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
                 @Override
                 public void onClick(View v) {
                     favoriteRecipe(getAdapterPosition());
+                }
+            });
+        }
+
+        private void saveRecipe(int position){
+            // update or save the recipe
+            Recipe recipe = recipes.get(position);
+            recipe.setSaved(!recipe.getSaved());
+            recipe.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        // update in recipes list
+                        if (page == Constant.HOME) {
+                            if (!tbSave.isChecked()) {
+                                recipes.remove(getAdapterPosition());
+                                notifyItemRemoved(getAdapterPosition());
+                            }
+                        } else {
+                            recipes.set(getAdapterPosition(), recipe);
+                        }
+
+                        updateRecommendations(getAdapterPosition(), recipe.getSaved());
+                    } else {
+                        // show error and reverse toggle
+                        Toast.makeText(context, context.getString(R.string.error_saving_recipe), Toast.LENGTH_SHORT).show();
+                        tbSave.setChecked(!tbSave.isChecked());
+                    }
                 }
             });
         }
@@ -197,6 +210,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
                         } else {
                             recipes.set(getAdapterPosition(), recipe);
                         }
+
+                        updateRecommendations(getAdapterPosition(), recipe.getFavorite());
                     } else {
                         // show error and reverse toggle
                         Toast.makeText(context, context.getString(R.string.error_favoriting_recipe), Toast.LENGTH_SHORT).show();
@@ -204,6 +219,73 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
                     }
                 }
             });
+        }
+
+        public void updateRecommendations(int position, boolean increment){
+            Recipe recipe = recipes.get(position);
+
+            ParseQuery.getQuery(Recommendation.class)
+                .whereEqualTo(Constant.USER, ParseUser.getCurrentUser())
+                .getFirstInBackground((recommendation, e1) -> {
+                    if (e1 == null) {
+
+                        // updates user diet recommendation
+                        JSONObject diets = recommendation.getDiets();
+                        JSONArray recipeDiets = recipe.getDiets();
+                        if (recipeDiets != null) {
+                            for (int i = 0; i < recipeDiets.length(); i++) {
+                                try {
+                                    String diet = recipeDiets.optString(i);
+                                    diets.put(diet,
+                                            increment?
+                                                    diets.optInt(diet) + 1:
+                                                    diets.optInt(diet) == 0? 0:
+                                                            diets.optInt(diet) - 1);
+                                } catch (JSONException e2) {
+                                    e2.printStackTrace();
+                                }
+                            }
+                        }
+
+                        // update user cuisine recommendation
+                        JSONObject cuisines = recommendation.getCuisines();
+                        JSONArray recipeCuisines = recipe.getCuisines();
+                        if (recipeCuisines != null) {
+                            for (int i = 0; i < recipeCuisines.length(); i++) {
+                                try {
+                                    String cuisine = recipeCuisines.optString(i);
+
+                                    cuisines.put(cuisine,
+                                            increment?
+                                                    cuisines.optInt(cuisine) + 1:
+                                                    cuisines.optInt(cuisine) == 0? 0:
+                                                            cuisines.optInt(cuisine) - 1);
+
+                                } catch (JSONException e2) {
+                                    e2.printStackTrace();
+                                }
+                            }
+                        }
+
+                        recommendation.setDiets(diets);
+                        recommendation.setCuisines(cuisines);
+                        recommendation.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e != null) {
+                                    Log.i(TAG, "Error saving " +
+                                            "recommendation");
+                                } else {
+                                    Log.i(TAG, "Recommendation saved:" +
+                                            recommendation.getDiets().toString());
+
+                                    Log.i(TAG, "Recommendation saved:" +
+                                            recommendation.getCuisines().toString());
+                                }
+                            }
+                        });
+                    }
+                });
         }
 
         public void bind(Recipe recipe) {

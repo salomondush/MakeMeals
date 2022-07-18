@@ -106,4 +106,13 @@
     <string name="ingredients_selector">ingredients</string>
     <string name="instructions_selector">Instructions</string>
     <string name="add_ingredient_icon">add ingredient icon</string>
+    <string name="vegetarian">vegetarian</string>
+    <string name="breakfast_lunch_dinner">Breakfast, Lunch, Dinner</string>
+    <string name="breakfast">Breakfast</string>
+    <string name="lunch">Lunch</string>
+    <string name="dinner">Dinner</string>
+    <string name="snack">Snacks</string>
+    <string name="error_getting_recommendations">Error getting recommendations</string>
+    <string name="error_getting_recipes">Error getting recipes</string>
+    <string name="connection_failed">Connection Failed</string>
 </resources>

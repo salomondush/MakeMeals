@@ -79,7 +79,7 @@ public class FavoritesFragment extends Fragment {
         ParseQuery<Recipe> query = ParseQuery.getQuery(Recipe.class);
         query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
         // only get 20 most recent Recipes
-        query.setLimit(HomeFragment.REQUEST_LIMIT);
+        query.setLimit(Constant.REQUEST_LIMIT);
         query.orderByDescending(Recipe.KEY_CREATED_AT);
         query.whereEqualTo(Constant.USER, ParseUser.getCurrentUser());
         query.whereEqualTo(FAVORITE, true);
