@@ -1,6 +1,5 @@
 package com.example.makemeals.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,12 +8,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.makemeals.Constant;
 import com.example.makemeals.MainActivity;
+import com.example.makemeals.ViewModel.SharedViewModel;
 import com.example.makemeals.databinding.RecommendationRecipeItemBinding;
 import com.example.makemeals.models.Recipe;
 
@@ -51,6 +52,7 @@ public class RecommendedRecipesAdapter extends RecyclerView.Adapter<RecommendedR
     public class ViewHolder extends RecyclerView.ViewHolder {
         private final ImageView recipeImageView;
         private final TextView recipeTitleTextView;
+        private SharedViewModel model;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -58,12 +60,10 @@ public class RecommendedRecipesAdapter extends RecyclerView.Adapter<RecommendedR
             recipeImageView = binding.recipeImageView;
             recipeTitleTextView = binding.recipeTitleTextView;
 
-            recipeImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // navigate to recipe detail activity
-                    ((MainActivity) context).showRecipeDetails(recipes.get(getAdapterPosition()));
-                }
+            model = new ViewModelProvider(((MainActivity) context)).get(SharedViewModel.class);
+            recipeImageView.setOnClickListener(v -> {
+                model.select(recipes.get(getAdapterPosition()));
+                ((MainActivity) context).showRecipeDetails();
             });
         }
 

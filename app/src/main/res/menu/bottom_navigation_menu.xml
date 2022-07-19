@@ -19,7 +19,7 @@
         android:enabled="true"
         app:showAsAction="always"
         android:icon="@drawable/recipes_selector"
-        android:title="@string/favorites" />
+        android:title="@string/recipes" />
 
     <item
         android:id="@+id/profile"

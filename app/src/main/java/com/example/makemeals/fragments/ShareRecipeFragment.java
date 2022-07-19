@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,6 +31,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.makemeals.Constant;
 import com.example.makemeals.MainActivity;
 import com.example.makemeals.R;
+import com.example.makemeals.ViewModel.SharedViewModel;
 import com.example.makemeals.adapters.RecipeIngredientsAdapter;
 import com.example.makemeals.adapters.RecipeInstructionsAdapter;
 import com.example.makemeals.customClasses.PinchRecyclerView;
@@ -47,7 +49,6 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class ShareRecipeFragment extends Fragment {
-    private static final String ARG_PARAM1 = "recipe";
 
     private Recipe recipe;
     private LinearLayout llNutritionInfo;
@@ -79,7 +80,6 @@ public class ShareRecipeFragment extends Fragment {
     public static ShareRecipeFragment newInstance(Recipe recipe) {
         ShareRecipeFragment fragment = new ShareRecipeFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_PARAM1, recipe);
         fragment.setArguments(args);
         return fragment;
     }
@@ -87,9 +87,6 @@ public class ShareRecipeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            recipe = getArguments().getParcelable(ARG_PARAM1);
-        }
     }
 
     @Override
@@ -105,208 +102,215 @@ public class ShareRecipeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         FragmentShareRecipeBinding binding = FragmentShareRecipeBinding.bind(view);
 
-
-        ImageView ivRecipeImage = binding.ivRecipeImage;
-        TextView tvRecipeTitle = binding.tvRecipeTitle;
-        TextView tvReadyInTime = binding.tvReadyInTime;
-        TextView tvTypes = binding.tvTypes;
-        TextView tvServings = binding.tvServings;
-        TextView tvDiets = binding.tvDiets;
-        llNutritionInfo = binding.llNutritionInfo;
-        MaterialButton buttonShareRecipe = binding.buttonShareRecipe;
-        MaterialButton buttonCancelSharing = binding.buttonCancelSharing;
-        llSharableRecipeInfo = binding.llSharableRecipeInfo;
+        SharedViewModel model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+        model.getSelected().observe(getViewLifecycleOwner(), recipe -> {
+            if (recipe != null) {
+                this.recipe = recipe;
 
 
-        llNutritionInfo.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                ScaleGestureDetector scaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.OnScaleGestureListener() {
+                ImageView ivRecipeImage = binding.ivRecipeImage;
+                TextView tvRecipeTitle = binding.tvRecipeTitle;
+                TextView tvReadyInTime = binding.tvReadyInTime;
+                TextView tvTypes = binding.tvTypes;
+                TextView tvServings = binding.tvServings;
+                TextView tvDiets = binding.tvDiets;
+                llNutritionInfo = binding.llNutritionInfo;
+                MaterialButton buttonShareRecipe = binding.buttonShareRecipe;
+                MaterialButton buttonCancelSharing = binding.buttonCancelSharing;
+                llSharableRecipeInfo = binding.llSharableRecipeInfo;
+
+
+                llNutritionInfo.setOnTouchListener(new View.OnTouchListener() {
                     @Override
-                    public boolean onScale(ScaleGestureDetector detector) {
-                        scale *= detector.getScaleFactor();
-                        scale = Math.max(0.1f, Math.min(scale, 5.0f));
-                        llNutritionInfo.setScaleX(scale);
-                        llNutritionInfo.setScaleY(scale);
-                        return true;
-                    }
-
-                    @Override
-                    public boolean onScaleBegin(ScaleGestureDetector detector) {
-                        return true;
-                    }
-
-                    @Override
-                    public void onScaleEnd(ScaleGestureDetector detector) {
-                    }
-                });
-                scaleGestureDetector.onTouchEvent(event);
-
-                switch (event.getAction() & MotionEvent.ACTION_MASK) {
-                    case MotionEvent.ACTION_DOWN: // first finger down
-                        currentX = (int) event.getX();
-                        currentY = (int) event.getY();
-                        mode = DRAG;
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        if (mode == DRAG) {
-                            int x = (int) event.getX();
-                            int y = (int) event.getY();
-                            int deltaX = x - currentX;
-                            int deltaY = y - currentY;
-                            currentX = x;
-                            currentY = y;
-                            llNutritionInfo.setX(llNutritionInfo.getX() + deltaX);
-                            llNutritionInfo.setY(llNutritionInfo.getY() + deltaY);
-                        } else if (mode == ZOOM) {
-                            float newDist = spacing(event);
-                            if (newDist > 5f) {
-                                float scale = newDist / oldDistLlNutritionInfo;
-
-                                // if scale > 1, zoom in image. If scale < 1, zoom out image based on midpoint of image
+                    public boolean onTouch(View v, MotionEvent event) {
+                        ScaleGestureDetector scaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.OnScaleGestureListener() {
+                            @Override
+                            public boolean onScale(ScaleGestureDetector detector) {
+                                scale *= detector.getScaleFactor();
+                                scale = Math.max(0.1f, Math.min(scale, 5.0f));
                                 llNutritionInfo.setScaleX(scale);
                                 llNutritionInfo.setScaleY(scale);
+                                return true;
                             }
+
+                            @Override
+                            public boolean onScaleBegin(ScaleGestureDetector detector) {
+                                return true;
+                            }
+
+                            @Override
+                            public void onScaleEnd(ScaleGestureDetector detector) {
+                            }
+                        });
+                        scaleGestureDetector.onTouchEvent(event);
+
+                        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                            case MotionEvent.ACTION_DOWN: // first finger down
+                                currentX = (int) event.getX();
+                                currentY = (int) event.getY();
+                                mode = DRAG;
+                                break;
+                            case MotionEvent.ACTION_MOVE:
+                                if (mode == DRAG) {
+                                    int x = (int) event.getX();
+                                    int y = (int) event.getY();
+                                    int deltaX = x - currentX;
+                                    int deltaY = y - currentY;
+                                    currentX = x;
+                                    currentY = y;
+                                    llNutritionInfo.setX(llNutritionInfo.getX() + deltaX);
+                                    llNutritionInfo.setY(llNutritionInfo.getY() + deltaY);
+                                } else if (mode == ZOOM) {
+                                    float newDist = spacing(event);
+                                    if (newDist > 5f) {
+                                        float scale = newDist / oldDistLlNutritionInfo;
+
+                                        // if scale > 1, zoom in image. If scale < 1, zoom out image based on midpoint of image
+                                        llNutritionInfo.setScaleX(scale);
+                                        llNutritionInfo.setScaleY(scale);
+                                    }
+                                }
+                                break;
+                            case MotionEvent.ACTION_UP: // first finger up
+                                break;
+
+                            case MotionEvent.ACTION_POINTER_UP: // second finger up
+                                mode = NONE;
+                                break;
+
+                            case MotionEvent.ACTION_POINTER_DOWN: // first and second finger down
+                                // distance between two fingers
+                                oldDistLlNutritionInfo = spacing(event);
+                                if (oldDistLlNutritionInfo > 5f) {
+                                    mode = ZOOM;
+                                }
+                                break;
                         }
-                        break;
-                    case MotionEvent.ACTION_UP: // first finger up
-                        break;
-
-                    case MotionEvent.ACTION_POINTER_UP: // second finger up
-                        mode = NONE;
-                        break;
-
-                    case MotionEvent.ACTION_POINTER_DOWN: // first and second finger down
-                        // distance between two fingers
-                        oldDistLlNutritionInfo = spacing(event);
-                        if (oldDistLlNutritionInfo > 5f) {
-                            mode = ZOOM;
-                        }
-                        break;
-                }
-                return true;
-            }
-        });
-
-
-        ivRecipeImage.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                ScaleGestureDetector scaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.OnScaleGestureListener() {
-                    @Override
-                    public boolean onScale(ScaleGestureDetector detector) {
-                        scale *= detector.getScaleFactor();
-                        scale = Math.max(0.1f, Math.min(scale, 5.0f));
-                        ivRecipeImage.setScaleX(scale);
-                        ivRecipeImage.setScaleY(scale);
                         return true;
-                    }
-
-                    @Override
-                    public boolean onScaleBegin(ScaleGestureDetector detector) {
-                        return true;
-                    }
-
-                    @Override
-                    public void onScaleEnd(ScaleGestureDetector detector) {
                     }
                 });
-                scaleGestureDetector.onTouchEvent(event);
 
-                switch (event.getAction() & MotionEvent.ACTION_MASK) {
-                    case MotionEvent.ACTION_DOWN: // first finger down
-                        currentX = (int) event.getX();
-                        currentY = (int) event.getY();
-                        mode = DRAG;
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        if (mode == DRAG) {
-                            int x = (int) event.getX();
-                            int y = (int) event.getY();
-                            int deltaX = x - currentX;
-                            int deltaY = y - currentY;
-                            currentX = x;
-                            currentY = y;
-                            ivRecipeImage.setX(ivRecipeImage.getX() + deltaX);
-                            ivRecipeImage.setY(ivRecipeImage.getY() + deltaY);
-                        } else if (mode == ZOOM) {
-                            float newDist = spacing(event);
-                            if (newDist > 5f) {
-                                float scale = newDist / oldDistImage;
-                                // if scale > 1, zoom in image. If scale < 1, zoom out image based on midpoint of image
+
+                ivRecipeImage.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        ScaleGestureDetector scaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.OnScaleGestureListener() {
+                            @Override
+                            public boolean onScale(ScaleGestureDetector detector) {
+                                scale *= detector.getScaleFactor();
+                                scale = Math.max(0.1f, Math.min(scale, 5.0f));
                                 ivRecipeImage.setScaleX(scale);
                                 ivRecipeImage.setScaleY(scale);
+                                return true;
                             }
+
+                            @Override
+                            public boolean onScaleBegin(ScaleGestureDetector detector) {
+                                return true;
+                            }
+
+                            @Override
+                            public void onScaleEnd(ScaleGestureDetector detector) {
+                            }
+                        });
+                        scaleGestureDetector.onTouchEvent(event);
+
+                        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                            case MotionEvent.ACTION_DOWN: // first finger down
+                                currentX = (int) event.getX();
+                                currentY = (int) event.getY();
+                                mode = DRAG;
+                                break;
+                            case MotionEvent.ACTION_MOVE:
+                                if (mode == DRAG) {
+                                    int x = (int) event.getX();
+                                    int y = (int) event.getY();
+                                    int deltaX = x - currentX;
+                                    int deltaY = y - currentY;
+                                    currentX = x;
+                                    currentY = y;
+                                    ivRecipeImage.setX(ivRecipeImage.getX() + deltaX);
+                                    ivRecipeImage.setY(ivRecipeImage.getY() + deltaY);
+                                } else if (mode == ZOOM) {
+                                    float newDist = spacing(event);
+                                    if (newDist > 5f) {
+                                        float scale = newDist / oldDistImage;
+                                        // if scale > 1, zoom in image. If scale < 1, zoom out image based on midpoint of image
+                                        ivRecipeImage.setScaleX(scale);
+                                        ivRecipeImage.setScaleY(scale);
+                                    }
+                                }
+                                break;
+                            case MotionEvent.ACTION_UP: // first finger up
+                                break;
+
+                            case MotionEvent.ACTION_POINTER_UP: // second finger up
+                                mode = NONE;
+                                break;
+
+                            case MotionEvent.ACTION_POINTER_DOWN: // first and second finger down
+                                // distance between two fingers
+                                oldDistImage = spacing(event);
+                                if (oldDistImage > 5f) {
+                                    mode = ZOOM;
+                                }
+                                break;
                         }
-                        break;
-                    case MotionEvent.ACTION_UP: // first finger up
-                        break;
+                        return true;
+                    }
+                });
 
-                    case MotionEvent.ACTION_POINTER_UP: // second finger up
-                        mode = NONE;
-                        break;
 
-                    case MotionEvent.ACTION_POINTER_DOWN: // first and second finger down
-                        // distance between two fingers
-                        oldDistImage = spacing(event);
-                        if (oldDistImage > 5f) {
-                            mode = ZOOM;
-                        }
-                        break;
-                }
-                return true;
+                buttonShareRecipe.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Bitmap bitmap = getBitmapFromView(llSharableRecipeInfo);
+                        String path = MediaStore.Images.Media.insertImage(requireContext().getContentResolver(),
+                                bitmap, recipe.getTitle(), null);
+                        Uri bmpUri = Uri.parse(path);
+                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
+                        shareIntent.setType(SHARE_TYPE_IMAGE);
+                        requireContext().startActivity(Intent.createChooser(shareIntent, requireContext().getString(R.string.share_image)));
+                    }
+                });
+
+                buttonCancelSharing.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        // rollback to previous fragment
+                        (requireActivity()).onBackPressed();
+                    }
+                });
+
+
+                PinchRecyclerView rvRecipeDetailIngredients = binding.rvRecipeDetailIngredients;
+                PinchRecyclerView rvRecipeDetailInstructions = binding.rvRecipeDetailInstructions;
+
+
+                Glide.with(requireContext()).load(recipe.getImageUrl())
+                        .centerCrop()
+                        .transform(new RoundedCorners(Constant.IMAGE_RADIUS))
+                        .into(ivRecipeImage);
+                tvRecipeTitle.setText(recipe.getTitle());
+                tvReadyInTime.setText(MessageFormat.format("{0}m", recipe.getReadyInMinutes()));
+                tvTypes.setText(RecipeDetailsFragment.getDishTypesStringFromRecipe(recipe));
+                tvServings.setText(String.valueOf(recipe.getServings()));
+                tvDiets.setText(RecipeDetailsFragment.getDietStringFromRecipe(recipe));
+
+                // get ingredients from jsonArray and display them using adapter
+                RecipeIngredientsAdapter recipeIngredientsAdapter = new RecipeIngredientsAdapter(recipe.getExtendedIngredients(), getContext());
+                rvRecipeDetailIngredients.setAdapter(recipeIngredientsAdapter);
+                rvRecipeDetailIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
+
+
+                // get instructions from jsonArray and display them using adapter
+                RecipeInstructionsAdapter recipeInstructionsAdapter = new RecipeInstructionsAdapter(recipe.getAnalyzedInstructions(), getContext());
+                rvRecipeDetailInstructions.setAdapter(recipeInstructionsAdapter);
+                rvRecipeDetailInstructions.setLayoutManager(new LinearLayoutManager(getContext()));
             }
         });
-
-
-        buttonShareRecipe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bitmap bitmap = getBitmapFromView(llSharableRecipeInfo);
-                String path = MediaStore.Images.Media.insertImage(requireContext().getContentResolver(),
-                        bitmap, recipe.getTitle(), null);
-                Uri bmpUri = Uri.parse(path);
-                Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
-                shareIntent.setType(SHARE_TYPE_IMAGE);
-                requireContext().startActivity(Intent.createChooser(shareIntent, requireContext().getString(R.string.share_image)));
-            }
-        });
-
-        buttonCancelSharing.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // rollback to previous fragment
-                ((MainActivity) requireActivity()).onBackPressed();
-            }
-        });
-
-
-        PinchRecyclerView rvRecipeDetailIngredients = binding.rvRecipeDetailIngredients;
-        PinchRecyclerView rvRecipeDetailInstructions = binding.rvRecipeDetailInstructions;
-
-
-        Glide.with(requireContext()).load(recipe.getImageUrl())
-                .centerCrop()
-                .transform(new RoundedCorners(Constant.IMAGE_RADIUS))
-                .into(ivRecipeImage);
-        tvRecipeTitle.setText(recipe.getTitle());
-        tvReadyInTime.setText(MessageFormat.format("{0}m", recipe.getReadyInMinutes()));
-        tvTypes.setText(RecipeDetailsFragment.getDishTypesStringFromRecipe(recipe));
-        tvServings.setText(String.valueOf(recipe.getServings()));
-        tvDiets.setText(RecipeDetailsFragment.getDietStringFromRecipe(recipe));
-
-        // get ingredients from jsonArray and display them using adapter
-        RecipeIngredientsAdapter recipeIngredientsAdapter = new RecipeIngredientsAdapter(recipe.getExtendedIngredients(), getContext());
-        rvRecipeDetailIngredients.setAdapter(recipeIngredientsAdapter);
-        rvRecipeDetailIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
-
-
-        // get instructions from jsonArray and display them using adapter
-        RecipeInstructionsAdapter recipeInstructionsAdapter = new RecipeInstructionsAdapter(recipe.getAnalyzedInstructions(), getContext());
-        rvRecipeDetailInstructions.setAdapter(recipeInstructionsAdapter);
-        rvRecipeDetailInstructions.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
 

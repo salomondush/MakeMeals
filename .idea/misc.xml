@@ -58,7 +58,7 @@
         <entry key="app/src/main/res/layout/recommendation_recipe_item.xml" value="0.3645833333333333" />
         <entry key="app/src/main/res/layout/toolbar_main.xml" value="0.45401272243923607" />
         <entry key="app/src/main/res/layout/trial.xml" value="0.14231923421223958" />
-        <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.3136016845703125" />
+        <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.1" />
         <entry key="app/src/main/res/menu/menu_main.xml" value="0.22" />
         <entry key="app/src/main/res/xml/provider_paths.xml" value="0.21302083333333333" />
       </map>

@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,8 @@ import android.widget.Toast;
 
 import com.example.makemeals.Constant;
 import com.example.makemeals.R;
+import com.example.makemeals.ViewModel.RecipesDetailsSharedViewModel;
+import com.example.makemeals.databinding.FragmentFavoritesBinding;
 import com.example.makemeals.models.Recipe;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.parse.ParseQuery;
@@ -30,7 +33,7 @@ import java.util.List;
 public class FavoritesFragment extends Fragment {
     private Fragment recipesListFragment;
     private CircularProgressIndicator progressIndicator;
-    private static final String FAVORITE = "favorite";
+    public static final String FAVORITE = "favorite";
 
 
     public FavoritesFragment() {
@@ -64,32 +67,17 @@ public class FavoritesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        FragmentFavoritesBinding binding = FragmentFavoritesBinding.bind(view);
+        progressIndicator = binding.progressIndicator;
 
-        progressIndicator = view.findViewById(R.id.progressIndicator);
-
-        List<Recipe> favoriteRecipes = new ArrayList<>();
-        recipesListFragment = RecipesListFragment.newInstance(favoriteRecipes, Constant.FAVORITES);
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.add(R.id.flFavoriteRecipesContainer, recipesListFragment).commit();
-        queryFavoriteRecipes();
-    }
-
-    private void queryFavoriteRecipes() {
+        RecipesDetailsSharedViewModel model = new ViewModelProvider(requireActivity()).get(RecipesDetailsSharedViewModel.class);
         showProgressBar();
-        ParseQuery<Recipe> query = ParseQuery.getQuery(Recipe.class);
-        query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
-        // only get 20 most recent Recipes
-        query.setLimit(Constant.REQUEST_LIMIT);
-        query.orderByDescending(Recipe.KEY_CREATED_AT);
-        query.whereEqualTo(Constant.USER, ParseUser.getCurrentUser());
-        query.whereEqualTo(FAVORITE, true);
-        query.findInBackground((recipes, e) -> {
-            if (e == null) {
-                hideProgressBar();
-                ((RecipesListFragment) recipesListFragment).updateRecipes(recipes);
-            } else {
-                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+        model.getRecipes().observe(getViewLifecycleOwner(), recipes -> {
+            // Update the UI.
+            hideProgressBar();
+            recipesListFragment = RecipesListFragment.newInstance(recipes, Constant.FAVORITES);
+            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+            transaction.add(R.id.flFavoriteRecipesContainer, recipesListFragment).commit();
         });
     }
 

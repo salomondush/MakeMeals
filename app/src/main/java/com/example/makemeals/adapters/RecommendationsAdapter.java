@@ -45,17 +45,12 @@ import okhttp3.Response;
 
 public class RecommendationsAdapter extends RecyclerView.Adapter<RecommendationsAdapter.ViewHolder>{
     private RecommendationItemBinding binding;
-    private final List<HashMap<String, String>> categories;
+    private final List<HashMap<String, List<Recipe>>> recommendations;
     private final Context context;
-    private final OkHttpClient client;
-    private final String mealType;
 
-    public RecommendationsAdapter(List<HashMap<String, String>> categories, Context context,
-                                  String mealType) {
-        this.categories = categories;
+    public RecommendationsAdapter(List<HashMap<String, List<Recipe>>> recommendations, Context context) {
+        this.recommendations = recommendations;
         this.context = context;
-        client = new OkHttpClient();
-        this.mealType = mealType;
     }
 
     @NonNull
@@ -67,116 +62,38 @@ public class RecommendationsAdapter extends RecyclerView.Adapter<Recommendations
 
     @Override
     public void onBindViewHolder(@NonNull RecommendationsAdapter.ViewHolder holder, int position) {
-        HashMap<String, String> category = categories.get(position);
-        holder.bind(category);
+        HashMap<String, List<Recipe>> recommendation = recommendations.get(position);
+        holder.bind(recommendation);
     }
 
     @Override
     public int getItemCount() {
-        return categories.size();
+        return recommendations.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView categoryTitleTextView;
         private final RecyclerView recyclerViewRecommendedRecipes;
-        private List<Recipe> recipes;
-        private RecommendedRecipesAdapter recommendedRecipesAdapter;
-        private CircularProgressIndicator progressIndicator;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             categoryTitleTextView = binding.categoryTitleTextView;
             recyclerViewRecommendedRecipes = binding.recyclerViewRecommendedRecipes;
-            progressIndicator = binding.progressIndicator;
         }
 
-        public void bind(HashMap<String, String> category) {
-            categoryTitleTextView.setText(category.containsKey("diet") ? category.get("diet") : category.get("cuisine"));
+        public void bind(HashMap<String, List<Recipe>> recommendation) {
 
-            recipes = new ArrayList<>();
-            recommendedRecipesAdapter = new RecommendedRecipesAdapter(recipes, context);
+            String typeName = recommendation.keySet().toArray()[0].toString();
+
+            categoryTitleTextView.setText(typeName.split("\\*")[1]);
+
+            RecommendedRecipesAdapter recommendedRecipesAdapter = new RecommendedRecipesAdapter(recommendation.get(typeName),
+                    context);
             recyclerViewRecommendedRecipes.setAdapter(recommendedRecipesAdapter);
             recyclerViewRecommendedRecipes.setLayoutManager(new LinearLayoutManager(context,
                     LinearLayoutManager.HORIZONTAL, false));
 
-            getRecipesByCategory(category);
-        }
-
-        private void showProgressIndicator() {
-            progressIndicator.setVisibility(View.VISIBLE);
-        }
-
-        private void hideProgressIndicator() {
-            progressIndicator.setVisibility(View.GONE);
-        }
-
-
-        /**
-         * Query recipes satisfying the recommended diet and cuisine categories from the
-         * Spoonacular API
-         *
-         * @param category
-         */
-        private void getRecipesByCategory(HashMap<String, String> category) {
-            showProgressIndicator();
-            HttpUrl.Builder urlBuilder =
-                    Objects.requireNonNull(HttpUrl.parse(Constant.RECIPE_SEARCH_URL)).newBuilder();
-            urlBuilder.addQueryParameter(Constant.API_KEY, Constant.SPN_API_KEY);
-            urlBuilder.addQueryParameter(Constant.TYPE, mealType);
-            if (category.containsKey(Constant.DIET)) {
-                urlBuilder.addQueryParameter(Constant.DIET, category.get(Constant.DIET));
-            } else {
-                urlBuilder.addQueryParameter(Constant.CUISINE, category.get(Constant.CUISINE));
-            }
-            urlBuilder.addQueryParameter(Constant.NUMBER,
-                    String.valueOf(Constant.MAX_CATEGORY_RECOMMENDATIONS_RESULTS));
-
-            urlBuilder.addQueryParameter(Constant.FILL_INGREDIENTS, String.valueOf(true));
-            urlBuilder.addQueryParameter(Constant.ADD_RECIPE_INFORMATION, String.valueOf(true));
-            urlBuilder.addQueryParameter(Constant.ADD_RECIPE_NUTRITION, String.valueOf(true));
-            urlBuilder.addQueryParameter(Constant.INSTRUCTIONS_REQUIRED, String.valueOf(true));
-            urlBuilder.addQueryParameter(Constant.OFFSET,
-                    String.valueOf((int) (Math.random() * Constant.RANDOM_MAX)));
-
-            Request request = new Request.Builder()
-                    .url(urlBuilder.build().toString())
-                    .build();
-
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    e.printStackTrace();
-                }
-
-                @Override
-                public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
-                    final String responseData = Objects.requireNonNull(response.body()).string();
-                    ((Activity) context).runOnUiThread(() -> {
-                        hideProgressIndicator();
-                    });
-                    if (response.isSuccessful()) {
-                        try {
-                            JSONObject responseJson =
-                                    new JSONObject(responseData);
-                            recipes.clear();
-                            recipes.addAll(Recipe.fromJsonArray(responseJson.getJSONArray(Constant.RESULTS)));
-
-                            ((Activity) context).runOnUiThread(() -> {
-                                recommendedRecipesAdapter.notifyDataSetChanged();
-                            });
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                    } else {
-                        ((Activity) context).runOnUiThread(() -> {
-                            Toast.makeText(context, context.getString(R.string.error_getting_recipes),
-                                    Toast.LENGTH_SHORT).show();
-                        });
-                    }
-                }
-            });
         }
     }
 }

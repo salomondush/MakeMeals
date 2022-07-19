@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 
 import com.example.makemeals.MainActivity;
 import com.example.makemeals.R;
+import com.example.makemeals.ViewModel.SharedViewModel;
 import com.example.makemeals.adapters.RecipeAdapter;
 import com.example.makemeals.models.Recipe;
 
@@ -83,14 +85,15 @@ public class RecipesListFragment extends Fragment {
         RecyclerView rvRecipeList = view.findViewById(R.id.rvRecipeList);
         recipeAdapter = new RecipeAdapter(recipes, getContext(), page);
 
-
+        SharedViewModel model =
+                new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
         recipeAdapter.setOnItemClickListener(new RecipeAdapter.OnItemClickListener() {
              @Override
              public void onItemClick(View itemView, int position) {
 
                  // call the activity to show the recipe details
-                 ((MainActivity) requireActivity()).showRecipeDetails(recipes.get(position));
-
+                 model.select(recipes.get(position));
+                 ((MainActivity) requireActivity()).showRecipeDetails();
              }
         });
 

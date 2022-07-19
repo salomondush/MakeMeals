@@ -155,16 +155,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void showRecipeDetails(Recipe recipe) {
-        Fragment fragment = RecipeDetailsFragment.newInstance(recipe);
+    public void showRecipeDetails() {
+        Fragment fragment = new RecipeDetailsFragment();
         fragmentManager.beginTransaction()
                 .replace(R.id.flContainer, fragment)
                 .addToBackStack(null)
                 .commit();
     }
 
-    public void showRecipeSharingFragment(Recipe recipe) {
-        Fragment fragment = ShareRecipeFragment.newInstance(recipe);
+    public void showRecipeSharingFragment() {
+        Fragment fragment = new ShareRecipeFragment();
         fragmentManager.beginTransaction()
                 .replace(R.id.flContainer, fragment)
                 .addToBackStack(null)
