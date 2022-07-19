@@ -63,7 +63,14 @@ public class RecommendationsAdapter extends RecyclerView.Adapter<Recommendations
     @Override
     public void onBindViewHolder(@NonNull RecommendationsAdapter.ViewHolder holder, int position) {
         HashMap<String, List<Recipe>> recommendation = recommendations.get(position);
-        holder.bind(recommendation);
+
+        // if no recommendations, hide the view
+        String key = recommendation.keySet().iterator().next();
+        if (Objects.requireNonNull(recommendation.get(key)).size() == 0) {
+           holder.itemView.setVisibility(View.GONE);
+        } else {
+            holder.bind(recommendation);
+        }
     }
 
     @Override

@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.makemeals.Constant;
-import com.example.makemeals.fragments.FavoritesFragment;
+import com.example.makemeals.fragments.RecipesFragment;
 import com.example.makemeals.models.Recipe;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -30,7 +30,7 @@ public class RecipesDetailsSharedViewModel extends ViewModel {
         query.setLimit(Constant.REQUEST_LIMIT);
         query.orderByDescending(Recipe.KEY_CREATED_AT);
         query.whereEqualTo(Constant.USER, ParseUser.getCurrentUser());
-        query.whereEqualTo(FavoritesFragment.FAVORITE, true);
+        query.whereEqualTo(RecipesFragment.FAVORITE, true);
         query.findInBackground((resultRecipes, e) -> {
             if (e == null) {
                 recipes.setValue(resultRecipes);

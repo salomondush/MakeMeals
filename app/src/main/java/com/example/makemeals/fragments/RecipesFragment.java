@@ -11,42 +11,35 @@ import androidx.lifecycle.ViewModelProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.makemeals.Constant;
 import com.example.makemeals.R;
 import com.example.makemeals.ViewModel.RecipesDetailsSharedViewModel;
-import com.example.makemeals.databinding.FragmentFavoritesBinding;
-import com.example.makemeals.models.Recipe;
+import com.example.makemeals.databinding.FragmentRecipesBinding;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link FavoritesFragment#newInstance} factory method to
+ * Use the {@link RecipesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FavoritesFragment extends Fragment {
+public class RecipesFragment extends Fragment {
     private Fragment recipesListFragment;
     private CircularProgressIndicator progressIndicator;
     public static final String FAVORITE = "favorite";
 
 
-    public FavoritesFragment() {
+    public RecipesFragment() {
         // Required empty public constructor
     }
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     * @return A new instance of fragment FavoritesFragment.
+     * @return A new instance of fragment RecipesFragment.
      */
-    public static FavoritesFragment newInstance() {
-        FavoritesFragment fragment = new FavoritesFragment();
+    public static RecipesFragment newInstance() {
+        RecipesFragment fragment = new RecipesFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -61,13 +54,13 @@ public class FavoritesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_favorites, container, false);
+        return inflater.inflate(R.layout.fragment_recipes, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        FragmentFavoritesBinding binding = FragmentFavoritesBinding.bind(view);
+        FragmentRecipesBinding binding = FragmentRecipesBinding.bind(view);
         progressIndicator = binding.progressIndicator;
 
         RecipesDetailsSharedViewModel model = new ViewModelProvider(requireActivity()).get(RecipesDetailsSharedViewModel.class);
