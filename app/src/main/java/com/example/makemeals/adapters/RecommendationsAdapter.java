@@ -1,47 +1,23 @@
 package com.example.makemeals.adapters;
 
-import android.app.Activity;
 import android.content.Context;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.makemeals.Constant;
-import com.example.makemeals.R;
 import com.example.makemeals.databinding.RecommendationItemBinding;
-import com.example.makemeals.fragments.RecipesListFragment;
-import com.example.makemeals.models.Ingredient;
 import com.example.makemeals.models.Recipe;
-import com.google.android.material.progressindicator.CircularProgressIndicator;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class RecommendationsAdapter extends RecyclerView.Adapter<RecommendationsAdapter.ViewHolder>{
     private RecommendationItemBinding binding;
@@ -100,7 +76,6 @@ public class RecommendationsAdapter extends RecyclerView.Adapter<Recommendations
             recyclerViewRecommendedRecipes.setAdapter(recommendedRecipesAdapter);
             recyclerViewRecommendedRecipes.setLayoutManager(new LinearLayoutManager(context,
                     LinearLayoutManager.HORIZONTAL, false));
-
         }
     }
 }
