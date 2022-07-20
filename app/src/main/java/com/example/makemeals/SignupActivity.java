@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.makemeals.databinding.ActivitySignupBinding;
+import com.example.makemeals.models.Recommendation;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
@@ -57,7 +58,11 @@ public class SignupActivity extends AppCompatActivity {
             public void done(com.parse.ParseException e) {
                 if (e != null) {
                     Toast.makeText(SignupActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+
                 } else {
+                    Recommendation recommendation = new Recommendation();
+                    recommendation.setUser(ParseUser.getCurrentUser());
+                    recommendation.saveInBackground();
                     goToMainActivity();
                     Toast.makeText(SignupActivity.this, R.string.sign_up_successful, Toast.LENGTH_SHORT).show();
                 }

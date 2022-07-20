@@ -7,8 +7,8 @@ import org.json.JSONObject;
 
 @ParseClassName("ShoppingItem")
 public class ShoppingItem extends ParseObject {
-    public static final String FIELDS = "fields";
-    public static final String KEY_IS_CHECKED = "isChecked";
+    private static final String FIELDS = "fields";
+    private static final String KEY_IS_CHECKED = "isChecked";
 
     public ShoppingItem() {
         super();

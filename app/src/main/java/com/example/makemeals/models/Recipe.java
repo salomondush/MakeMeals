@@ -16,19 +16,20 @@ import java.util.Objects;
 
 @ParseClassName("Recipe")
 public class Recipe extends ParseObject {
-    public static final String SPN_ID = "spoonacularId";
-    public static final String TITLE = "title";
-    public static final String IMAGE_URL = "imageUrl";
-    public static final String FAVORITE = "favorite";
-    public static final String SAVED = "saved";
-    public static final String KEY_USER = "user";
-    public static final String DIETS = "diets";
-    public static final String DISH_TYPES = "dishTypes";
-    public static final String READY_IN = "readyInMinutes";
-    public static final String SERVINGS = "servings";
-    public static final String EXTENDED_INGREDIENTS = "extendedIngredients";
-    public static final String NUTRIENTS = "nutrients";
-    public static final String ANALYZED_INSTRUCTIONS = "analyzedInstructions";
+    private static final String SPN_ID = "spoonacularId";
+    private static final String TITLE = "title";
+    private static final String IMAGE_URL = "imageUrl";
+    private static final String FAVORITE = "favorite";
+    private static final String SAVED = "saved";
+    private static final String KEY_USER = "user";
+    private static final String DIETS = "diets";
+    private static final String DISH_TYPES = "dishTypes";
+    private static final String READY_IN = "readyInMinutes";
+    private static final String SERVINGS = "servings";
+    private static final String EXTENDED_INGREDIENTS = "extendedIngredients";
+    private static final String NUTRIENTS = "nutrients";
+    private static final String CUISINES = "cuisines";
+    private static final String ANALYZED_INSTRUCTIONS = "analyzedInstructions";
 
     // implement the default constructor
     public Recipe() {
@@ -46,6 +47,7 @@ public class Recipe extends ParseObject {
         setNutrients(jsonObject.getJSONObject("nutrition").getJSONArray("nutrients"));
         setExtendedIngredients(jsonObject.getJSONArray("extendedIngredients"));
         setAnalyzedInstructions(jsonObject.getJSONArray("analyzedInstructions"));
+        setCuisines(jsonObject.getJSONArray("cuisines"));
         setFavorite(false);
         setSaved(false);
         setUser(ParseUser.getCurrentUser());
@@ -189,5 +191,13 @@ public class Recipe extends ParseObject {
 
     public void setNutrients(JSONArray nutrients) {
         put(NUTRIENTS, nutrients);
+    }
+
+    public JSONArray getCuisines() {
+        return getJSONArray(CUISINES);
+    }
+
+    public void setCuisines(JSONArray cuisines) {
+        put(CUISINES, cuisines);
     }
 }

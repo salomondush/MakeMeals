@@ -8,9 +8,9 @@ import java.util.Date;
 
 @ParseClassName("Ingredient")
 public class Ingredient extends ParseObject {
-    public static final String KEY_NAME = "name";
-    public static final String CREATED_AT = "createdAt";
-    public static final String USER = "user";
+    private static final String KEY_NAME = "name";
+    private static final String CREATED_AT = "createdAt";
+    private static final String USER = "user";
 
     public String getName() {
         return getString(KEY_NAME);

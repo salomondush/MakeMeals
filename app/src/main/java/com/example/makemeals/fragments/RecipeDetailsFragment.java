@@ -13,6 +13,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,6 +38,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.example.makemeals.MainActivity;
 import com.example.makemeals.R;
 import com.example.makemeals.RestClient;
+import com.example.makemeals.ViewModel.SharedViewModel;
 import com.example.makemeals.adapters.IngredientsDialogAdapter;
 import com.example.makemeals.adapters.RecipeIngredientsAdapter;
 import com.example.makemeals.adapters.RecipeInstructionsAdapter;
@@ -78,6 +80,7 @@ public class RecipeDetailsFragment extends Fragment {
     private LinearLayout llIngredients;
     private LinearLayout llInstructions;
     private Recipe recipe;
+    private MaterialButtonToggleGroup toggleButtonRecipeInfo;
 
 
     // material popup
@@ -85,7 +88,6 @@ public class RecipeDetailsFragment extends Fragment {
 
 
     public final static int IMAGE_RADIUS = 10;
-    private static final String ARG_PARAM1 = "recipe";
 
 
     public RecipeDetailsFragment() {
@@ -95,14 +97,12 @@ public class RecipeDetailsFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     * @param recipe Parameter 1.
+     *
      * @return A new instance of fragment RecipeDetailsFragment.
      */
-    public static RecipeDetailsFragment newInstance(Recipe recipe) {
+    public static RecipeDetailsFragment newInstance() {
         RecipeDetailsFragment fragment = new RecipeDetailsFragment();
         Bundle args = new Bundle();
-        // pass the recipe object to the fragment
-        args.putParcelable(ARG_PARAM1, recipe);
         fragment.setArguments(args);
         return fragment;
     }
@@ -110,12 +110,6 @@ public class RecipeDetailsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            recipe = getArguments().getParcelable(ARG_PARAM1);
-        }
-
-        TransitionInflater inflater = TransitionInflater.from(requireContext());
-        setEnterTransition(inflater.inflateTransition(R.transition.slide_right));
     }
 
     @Override
@@ -128,121 +122,140 @@ public class RecipeDetailsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        com.example.makemeals.databinding.FragmentRecipeDetailsBinding binding = FragmentRecipeDetailsBinding.bind(view);
+        FragmentRecipeDetailsBinding binding = FragmentRecipeDetailsBinding.bind(view);
 
-        materialAlertDialogBuilder = new MaterialAlertDialogBuilder(requireContext());
-        progressIndicator = binding.progressIndicator;
+        SharedViewModel model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+        model.getSelected().observe(getViewLifecycleOwner(), recipe -> {
+            if (recipe != null) {
+                this.recipe = recipe;
 
-        ImageView ivRecipeImage = binding.ivRecipeImage;
-        TextView tvRecipeTitle = binding.tvRecipeTitle;
-        TextView tvReadyInTime = binding.tvReadyInTime;
-        TextView tvTypes = binding.tvTypes;
-        TextView tvServings = binding.tvServings;
-        TextView tvDiets = binding.tvDiets;
+                materialAlertDialogBuilder = new MaterialAlertDialogBuilder(requireContext());
+                progressIndicator = binding.progressIndicator;
 
-        RecyclerView rvRecipeDetailIngredients = binding.rvRecipeDetailIngredients;
-        RecyclerView rvRecipeDetailInstructions = binding.rvRecipeDetailInstructions;
+                ImageView ivRecipeImage = binding.ivRecipeImage;
+                TextView tvRecipeTitle = binding.tvRecipeTitle;
+                TextView tvReadyInTime = binding.tvReadyInTime;
+                TextView tvTypes = binding.tvTypes;
+                TextView tvServings = binding.tvServings;
+                TextView tvDiets = binding.tvDiets;
 
-        tbSave = binding.tbSave;
-        tbFavorite = binding.tbFavorite;
-        ImageButton ibShare = binding.ibShare;
-        ImageButton ibShoppingList = binding.ibShoppingList;
+                RecyclerView rvRecipeDetailIngredients = binding.rvRecipeDetailIngredients;
+                RecyclerView rvRecipeDetailInstructions = binding.rvRecipeDetailInstructions;
 
-        MaterialButtonToggleGroup toggleButtonRecipeInfo = binding.toggleButtonRecipeInfo;
-        llNutritionInfo = binding.llNutritionInfo;
-        llIngredients = binding.llIngredients;
-        llInstructions = binding.llInstructions;
+                tbSave = binding.tbSave;
+                tbFavorite = binding.tbFavorite;
+                ImageButton ibShare = binding.ibShare;
+                ImageButton ibShoppingList = binding.ibShoppingList;
 
-        Glide.with(requireContext()).load(recipe.getImageUrl())
-                .centerCrop()
-                .transform(new RoundedCorners(IMAGE_RADIUS))
-                .into(ivRecipeImage);
-        tvRecipeTitle.setText(recipe.getTitle());
-        tvReadyInTime.setText(MessageFormat.format("{0}m", recipe.getReadyInMinutes()));
-        tvTypes.setText(getDishTypesStringFromRecipe(recipe));
-        tvServings.setText(String.valueOf(recipe.getServings()));
-        tvDiets.setText(getDietStringFromRecipe(recipe));
+                toggleButtonRecipeInfo = binding.toggleButtonRecipeInfo;
+                llNutritionInfo = binding.llNutritionInfo;
+                llIngredients = binding.llIngredients;
+                llInstructions = binding.llInstructions;
 
-        // get ingredients from jsonArray and display them using adapter
-        RecipeIngredientsAdapter recipeIngredientsAdapter = new RecipeIngredientsAdapter(recipe.getExtendedIngredients(), getContext());
-        rvRecipeDetailIngredients.setAdapter(recipeIngredientsAdapter);
-        rvRecipeDetailIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
+                Glide.with(requireContext()).load(recipe.getImageUrl())
+                        .centerCrop()
+                        .transform(new RoundedCorners(IMAGE_RADIUS))
+                        .into(ivRecipeImage);
+                tvRecipeTitle.setText(recipe.getTitle());
+                tvReadyInTime.setText(MessageFormat.format("{0}m", recipe.getReadyInMinutes()));
+                tvTypes.setText(getDishTypesStringFromRecipe(recipe));
+                tvServings.setText(String.valueOf(recipe.getServings()));
+                tvDiets.setText(getDietStringFromRecipe(recipe));
 
-        // get instructions from jsonArray and display them using adapter
-        RecipeInstructionsAdapter recipeInstructionsAdapter = new RecipeInstructionsAdapter(recipe.getAnalyzedInstructions(), getContext(), true);
-        rvRecipeDetailInstructions.setAdapter(recipeInstructionsAdapter);
-        rvRecipeDetailInstructions.setLayoutManager(new LinearLayoutManager(getContext()));
+                // get ingredients from jsonArray and display them using adapter
+                RecipeIngredientsAdapter recipeIngredientsAdapter = new RecipeIngredientsAdapter(recipe.getExtendedIngredients(), getContext());
+                rvRecipeDetailIngredients.setAdapter(recipeIngredientsAdapter);
+                rvRecipeDetailIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        toggleButtonRecipeInfo.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
-            @Override
-            public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
-                if (isChecked){
-                    if (checkedId == R.id.buttonNutrition) {
-                        llNutritionInfo.setVisibility(View.VISIBLE);
-                        llIngredients.setVisibility(View.GONE);
-                        llInstructions.setVisibility(View.GONE);
-                    } else if (checkedId == R.id.buttonIngredients) {
-                        llNutritionInfo.setVisibility(View.GONE);
-                        llIngredients.setVisibility(View.VISIBLE);
-                        llInstructions.setVisibility(View.GONE);
-                    } else if (checkedId == R.id.buttonInstructions) {
-                        llNutritionInfo.setVisibility(View.GONE);
-                        llIngredients.setVisibility(View.GONE);
-                        llInstructions.setVisibility(View.VISIBLE);
-                    }
-                }
+                // get instructions from jsonArray and display them using adapter
+                RecipeInstructionsAdapter recipeInstructionsAdapter = new RecipeInstructionsAdapter(recipe.getAnalyzedInstructions(), getContext(), true);
+                rvRecipeDetailInstructions.setAdapter(recipeInstructionsAdapter);
+                rvRecipeDetailInstructions.setLayoutManager(new LinearLayoutManager(getContext()));
+
+                // set up toggle button group for recipe info
+                setupToggleButtonGroup();
+
+                tbSave.setChecked(recipe.getSaved());
+                tbFavorite.setChecked(recipe.getFavorite());
+
+                tbSave.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    recipe.setSaved(isChecked);
+                    recipe.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e != null){
+                                tbSave.setChecked(!isChecked);
+                                Toast.makeText(getContext(),
+                                        (isChecked? requireContext().getString(R.string.error_saving_recipe):
+                                                requireContext().getString(R.string.error_unsaving_recipe)), Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getContext(), (isChecked?
+                                        requireContext().getString(R.string.recipe_saved):
+                                        requireContext().getString(R.string.recipe_unsaved)), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                });
+
+                tbFavorite.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    recipe.setFavorite(isChecked);
+                    recipe.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e != null){
+                                tbFavorite.setChecked(!isChecked);
+                                Toast.makeText(getContext(), (isChecked? requireContext().getString(R.string.error_favoriting_recipe):
+                                        requireContext().getString(R.string.error_unfavoriting_recipe)), Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getContext(), (isChecked?
+                                        requireContext().getString(R.string.recipe_favorited):
+                                        requireContext().getString(R.string.recipe_unfavorited)), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                });
+
+                ibShare.setOnClickListener(v -> {
+                    ((MainActivity) requireActivity()).showRecipeSharingFragment();
+                });
+
+                ibShoppingList.setOnClickListener(v -> {
+                    launchAddToShoppingListDialog();
+                });
             }
-        });
-
-        tbSave.setChecked(recipe.getSaved());
-        tbFavorite.setChecked(recipe.getFavorite());
-
-        tbSave.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            recipe.setSaved(isChecked);
-            recipe.saveInBackground(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if (e != null){
-                        tbSave.setChecked(!isChecked);
-                        Toast.makeText(getContext(),
-                                (isChecked? requireContext().getString(R.string.error_saving_recipe):
-                                        requireContext().getString(R.string.error_unsaving_recipe)), Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getContext(), (isChecked?
-                                requireContext().getString(R.string.recipe_saved):
-                                requireContext().getString(R.string.recipe_unsaved)), Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-        });
-
-        tbFavorite.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            recipe.setFavorite(isChecked);
-            recipe.saveInBackground(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if (e != null){
-                        tbFavorite.setChecked(!isChecked);
-                        Toast.makeText(getContext(), (isChecked? requireContext().getString(R.string.error_favoriting_recipe):
-                                requireContext().getString(R.string.error_unfavoriting_recipe)), Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getContext(), (isChecked?
-                                requireContext().getString(R.string.recipe_favorited):
-                                requireContext().getString(R.string.recipe_unfavorited)), Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-        });
-
-        ibShare.setOnClickListener(v -> {
-            ((MainActivity) requireActivity()).showRecipeSharingFragment(recipe);
-        });
-
-        ibShoppingList.setOnClickListener(v -> {
-            launchAddToShoppingListDialog();
         });
     }
 
+
+    /**
+     * Sets up the toggle button group for the recipe info.
+     */
+    private void setupToggleButtonGroup() {
+        int initialId = toggleButtonRecipeInfo.getCheckedButtonId();
+        displayCheckedIdInformation(initialId);
+
+        toggleButtonRecipeInfo.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (isChecked){
+                displayCheckedIdInformation(checkedId);
+            }
+        });
+    }
+
+    private void displayCheckedIdInformation(int checkedId){
+        if (checkedId == R.id.buttonNutrition) {
+            llNutritionInfo.setVisibility(View.VISIBLE);
+            llIngredients.setVisibility(View.GONE);
+            llInstructions.setVisibility(View.GONE);
+        } else if (checkedId == R.id.buttonIngredients) {
+            llNutritionInfo.setVisibility(View.GONE);
+            llIngredients.setVisibility(View.VISIBLE);
+            llInstructions.setVisibility(View.GONE);
+        } else if (checkedId == R.id.buttonInstructions) {
+            llNutritionInfo.setVisibility(View.GONE);
+            llIngredients.setVisibility(View.GONE);
+            llInstructions.setVisibility(View.VISIBLE);
+        }
+    }
 
     public static String getDietStringFromRecipe(Recipe recipe){
         StringBuilder diets = new StringBuilder();

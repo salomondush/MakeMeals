@@ -9,12 +9,6 @@
     <string name="search_meals">Search Meals</string>
     <string name="favorites">Favorites</string>
     <string name="logo">logo</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="hello_search_query_blank_fragment">Hello Search Query Blank Fragment</string>
-    <string name="hello_blank_recipe_details_fragment">Hello recipe details fragment</string>
-    <string name="hello_blank_profile_fragment">Hello blank profile fragment</string>
-    <string name="hello_blank_listview_fragment">Hello blank listview fragment</string>
-    <string name="hello_blank_ingredients_fragment">hello blank ingredients fragment</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="sign_up">Sign Up</string>
     <string name="recipe_title">Recipe Title</string>
@@ -76,8 +70,6 @@
     <string name="recipe_unsaved">Recipe Unsaved</string>
     <string name="recipe_favorited">Recipe Favorited</string>
     <string name="recipe_unfavorited">Recipe Unfavorited</string>
-    <string name="picture_not_taken">Picture wasn\'t taken!</string>
-    <string name="failed_to_create_directory">Failed to create directory</string>
     <string name="add_ingredients">Add ingredients</string>
     <string name="swipe_left_to_remove_item">Swipe left to remove item</string>
     <string name="add">Add</string>
@@ -86,7 +78,6 @@
     <string name="ingredients_added_to_shopping_list">Ingredients added to shopping list</string>
     <string name="error_adding_ingredients_to_shopping_list">Error adding ingredients to shopping list</string>
     <string name="error_saving_shopping_items">Error saving shopping items</string>
-    <string name="error_searching_recipes">Error searching recipes</string>
     <string name="error_getting_shopping_list">Error getting shopping list</string>
     <string name="clear_shopping_list">Clear Shopping List</string>
     <string name="yes">Yes</string>
@@ -106,5 +97,18 @@
     <string name="ingredients_selector">ingredients</string>
     <string name="instructions_selector">Instructions</string>
     <string name="add_ingredient_icon">add ingredient icon</string>
+    <string name="vegetarian">vegetarian</string>
+    <string name="breakfast_lunch_dinner">Breakfast, Lunch, Dinner</string>
+    <string name="breakfast">Breakfast</string>
+    <string name="lunch">Lunch</string>
+    <string name="dinner">Dinner</string>
+    <string name="snack">Snacks</string>
+    <string name="connection_failed">Connection Failed</string>
+    <string name="error_saving_recommendation">Error Saving Recommendation</string>
+    <string name="saved">Saved</string>
+    <string name="favorite">Favorite</string>
+    <string name="recipes">Recipes</string>
+    <string name="_1_large">1 Large</string>
+    <string name="all">All</string>
     <string name="profile">Profile</string>
 </resources>

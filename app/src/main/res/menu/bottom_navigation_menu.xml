@@ -15,11 +15,11 @@
         app:showAsAction="ifRoom"
         android:title="@string/search_meals"/>
     <item
-        android:id="@+id/favorites"
+        android:id="@+id/recipes"
         android:enabled="true"
         app:showAsAction="always"
-        android:icon="@drawable/favorites_icon_selector"
-        android:title="@string/favorites" />
+        android:icon="@drawable/recipes_selector"
+        android:title="@string/recipes" />
 
     <item
         android:id="@+id/profile"

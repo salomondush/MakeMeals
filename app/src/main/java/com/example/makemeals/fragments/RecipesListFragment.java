@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 
 import com.example.makemeals.MainActivity;
 import com.example.makemeals.R;
+import com.example.makemeals.ViewModel.SharedViewModel;
 import com.example.makemeals.adapters.RecipeAdapter;
 import com.example.makemeals.models.Recipe;
 
@@ -35,10 +37,8 @@ public class RecipesListFragment extends Fragment {
 
     // the fragment initialization parameters
     private static final String ARG_PARAM1 = "recipes";
-    private static final String PAGE = "page";
 
     private List<Recipe> recipes;
-    private int page;
 
     public RecipesListFragment() {
         // Required empty public constructor
@@ -50,12 +50,11 @@ public class RecipesListFragment extends Fragment {
      * @param recipes Parameter 1.
      * @return A new instance of fragment RecipesListFragment.
      */
-    public static RecipesListFragment newInstance(List<Recipe> recipes, int page) {
+    public static RecipesListFragment newInstance(List<Recipe> recipes) {
         RecipesListFragment fragment = new RecipesListFragment();
         Bundle args = new Bundle();
         // initialize the recipes list
         args.putParcelableArrayList(ARG_PARAM1, (ArrayList<? extends Parcelable>) recipes);
-        args.putInt(PAGE, page);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,7 +64,6 @@ public class RecipesListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             recipes = getArguments().getParcelableArrayList(ARG_PARAM1);
-            page = getArguments().getInt(PAGE);
         }
     }
 
@@ -81,27 +79,27 @@ public class RecipesListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         RecyclerView rvRecipeList = view.findViewById(R.id.rvRecipeList);
-        recipeAdapter = new RecipeAdapter(recipes, getContext(), page);
+        recipeAdapter = new RecipeAdapter(recipes, getContext());
 
+        rvRecipeList.setAdapter(recipeAdapter);
+        rvRecipeList.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        SharedViewModel model =
+                new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
         recipeAdapter.setOnItemClickListener(new RecipeAdapter.OnItemClickListener() {
              @Override
              public void onItemClick(View itemView, int position) {
 
                  // call the activity to show the recipe details
-                 ((MainActivity) requireActivity()).showRecipeDetails(recipes.get(position));
-
+                 model.select(recipes.get(position));
+                 ((MainActivity) requireActivity()).showRecipeDetails();
              }
         });
-
-
-        rvRecipeList.setAdapter(recipeAdapter);
-        rvRecipeList.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
-    public void updateRecipes(List<Recipe> recipes) {
-        this.recipes.clear();
-        this.recipes.addAll(recipes);
+    public void updateRecipes(List<Recipe> newRecipes) {
+        recipes.clear();
+        recipes.addAll(newRecipes);
         recipeAdapter.notifyDataSetChanged();
     }
 

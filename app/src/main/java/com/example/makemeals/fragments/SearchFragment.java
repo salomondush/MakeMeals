@@ -6,10 +6,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.transition.TransitionInflater;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 import com.example.makemeals.Constant;
 import com.example.makemeals.R;
 import com.example.makemeals.RestClient;
+import com.example.makemeals.ViewModel.RecipesSearchViewModel;
 import com.example.makemeals.adapters.IngredientsPageAdapter;
 import com.example.makemeals.models.Ingredient;
 import com.example.makemeals.models.Recipe;
@@ -32,15 +34,25 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import cz.msebera.android.httpclient.Header;
+import okhttp3.CacheControl;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,7 +70,8 @@ public class SearchFragment extends Fragment {
     private Fragment recipesListFragment;
     private CircularProgressIndicator progressIndicator;
 
-    private static final String RESULTS = "results";
+    private RecipesSearchViewModel recipesSearchViewModel;
+
     private static final List<String> DIET_OPTIONS = Arrays.asList("Gluten Free", "Ketogenic",
             "Vegetarian", "Lacto-Vegetarian", "Ovo-Vegetarian", "Vegan", "Pescetarian",
             "Paleo", "Primal", "Whole30", "Low FODMAP");
@@ -98,6 +111,13 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        recipesSearchViewModel = new ViewModelProvider(requireActivity()).get(RecipesSearchViewModel.class);
+        recipesSearchViewModel.getRecipes().observe(getViewLifecycleOwner(), recipes -> {
+            if (recipes != null) {
+                ((RecipesListFragment) recipesListFragment).updateRecipes(recipes);
+            }
+        });
+
         MaterialButton searchButton = view.findViewById(R.id.searchButton);
         recipeDiet = view.findViewById(R.id.recipeDiet);
         recipeType = view.findViewById(R.id.recipeType);
@@ -117,7 +137,8 @@ public class SearchFragment extends Fragment {
 
         // initialize the child fragment that displays result recipes in a recyclerView
         List<Recipe> resultRecipes = new ArrayList<>();
-        recipesListFragment = RecipesListFragment.newInstance(resultRecipes, Constant.SEARCH);
+        recipesListFragment = RecipesListFragment.newInstance(resultRecipes);
+
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.add(R.id.flSearchResultsContainer, recipesListFragment).commit();
 
@@ -168,25 +189,57 @@ public class SearchFragment extends Fragment {
 
     private void searchRecipes(String type, String diet) {
         showProgressBar();
-        RestClient restClient = new RestClient(getContext());
-        restClient.complexSearch(searchIngredientsNames, type, diet, new JsonHttpResponseHandler(){
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                super.onSuccess(statusCode, headers, response);
 
-                try {
-                    ((RecipesListFragment) recipesListFragment).updateRecipes(Recipe.fromJsonArray(response.getJSONArray(RESULTS)));
-                    hideProgressBar();
-                    hideSearchBlock();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        OkHttpClient client = new OkHttpClient();
+
+        HttpUrl.Builder urlBuilder =
+                Objects.requireNonNull(HttpUrl.parse(Constant.RECIPE_SEARCH_URL)).newBuilder();
+        urlBuilder.addQueryParameter(Constant.API_KEY, Constant.SPN_API_KEY);
+        urlBuilder.addQueryParameter(Constant.NUMBER, String.valueOf(Constant.MAX_RESULTS));
+        urlBuilder.addQueryParameter(Constant.INCLUDE_INGREDIENTS, TextUtils.join(",", searchIngredientsNames));
+        urlBuilder.addQueryParameter(Constant.TYPE, type);
+        urlBuilder.addQueryParameter(Constant.DIET, diet);
+        urlBuilder.addQueryParameter(Constant.FILL_INGREDIENTS, String.valueOf(true));
+        urlBuilder.addQueryParameter(Constant.ADD_RECIPE_INFORMATION, String.valueOf(true));
+        urlBuilder.addQueryParameter(Constant.ADD_RECIPE_NUTRITION, String.valueOf(true));
+        urlBuilder.addQueryParameter(Constant.INSTRUCTIONS_REQUIRED, String.valueOf(true));
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.build().toString())
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-                Toast.makeText(getContext(), requireContext().getString(R.string.error_searching_recipes), Toast.LENGTH_SHORT).show();
+            public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
+                requireActivity().runOnUiThread(() -> {
+                    hideProgressBar();
+                });
+
+                if (response.isSuccessful()) {
+                    try {
+                        JSONObject responseJson =
+                                new JSONObject(Objects.requireNonNull(response.body()).string());
+                        recipesSearchViewModel.setRecipes((Recipe.fromJsonArray(responseJson.getJSONArray(Constant.RESULTS))));
+
+                        requireActivity().runOnUiThread(() -> {
+                            hideSearchBlock();
+                        });
+                    } catch (JSONException | IOException e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(getActivity(),
+                                requireContext().getString(R.string.connection_failed),
+                                Toast.LENGTH_LONG).show();
+                    });
+                }
             }
         });
     }
@@ -194,6 +247,7 @@ public class SearchFragment extends Fragment {
     private void querySearchIngredients() {
         showProgressBar();
         ParseQuery<Ingredient> query = ParseQuery.getQuery(Ingredient.class);
+        query.whereEqualTo(Constant.USER, ParseUser.getCurrentUser());
         query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
         query.findInBackground(new FindCallback<Ingredient>() {
             @Override
