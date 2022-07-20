@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,13 +33,10 @@ import java.util.stream.Collectors;
  */
 public class RecipesFragment extends Fragment {
     private Fragment recipesListFragment;
-    private CircularProgressIndicator progressIndicator;
     private List<Recipe> recipesFilterList;
-    FragmentRecipesBinding binding;
+    private FragmentRecipesBinding binding;
     private MaterialButtonToggleGroup toggleButtonRecipes;
-
-    public static final String FAVORITE = "favorite";
-
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public RecipesFragment() {
         // Required empty public constructor
@@ -72,8 +70,19 @@ public class RecipesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding = FragmentRecipesBinding.bind(view);
-        progressIndicator = binding.progressIndicator;
         toggleButtonRecipes = binding.toggleButtonRecipes;
+
+        RecipesSharedViewModel recipesSharedViewModel =
+                new ViewModelProvider(requireActivity()).get(RecipesSharedViewModel.class);
+
+        swipeRefreshLayout = binding.swipeRefreshLayout;
+        swipeRefreshLayout.setOnRefreshListener(recipesSharedViewModel::loadRecipes);
+        // Configure the refreshing colors
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
         recipesFilterList = new ArrayList<>();
 
         recipesListFragment = RecipesListFragment.newInstance(new ArrayList<>());
@@ -82,11 +91,10 @@ public class RecipesFragment extends Fragment {
 
 
         RecipesSharedViewModel model = new ViewModelProvider(requireActivity()).get(RecipesSharedViewModel.class);
-        showProgressBar();
+        swipeRefreshLayout.setRefreshing(true);
         model.getRecipes().observe(getViewLifecycleOwner(), recipes -> {
-            Log.i("RecipesFragment", "new Change: " + recipes.size());
+            swipeRefreshLayout.setRefreshing(false);
             setupToggleButtonFilterGroup(recipes);
-            hideProgressBar();
         });
     }
 
@@ -129,14 +137,5 @@ public class RecipesFragment extends Fragment {
                     .collect(Collectors.toList()));
         }
         ((RecipesListFragment) recipesListFragment).updateRecipes(recipesFilterList);
-    }
-
-
-    private void showProgressBar() {
-        progressIndicator.setVisibility(View.VISIBLE);
-    }
-
-    private void hideProgressBar() {
-        progressIndicator.setVisibility(View.GONE);
     }
 }

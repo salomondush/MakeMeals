@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -54,7 +55,7 @@ public class ShoppingListFragment extends Fragment {
     private List<ShoppingItem> shoppingList;
     private ShoppingListAdapter shoppingListAdapter;
     private MaterialButton buttonClearShoppingList;
-    private CircularProgressIndicator progressIndicator;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private int checkedItems;
     private TextView tvUncheckedCount;
     private TextView tvCheckedCount;
@@ -97,8 +98,16 @@ public class ShoppingListFragment extends Fragment {
         buttonClearShoppingList = binding.buttonClearShoppingList;
         tvUncheckedCount = binding.tvUncheckedCount;
         tvCheckedCount = binding.tvCheckedCount;
-        progressIndicator = binding.progressIndicator;
         RecyclerView rvShoppingList = binding.rvShoppingList;
+
+        swipeRefreshLayout = binding.swipeRefreshLayout;
+        swipeRefreshLayout.setOnRefreshListener(this::getShoppingList);
+
+        // Configure the refreshing colors
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
         shoppingList = new ArrayList<>();
         shoppingListAdapter = new ShoppingListAdapter(shoppingList, getContext());
@@ -141,7 +150,7 @@ public class ShoppingListFragment extends Fragment {
 
     private void getShoppingList() {
        // get shopping list field from the current user
-        showProgressBar();
+        swipeRefreshLayout.setRefreshing(true);
 
         ParseUser.getQuery()
                 .setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK)
@@ -164,7 +173,7 @@ public class ShoppingListFragment extends Fragment {
 
                         if (err == null && shoppingItems != null) {
                             // add all the shopping items to the shopping list
-                            hideProgressBar();
+                            swipeRefreshLayout.setRefreshing(false);
                             shoppingList.clear();
                             shoppingList.addAll(shoppingItems);
                             shoppingListAdapter.notifyDataSetChanged();
@@ -222,14 +231,6 @@ public class ShoppingListFragment extends Fragment {
                 Toast.makeText(getContext(), requireContext().getString(R.string.error_clearing_shopping_list), Toast.LENGTH_SHORT).show();
             }
         }));
-    }
-
-    private void showProgressBar() {
-        progressIndicator.setVisibility(View.VISIBLE);
-    }
-
-    private void hideProgressBar() {
-        progressIndicator.setVisibility(View.GONE);
     }
 
     private void resetShoppingListState() {

@@ -44,18 +44,14 @@
             />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
-    <FrameLayout
-        android:id="@+id/flRecipesContainer"
-        android:layout_weight="1"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="0dp" />
-
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/progressIndicator"
-        android:layout_gravity="center"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:indeterminate="true"
-        android:visibility="gone" />
-
+        android:layout_weight="1"
+        android:layout_height="0dp">
+        <FrameLayout
+            android:id="@+id/flRecipesContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>

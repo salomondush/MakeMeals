@@ -14,9 +14,11 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -34,8 +36,10 @@ import com.codepath.asynchttpclient.RequestHeaders;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.makemeals.R;
+import com.example.makemeals.ViewModel.HomeViewModel;
 import com.example.makemeals.adapters.IngredientsPageAdapter;
 import com.example.makemeals.adapters.IngredientsDialogAdapter;
+import com.example.makemeals.databinding.FragmentIngredientsBinding;
 import com.example.makemeals.models.Ingredient;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
@@ -73,7 +77,7 @@ public class IngredientsFragment extends Fragment {
     private EditText etIngredientName;
     private ImageButton addButton;
     private LinearLayout addLayout;
-
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private static final String REST_URL = "http://172.20.9.185:3200/file/analyse";
     private static final int MINIMUM_LENGTH = 2;
@@ -119,14 +123,23 @@ public class IngredientsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         materialAlertDialogBuilder = new MaterialAlertDialogBuilder(requireContext());
+        FragmentIngredientsBinding binding = FragmentIngredientsBinding.bind(view);
 
-        rvIngredients = view.findViewById(R.id.rvIngredients);
-        addButton = view.findViewById(R.id.addButton);
-        addLayout = view.findViewById(R.id.addLayout);
-        ImageButton buttonAddIngredient = view.findViewById(R.id.buttonAddIngredient);
-        etIngredientName = view.findViewById(R.id.etIngredientName);
-        progressIndicator = view.findViewById(R.id.progressIndicator);
-        ImageButton galleryButton = view.findViewById(R.id.galleryButton);
+        rvIngredients = binding.rvIngredients;
+        addButton = binding.addButton;
+        addLayout = binding.addLayout;
+        ImageButton buttonAddIngredient = binding.buttonAddIngredient;
+        etIngredientName = binding.etIngredientName;
+        ImageButton galleryButton = binding.galleryButton;
+
+        swipeRefreshLayout = binding.swipeRefreshLayout;
+        swipeRefreshLayout.setOnRefreshListener(this::queryIngredients);
+
+        // Configure the refreshing colors
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
         ingredients = new ArrayList<>();
         adapter = new IngredientsPageAdapter(ingredients, getContext(), false);
@@ -137,63 +150,45 @@ public class IngredientsFragment extends Fragment {
         itemTouchHelper.attachToRecyclerView(rvIngredients);
 
 
-        adapter.setOnRemoveIngredientClickListener(new IngredientsPageAdapter.OnItemClickListener() {
+        adapter.setOnRemoveIngredientClickListener((itemView, position) -> adapter.deleteItem(rvIngredients, position));
 
-            @Override
-            public void onItemClick(View itemView, int position) {
-                adapter.deleteItem(rvIngredients, position);
+        galleryButton.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(intent, GALLERY_IMAGE_ACTIVITY_REQUEST_CODE);
+        });
+
+        addButton.setOnClickListener(v -> {
+            if (addLayout.getVisibility() == View.GONE) {
+                addLayout.setVisibility(View.VISIBLE);
+                addButton.setBackground
+                        (ResourcesCompat.getDrawable(getResources(),
+                                R.drawable.make_meals_remove_icon, null));
+            } else {
+                addLayout.setVisibility(View.GONE);
+                addButton.setBackground
+                        (ResourcesCompat.getDrawable(getResources(),
+                                R.drawable.add_icon, null));
             }
         });
 
-        galleryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, GALLERY_IMAGE_ACTIVITY_REQUEST_CODE);
+        buttonAddIngredient.setOnClickListener(v -> {
+            String ingredientName = etIngredientName.getText().toString();
+            if (ingredientName.isEmpty()) {
+                etIngredientName.setError(requireContext().getString(R.string.ingredient_name_is_required));
+                return;
             }
-        });
-
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (addLayout.getVisibility() == View.GONE) {
-                    addLayout.setVisibility(View.VISIBLE);
-                    addButton.setBackground
-                            (ResourcesCompat.getDrawable(getResources(),
-                                    R.drawable.make_meals_remove_icon, null));
+            Ingredient ingredient = new Ingredient();
+            ingredient.setName(ingredientName);
+            ingredient.setUser(ParseUser.getCurrentUser());
+            ingredient.saveInBackground(e -> {
+                if (e == null) {
+                    etIngredientName.setText("");
+                    ingredients.add(ingredient);
+                    adapter.notifyItemInserted(ingredients.size() - 1);
                 } else {
-                    addLayout.setVisibility(View.GONE);
-                    addButton.setBackground
-                            (ResourcesCompat.getDrawable(getResources(),
-                                    R.drawable.add_icon, null));
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
-
-        buttonAddIngredient.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String ingredientName = etIngredientName.getText().toString();
-                if (ingredientName.isEmpty()) {
-                    etIngredientName.setError(requireContext().getString(R.string.ingredient_name_is_required));
-                    return;
-                }
-                Ingredient ingredient = new Ingredient();
-                ingredient.setName(ingredientName);
-                ingredient.setUser(ParseUser.getCurrentUser());
-                ingredient.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if (e == null) {
-                            etIngredientName.setText("");
-                            ingredients.add(ingredient);
-                            adapter.notifyItemInserted(ingredients.size() - 1);
-                        } else {
-                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
+            });
         });
 
         queryIngredients();
@@ -207,7 +202,7 @@ public class IngredientsFragment extends Fragment {
             Uri uri = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), uri);
-                showProgressBar();
+                swipeRefreshLayout.setRefreshing(true);
                 getImageText(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -235,7 +230,7 @@ public class IngredientsFragment extends Fragment {
         materialAlertDialogBuilder.setPositiveButton(requireContext().getString(R.string.add), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                showProgressBar();
+                swipeRefreshLayout.setRefreshing(true);
 
                 List<Ingredient> newIngredients = new ArrayList<>();
 
@@ -257,7 +252,7 @@ public class IngredientsFragment extends Fragment {
                         if (e == null) {
                             ingredients.addAll(newIngredients);
                             adapter.notifyDataSetChanged();
-                            hideProgressBar();
+                            swipeRefreshLayout.setRefreshing(false);
                         } else {
                             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -276,7 +271,7 @@ public class IngredientsFragment extends Fragment {
     }
 
     private void queryIngredients() {
-        showProgressBar();
+        swipeRefreshLayout.setRefreshing(true);
         ParseQuery<Ingredient> query = ParseQuery.getQuery(Ingredient.class);
         query.whereEqualTo(USER, ParseUser.getCurrentUser());
         query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
@@ -287,7 +282,7 @@ public class IngredientsFragment extends Fragment {
                     ingredients.clear();
                     ingredients.addAll(objects);
                     adapter.notifyDataSetChanged();
-                    hideProgressBar();
+                    swipeRefreshLayout.setRefreshing(false);
                 } else {
                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -322,7 +317,7 @@ public class IngredientsFragment extends Fragment {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 try {
-                    hideProgressBar();
+                    swipeRefreshLayout.setRefreshing(false);
                     launchAddIngredientDialog(extractItemsFromCSV(json.jsonObject.getString("response")));
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -334,7 +329,7 @@ public class IngredientsFragment extends Fragment {
                 requireActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        hideProgressBar();
+                        swipeRefreshLayout.setRefreshing(false);
                         Toast.makeText(getContext(), requireContext().getString(R.string.failed_to_get_image_text), Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -350,18 +345,10 @@ public class IngredientsFragment extends Fragment {
         for (String line : lines) {
             String[] item = line.split(",");
             if (item.length >= MINIMUM_LENGTH) {
-                // todo: index depends on the type of receipt
+                // only works with recipes with items in the second column
                 items.add(item[1]);
             }
         }
         return items;
-    }
-
-    private void showProgressBar() {
-        progressIndicator.setVisibility(View.VISIBLE);
-    }
-
-    private void hideProgressBar() {
-        progressIndicator.setVisibility(View.GONE);
     }
 }

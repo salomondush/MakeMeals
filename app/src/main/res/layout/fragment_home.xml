@@ -17,18 +17,17 @@
         android:textColor="@color/black"
         android:textStyle="bold"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recommendationsRecyclerView"
-        android:background="@color/white"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_weight="1"
+        android:layout_height="0dp">
 
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/progressIndicator"
-        android:layout_gravity="center"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:indeterminate="true"
-        android:visibility="gone" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recommendationsRecyclerView"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>
