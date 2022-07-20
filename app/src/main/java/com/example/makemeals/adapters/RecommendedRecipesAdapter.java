@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.makemeals.Constant;
 import com.example.makemeals.MainActivity;
+import com.example.makemeals.R;
 import com.example.makemeals.ViewModel.SharedViewModel;
 import com.example.makemeals.databinding.RecommendationRecipeItemBinding;
 import com.example.makemeals.models.Recipe;
@@ -70,6 +71,7 @@ public class RecommendedRecipesAdapter extends RecyclerView.Adapter<RecommendedR
         public void  bind(Recipe recipe) {
             recipeTitleTextView.setText(recipe.getTitle());
             Glide.with(context).load(recipe.getImageUrl())
+                    .placeholder(R.drawable.recipe_image_placeholder)
                     .centerCrop()
                     .transform(new RoundedCorners(Constant.IMAGE_RADIUS))
                     .into(recipeImageView);

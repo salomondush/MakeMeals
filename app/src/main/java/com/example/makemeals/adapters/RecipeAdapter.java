@@ -267,6 +267,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             tbSave.setChecked(recipe.getSaved());
             tbFavorite.setChecked(recipe.getFavorite());
             Glide.with(context).load(recipe.getImageUrl())
+                    .placeholder(R.drawable.recipe_image_placeholder)
                     .centerCrop()
                     .transform(new RoundedCorners(Constant.IMAGE_RADIUS))
                     .into(recipeImage);
