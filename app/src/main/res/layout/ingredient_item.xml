@@ -18,13 +18,14 @@
             android:layout_height="wrap_content"
             android:text="@string/ingredient_name_placeholder"
             android:textColor="@color/black"
-            android:textSize="18sp"
+            android:textSize="11sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/ingredientDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="11sp"
             android:text="@string/date_placeholder"
             android:textStyle="italic" />
     </LinearLayout>

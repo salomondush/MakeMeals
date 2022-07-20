@@ -3,6 +3,8 @@ package com.example.makemeals.ViewModel;
 import static com.example.makemeals.fragments.HomeFragment.TIME_FORMAT;
 
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -58,6 +60,7 @@ public class HomeViewModel extends ViewModel {
 
 
     public MutableLiveData<List<HashMap<String, List<Recipe>>>> getRecommendedRecipes() {
+        Log.i("HomeViewModel", "getRecommendedRecipes");
         if (recommendationData == null) {
             recommendationData = new MutableLiveData<>();
             // call loadRecipes method with call back to get the data

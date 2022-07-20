@@ -153,6 +153,7 @@ public class RecipeDetailsFragment extends Fragment {
                 llInstructions = binding.llInstructions;
 
                 Glide.with(requireContext()).load(recipe.getImageUrl())
+                        .placeholder(R.drawable.recipe_image_placeholder)
                         .centerCrop()
                         .transform(new RoundedCorners(IMAGE_RADIUS))
                         .into(ivRecipeImage);

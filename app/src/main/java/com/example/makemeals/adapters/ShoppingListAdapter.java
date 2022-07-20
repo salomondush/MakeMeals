@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.makemeals.Constant;
+import com.example.makemeals.R;
 import com.example.makemeals.databinding.RecipeIngredientItemBinding;
 import com.example.makemeals.models.ShoppingItem;
 
@@ -112,6 +113,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
             String image = ingredientFields.optString(imageField);
             ;
             Glide.with(context).load(Constant.IMAGE_BASE_URL + image)
+                    .placeholder(R.drawable.recipe_image_placeholder)
                     .centerCrop()
                     .transform(new RoundedCorners(Constant.IMAGE_RADIUS))
                     .into(ivIngredientImage);

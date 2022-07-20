@@ -290,6 +290,7 @@ public class ShareRecipeFragment extends Fragment {
 
 
                 Glide.with(requireContext()).load(recipe.getImageUrl())
+                        .placeholder(R.drawable.recipe_image_placeholder)
                         .centerCrop()
                         .transform(new RoundedCorners(Constant.IMAGE_RADIUS))
                         .into(ivRecipeImage);
