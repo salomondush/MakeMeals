@@ -66,7 +66,7 @@ public class HomeViewModel extends ViewModel {
         return recommendationData;
     }
 
-    private void processRecommendations() {
+    public void processRecommendations() {
 
         // get local HOUR of the day
         String localTime = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(new Date());

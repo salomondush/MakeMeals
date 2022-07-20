@@ -24,7 +24,7 @@ public class RecipesSharedViewModel extends RecipesViewModel {
     /**
      * Loads user recipes from Parse
      */
-    private void loadRecipes() {
+    public void loadRecipes() {
         ParseQuery<Recipe> query = ParseQuery.getQuery(Recipe.class);
         query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
         // only get 20 most recent Recipes

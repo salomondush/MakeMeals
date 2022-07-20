@@ -8,8 +8,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +21,16 @@ import com.example.makemeals.R;
 import com.example.makemeals.ViewModel.HomeViewModel;
 import com.example.makemeals.adapters.RecommendationsAdapter;
 import com.example.makemeals.databinding.FragmentHomeBinding;
+import com.example.makemeals.models.Recipe;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
+import java.sql.Array;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -32,9 +40,9 @@ import java.util.Locale;
  */
 public class HomeFragment extends Fragment {
 
-    private RecyclerView recommendationsRecyclerView;
-    private CircularProgressIndicator progressIndicator;
     private RecommendationsAdapter recommendationsAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private HomeViewModel model;
 
     public static final String TIME_FORMAT = "HH";
 
@@ -77,18 +85,33 @@ public class HomeFragment extends Fragment {
         FragmentHomeBinding binding = FragmentHomeBinding.bind(view);
 
 
-        progressIndicator = binding.progressIndicator;
-        recommendationsRecyclerView = binding.recommendationsRecyclerView;
+        RecyclerView recommendationsRecyclerView = binding.recommendationsRecyclerView;
         TextView mealTypeTextView = binding.mealTypeTextView;
+        swipeRefreshLayout = binding.swipeRefreshLayout;
+        model = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
 
-        HomeViewModel model = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
-        showProgressBar();
-        model.getRecommendedRecipes().observe(getViewLifecycleOwner(), recommendations -> {
-            hideProgressBar();
-            recommendationsAdapter = new RecommendationsAdapter(recommendations,
-                    getContext());
-            recommendationsRecyclerView.setAdapter(recommendationsAdapter);
-            recommendationsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            model.processRecommendations();
+        });
+
+        // Configure the refreshing colors
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+        List<HashMap<String, List<Recipe>>> recommendations = new ArrayList<>();
+        recommendationsAdapter = new RecommendationsAdapter(recommendations,
+                getContext());
+        recommendationsRecyclerView.setAdapter(recommendationsAdapter);
+        recommendationsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        swipeRefreshLayout.setRefreshing(true);
+        model.getRecommendedRecipes().observe(getViewLifecycleOwner(), recommendationsUpdate -> {
+            swipeRefreshLayout.setRefreshing(false);
+            recommendations.clear();
+            recommendations.addAll(recommendationsUpdate);
+            recommendationsAdapter.notifyDataSetChanged();
         });
 
         // get local HOUR of the day
@@ -109,13 +132,5 @@ public class HomeFragment extends Fragment {
             mealTypeTextView.setText(getString(R.string.snack));
         }
 
-    }
-
-    private void showProgressBar() {
-        progressIndicator.setVisibility(View.VISIBLE);
-    }
-
-    private void hideProgressBar() {
-        progressIndicator.setVisibility(View.GONE);
     }
 }

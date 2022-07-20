@@ -27,10 +27,16 @@
         android:elevation="@dimen/cardview_compat_inset_shadow"
         android:padding="10dp">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvShoppingList"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvShoppingList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </com.google.android.material.card.MaterialCardView>
 

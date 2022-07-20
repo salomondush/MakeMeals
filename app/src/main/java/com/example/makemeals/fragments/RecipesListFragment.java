@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Parcelable;
 import android.util.Log;
@@ -19,8 +20,10 @@ import android.view.ViewGroup;
 
 import com.example.makemeals.MainActivity;
 import com.example.makemeals.R;
+import com.example.makemeals.ViewModel.RecipesSharedViewModel;
 import com.example.makemeals.ViewModel.SharedViewModel;
 import com.example.makemeals.adapters.RecipeAdapter;
+import com.example.makemeals.databinding.FragmentRecipesListBinding;
 import com.example.makemeals.models.Recipe;
 
 import java.util.ArrayList;
@@ -37,7 +40,6 @@ public class RecipesListFragment extends Fragment {
 
     // the fragment initialization parameters
     private static final String ARG_PARAM1 = "recipes";
-
     private List<Recipe> recipes;
 
     public RecipesListFragment() {
@@ -77,23 +79,21 @@ public class RecipesListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        FragmentRecipesListBinding binding = FragmentRecipesListBinding.bind(view);
+        RecyclerView rvRecipeList = binding.rvRecipeList;
 
-        RecyclerView rvRecipeList = view.findViewById(R.id.rvRecipeList);
+
         recipeAdapter = new RecipeAdapter(recipes, getContext());
-
         rvRecipeList.setAdapter(recipeAdapter);
         rvRecipeList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        SharedViewModel model =
+        SharedViewModel sharedViewModel =
                 new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-        recipeAdapter.setOnItemClickListener(new RecipeAdapter.OnItemClickListener() {
-             @Override
-             public void onItemClick(View itemView, int position) {
+        recipeAdapter.setOnItemClickListener((itemView, position) -> {
 
-                 // call the activity to show the recipe details
-                 model.select(recipes.get(position));
-                 ((MainActivity) requireActivity()).showRecipeDetails();
-             }
+            // call the activity to show the recipe details
+            sharedViewModel.select(recipes.get(position));
+            ((MainActivity) requireActivity()).showRecipeDetails();
         });
     }
 

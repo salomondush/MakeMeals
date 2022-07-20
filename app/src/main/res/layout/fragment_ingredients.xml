@@ -6,12 +6,17 @@
     android:orientation="vertical"
     tools:context=".fragments.IngredientsFragment">
 
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvIngredients"
-        android:layout_weight="1"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"/>
+        android:layout_weight="1"
+        android:layout_height="0dp">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvIngredients"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <LinearLayout
         android:id="@+id/addLayout"
@@ -75,13 +80,4 @@
             android:contentDescription="@string/camera_button" />
 
     </RelativeLayout>
-
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/progressIndicator"
-        android:layout_gravity="center"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:indeterminate="true"
-        android:visibility="gone" />
-
 </LinearLayout>
