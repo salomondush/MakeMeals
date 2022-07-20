@@ -108,4 +108,5 @@
     <string name="favorite">Favorite</string>
     <string name="recipes">Recipes</string>
     <string name="_1_large">1 Large</string>
+    <string name="all">All</string>
 </resources>

@@ -5,42 +5,24 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.makemeals.Constant;
 import com.example.makemeals.R;
 import com.example.makemeals.ViewModel.HomeViewModel;
-import com.example.makemeals.ViewModel.RecipesDetailsSharedViewModel;
-import com.example.makemeals.ViewModel.SharedViewModel;
 import com.example.makemeals.adapters.RecommendationsAdapter;
 import com.example.makemeals.databinding.FragmentHomeBinding;
-import com.example.makemeals.models.Ingredient;
-import com.example.makemeals.models.Recipe;
-import com.example.makemeals.models.Recommendation;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
-
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.

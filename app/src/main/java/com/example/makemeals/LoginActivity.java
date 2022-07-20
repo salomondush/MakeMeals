@@ -23,7 +23,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        com.example.makemeals.databinding.ActivityLoginBinding binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        ActivityLoginBinding binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         if (ParseUser.getCurrentUser() != null) {

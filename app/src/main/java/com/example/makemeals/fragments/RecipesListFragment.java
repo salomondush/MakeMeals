@@ -37,10 +37,8 @@ public class RecipesListFragment extends Fragment {
 
     // the fragment initialization parameters
     private static final String ARG_PARAM1 = "recipes";
-    private static final String PAGE = "page";
 
     private List<Recipe> recipes;
-    private int page;
 
     public RecipesListFragment() {
         // Required empty public constructor
@@ -52,12 +50,11 @@ public class RecipesListFragment extends Fragment {
      * @param recipes Parameter 1.
      * @return A new instance of fragment RecipesListFragment.
      */
-    public static RecipesListFragment newInstance(List<Recipe> recipes, int page) {
+    public static RecipesListFragment newInstance(List<Recipe> recipes) {
         RecipesListFragment fragment = new RecipesListFragment();
         Bundle args = new Bundle();
         // initialize the recipes list
         args.putParcelableArrayList(ARG_PARAM1, (ArrayList<? extends Parcelable>) recipes);
-        args.putInt(PAGE, page);
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,7 +64,6 @@ public class RecipesListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             recipes = getArguments().getParcelableArrayList(ARG_PARAM1);
-            page = getArguments().getInt(PAGE);
         }
     }
 
@@ -83,7 +79,10 @@ public class RecipesListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         RecyclerView rvRecipeList = view.findViewById(R.id.rvRecipeList);
-        recipeAdapter = new RecipeAdapter(recipes, getContext(), page);
+        recipeAdapter = new RecipeAdapter(recipes, getContext());
+
+        rvRecipeList.setAdapter(recipeAdapter);
+        rvRecipeList.setLayoutManager(new LinearLayoutManager(getContext()));
 
         SharedViewModel model =
                 new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
@@ -96,15 +95,11 @@ public class RecipesListFragment extends Fragment {
                  ((MainActivity) requireActivity()).showRecipeDetails();
              }
         });
-
-
-        rvRecipeList.setAdapter(recipeAdapter);
-        rvRecipeList.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
-    public void updateRecipes(List<Recipe> recipes) {
-        this.recipes.clear();
-        this.recipes.addAll(recipes);
+    public void updateRecipes(List<Recipe> newRecipes) {
+        recipes.clear();
+        recipes.addAll(newRecipes);
         recipeAdapter.notifyDataSetChanged();
     }
 

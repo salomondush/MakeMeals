@@ -82,11 +82,6 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
                     .transform(new RoundedCorners(Constant.IMAGE_RADIUS))
                     .into(ivIngredientImage);
         }
-
-        public void scale(float scale) {
-            ivIngredientImage.setScaleX(scale);
-            ivIngredientImage.setScaleY(scale);
-        }
     }
 
     public static class SwipeHelper extends ItemTouchHelper.SimpleCallback{

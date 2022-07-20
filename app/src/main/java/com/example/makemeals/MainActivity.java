@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.search:
                 fragment = new SearchFragment();
                 break;
-            case R.id.favorites:
+            case R.id.recipes:
                 fragment = new RecipesFragment();
                 break;
             case R.id.profile:

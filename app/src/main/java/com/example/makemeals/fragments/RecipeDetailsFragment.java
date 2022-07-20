@@ -79,6 +79,7 @@ public class RecipeDetailsFragment extends Fragment {
     private LinearLayout llIngredients;
     private LinearLayout llInstructions;
     private Recipe recipe;
+    private MaterialButtonToggleGroup toggleButtonRecipeInfo;
 
 
     // material popup
@@ -145,7 +146,7 @@ public class RecipeDetailsFragment extends Fragment {
                 ImageButton ibShare = binding.ibShare;
                 ImageButton ibShoppingList = binding.ibShoppingList;
 
-                MaterialButtonToggleGroup toggleButtonRecipeInfo = binding.toggleButtonRecipeInfo;
+                toggleButtonRecipeInfo = binding.toggleButtonRecipeInfo;
                 llNutritionInfo = binding.llNutritionInfo;
                 llIngredients = binding.llIngredients;
                 llInstructions = binding.llInstructions;
@@ -170,26 +171,8 @@ public class RecipeDetailsFragment extends Fragment {
                 rvRecipeDetailInstructions.setAdapter(recipeInstructionsAdapter);
                 rvRecipeDetailInstructions.setLayoutManager(new LinearLayoutManager(getContext()));
 
-                toggleButtonRecipeInfo.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
-                    @Override
-                    public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
-                        if (isChecked){
-                            if (checkedId == R.id.buttonNutrition) {
-                                llNutritionInfo.setVisibility(View.VISIBLE);
-                                llIngredients.setVisibility(View.GONE);
-                                llInstructions.setVisibility(View.GONE);
-                            } else if (checkedId == R.id.buttonIngredients) {
-                                llNutritionInfo.setVisibility(View.GONE);
-                                llIngredients.setVisibility(View.VISIBLE);
-                                llInstructions.setVisibility(View.GONE);
-                            } else if (checkedId == R.id.buttonInstructions) {
-                                llNutritionInfo.setVisibility(View.GONE);
-                                llIngredients.setVisibility(View.GONE);
-                                llInstructions.setVisibility(View.VISIBLE);
-                            }
-                        }
-                    }
-                });
+                // set up toggle button group for recipe info
+                setupToggleButtonGroup();
 
                 tbSave.setChecked(recipe.getSaved());
                 tbFavorite.setChecked(recipe.getFavorite());
@@ -240,6 +223,37 @@ public class RecipeDetailsFragment extends Fragment {
                 });
             }
         });
+    }
+
+
+    /**
+     * Sets up the toggle button group for the recipe info.
+     */
+    private void setupToggleButtonGroup() {
+        int initialId = toggleButtonRecipeInfo.getCheckedButtonId();
+        displayCheckedIdInformation(initialId);
+
+        toggleButtonRecipeInfo.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (isChecked){
+                displayCheckedIdInformation(checkedId);
+            }
+        });
+    }
+
+    private void displayCheckedIdInformation(int checkedId){
+        if (checkedId == R.id.buttonNutrition) {
+            llNutritionInfo.setVisibility(View.VISIBLE);
+            llIngredients.setVisibility(View.GONE);
+            llInstructions.setVisibility(View.GONE);
+        } else if (checkedId == R.id.buttonIngredients) {
+            llNutritionInfo.setVisibility(View.GONE);
+            llIngredients.setVisibility(View.VISIBLE);
+            llInstructions.setVisibility(View.GONE);
+        } else if (checkedId == R.id.buttonInstructions) {
+            llNutritionInfo.setVisibility(View.GONE);
+            llIngredients.setVisibility(View.GONE);
+            llInstructions.setVisibility(View.VISIBLE);
+        }
     }
 
     public static String getDietStringFromRecipe(Recipe recipe){

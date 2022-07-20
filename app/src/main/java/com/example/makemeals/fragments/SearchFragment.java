@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,6 +25,7 @@ import android.widget.Toast;
 import com.example.makemeals.Constant;
 import com.example.makemeals.R;
 import com.example.makemeals.RestClient;
+import com.example.makemeals.ViewModel.RecipesSearchViewModel;
 import com.example.makemeals.adapters.IngredientsPageAdapter;
 import com.example.makemeals.models.Ingredient;
 import com.example.makemeals.models.Recipe;
@@ -69,6 +71,8 @@ public class SearchFragment extends Fragment {
     private Fragment recipesListFragment;
     private CircularProgressIndicator progressIndicator;
 
+    private RecipesSearchViewModel recipesSearchViewModel;
+
     private static final List<String> DIET_OPTIONS = Arrays.asList("Gluten Free", "Ketogenic",
             "Vegetarian", "Lacto-Vegetarian", "Ovo-Vegetarian", "Vegan", "Pescetarian",
             "Paleo", "Primal", "Whole30", "Low FODMAP");
@@ -108,6 +112,13 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        recipesSearchViewModel = new ViewModelProvider(requireActivity()).get(RecipesSearchViewModel.class);
+        recipesSearchViewModel.getRecipes().observe(getViewLifecycleOwner(), recipes -> {
+            if (recipes != null) {
+                ((RecipesListFragment) recipesListFragment).updateRecipes(recipes);
+            }
+        });
+
         MaterialButton searchButton = view.findViewById(R.id.searchButton);
         recipeDiet = view.findViewById(R.id.recipeDiet);
         recipeType = view.findViewById(R.id.recipeType);
@@ -127,7 +138,8 @@ public class SearchFragment extends Fragment {
 
         // initialize the child fragment that displays result recipes in a recyclerView
         List<Recipe> resultRecipes = new ArrayList<>();
-        recipesListFragment = RecipesListFragment.newInstance(resultRecipes, Constant.SEARCH);
+        recipesListFragment = RecipesListFragment.newInstance(resultRecipes);
+
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.add(R.id.flSearchResultsContainer, recipesListFragment).commit();
 
@@ -213,7 +225,7 @@ public class SearchFragment extends Fragment {
                     try {
                         JSONObject responseJson =
                                 new JSONObject(Objects.requireNonNull(response.body()).string());
-                        ((RecipesListFragment) recipesListFragment).updateRecipes(Recipe.fromJsonArray(responseJson.getJSONArray(Constant.RESULTS)));
+                        recipesSearchViewModel.setRecipes((Recipe.fromJsonArray(responseJson.getJSONArray(Constant.RESULTS))));
 
                         requireActivity().runOnUiThread(() -> {
                             hideSearchBlock();

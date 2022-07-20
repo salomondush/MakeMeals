@@ -47,7 +47,7 @@ import okhttp3.Response;
  */
 public class HomeViewModel extends ViewModel {
     private MutableLiveData<List<HashMap<String, List<Recipe>>>> recommendationData;
-    private List<HashMap<String, List<Recipe>>> recommendations = new ArrayList<>();
+    private final List<HashMap<String, List<Recipe>>> recommendations = new ArrayList<>();
 
     private final OkHttpClient client = new OkHttpClient();
     private String mealType;
