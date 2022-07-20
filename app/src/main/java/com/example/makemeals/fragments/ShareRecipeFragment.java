@@ -75,10 +75,9 @@ public class ShareRecipeFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     * @param recipe Parameter 1.
      * @return A new instance of fragment ShareRecipeFragment.
      */
-    public static ShareRecipeFragment newInstance(Recipe recipe) {
+    public static ShareRecipeFragment newInstance() {
         ShareRecipeFragment fragment = new ShareRecipeFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
