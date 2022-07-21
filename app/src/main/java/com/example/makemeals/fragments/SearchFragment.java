@@ -1,17 +1,21 @@
 package com.example.makemeals.fragments;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.loader.content.AsyncTaskLoader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -21,12 +25,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.makemeals.Constant;
+import com.example.makemeals.MainActivity;
+import com.example.makemeals.ParseApplication;
 import com.example.makemeals.R;
 import com.example.makemeals.RestClient;
 import com.example.makemeals.adapters.IngredientsPageAdapter;
 import com.example.makemeals.databinding.FragmentSearchBinding;
 import com.example.makemeals.models.Ingredient;
 import com.example.makemeals.models.Recipe;
+import com.example.makemeals.models.SearchHistory;
+import com.example.makemeals.models.SearchHistoryDao;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -59,6 +67,9 @@ public class SearchFragment extends Fragment {
     private AutoCompleteTextView etSearchText;
     private Fragment recipesListFragment;
     private CircularProgressIndicator progressIndicator;
+    private List<SearchHistory> searchHistories;
+    private SearchHistoryDao searchHistoryDao;
+    private ArrayAdapter<String> searchQueryAdapter;
 
     private static final String RESULTS = "results";
     private static final List<String> DIET_OPTIONS = Arrays.asList("Gluten Free", "Ketogenic",
@@ -114,6 +125,15 @@ public class SearchFragment extends Fragment {
         ImageButton ibHideSearchBlock = binding.ibHideSearchBlock;
         etSearchText = binding.etSearchText;
 
+        // define our db and delete any excess search history data
+        searchHistoryDao =
+                ((ParseApplication) requireActivity().getApplicationContext()).getSearchHistoryDataBase().searchHistoryDao();
+        AsyncTask.execute(() -> {
+            if (searchHistoryDao.getSize() > Constant.VISIBLE_THRESHOLD) {
+                searchHistoryDao.deleteNLeastRecent(searchHistoryDao.getSize() - Constant.VISIBLE_THRESHOLD);
+            }
+        });
+
         // set and attach ingredients adapter to rvSearchIngredients recyclerView
         ingredients = new ArrayList<>();
         searchIngredientsNames = new ArrayList<>();
@@ -127,13 +147,7 @@ public class SearchFragment extends Fragment {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.add(R.id.flSearchResultsContainer, recipesListFragment).commit();
 
-        // set up autocomplete text views
-        ArrayAdapter<String> optionsAdapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_list_item_1, DIET_OPTIONS);
-        ArrayAdapter<String> typesAdapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_list_item_1, TYPE_OPTIONS);
-        recipeDiet.setAdapter(optionsAdapter);
-        recipeType.setAdapter(typesAdapter);
+        setupDropdownOptions();
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,7 +155,13 @@ public class SearchFragment extends Fragment {
                 String type = recipeType.getText().toString();
                 String diet = recipeDiet.getText().toString();
                 String query = etSearchText.getText().toString();
-                searchOptions.add(query);
+
+                AsyncTask.execute(() -> {
+                    searchHistoryDao.insert(SearchHistory.createEntry(query, type, diet));
+                    searchOptions.add(query);
+                    searchQueryAdapter.notifyDataSetChanged();
+                });
+
                 searchRecipes(type, diet, query);
             }
         });
@@ -172,6 +192,45 @@ public class SearchFragment extends Fragment {
         });
 
         querySearchIngredients();
+    }
+
+    private void setupDropdownOptions() {
+        // set up autocomplete text views
+        searchOptions = new ArrayList<>();
+        searchQueryAdapter = new ArrayAdapter<>(getContext(),
+                android.R.layout.simple_list_item_1, searchOptions);
+        etSearchText.setAdapter(searchQueryAdapter);
+
+        ArrayAdapter<String> optionsAdapter = new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_list_item_1, DIET_OPTIONS);
+        ArrayAdapter<String> typesAdapter = new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_list_item_1, TYPE_OPTIONS);
+        recipeDiet.setAdapter(optionsAdapter);
+        recipeType.setAdapter(typesAdapter);
+
+        AsyncTask.execute(() -> {
+            searchHistories = searchHistoryDao.getRecent();
+            for (SearchHistory searchHistory : searchHistories) {
+                searchOptions.add(searchHistory.searchQuery);
+            }
+            searchQueryAdapter.notifyDataSetChanged();
+        });
+
+
+        etSearchText.setOnItemClickListener((parent, view, position, id) -> {
+
+            String queryName = searchOptions.get(position);
+            searchHistories.forEach(searchHistory -> {
+                if (searchHistory.searchQuery.equals(queryName)) {
+                    if (!searchHistory.searchDiet.isEmpty()) {
+                        recipeDiet.setText(searchHistory.searchDiet);
+                    }
+                    if (!searchHistory.searchType.isEmpty()) {
+                        recipeType.setText(searchHistory.searchType);
+                    }
+                }
+            });
+        });
     }
 
     private void searchRecipes(String type, String diet, String query) {

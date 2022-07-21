@@ -18,4 +18,12 @@ public class SearchHistory {
 
     @ColumnInfo(name = "search_diet")
     public String searchDiet;
+
+    public static SearchHistory createEntry(String query, String type, String diet) {
+        SearchHistory searchHistory = new SearchHistory();
+        searchHistory.searchQuery = query;
+        searchHistory.searchType = type;
+        searchHistory.searchDiet = diet;
+        return searchHistory;
+    }
 }
