@@ -26,8 +26,8 @@
     <string name="ingredient_name_placeholder">Ingredient Name</string>
     <string name="date_placeholder">01/01/2001</string>
     <string name="remove_button_description">remove</string>
-    <string name="type_placeholder">Type</string>
-    <string name="diet_placeholder">diet</string>
+    <string name="type_placeholder">Type (optional)</string>
+    <string name="diet_placeholder">diet (optional)</string>
     <string name="search">Search</string>
     <string name="ingredient_name">Ingredient Name</string>
     <string name="add_button">add Button</string>
@@ -97,6 +97,7 @@
     <string name="ingredients_selector">ingredients</string>
     <string name="instructions_selector">Instructions</string>
     <string name="add_ingredient_icon">add ingredient icon</string>
+    <string name="search_optional">Search (optional)</string>
     <string name="vegetarian">vegetarian</string>
     <string name="breakfast_lunch_dinner">Breakfast, Lunch, Dinner</string>
     <string name="breakfast">Breakfast</string>
@@ -111,4 +112,5 @@
     <string name="_1_large">1 Large</string>
     <string name="all">All</string>
     <string name="profile">Profile</string>
+>>>>>>> main
 </resources>

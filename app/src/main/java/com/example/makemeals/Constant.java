@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class Constant {
+    public final static int VISIBLE_THRESHOLD = 5;
     public final static int IMAGE_RADIUS = 10;
     public final static String IMAGE_BASE_URL = "https://spoonacular.com/cdn/ingredients_100x100/";;
     public final static String OBJECT_ID = "objectId";
@@ -22,6 +23,7 @@ public class Constant {
     public static final String CUISINE = "cuisine";
     public static final String DIET = "diet";
     public static final String TYPE = "type";
+    public static final String QUERY = "query";
     public static final String NUMBER = "number";
     public static final String INCLUDE_INGREDIENTS = "includeIngredients";
     public static final String FILL_INGREDIENTS = "fillIngredients";
