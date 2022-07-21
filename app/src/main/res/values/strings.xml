@@ -97,9 +97,7 @@
     <string name="ingredients_selector">ingredients</string>
     <string name="instructions_selector">Instructions</string>
     <string name="add_ingredient_icon">add ingredient icon</string>
-<<<<<<< HEAD
     <string name="search_optional">Search (optional)</string>
-=======
     <string name="vegetarian">vegetarian</string>
     <string name="breakfast_lunch_dinner">Breakfast, Lunch, Dinner</string>
     <string name="breakfast">Breakfast</string>
