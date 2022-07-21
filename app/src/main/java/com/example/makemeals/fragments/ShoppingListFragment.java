@@ -235,8 +235,9 @@ public class ShoppingListFragment extends Fragment {
 
     private void resetShoppingListState() {
         checkedItems = CHECKED_ITEMS_INITIAL_VALUE;
-        tvUncheckedCount.setText(String.valueOf(Math.max(checkedItems, 0)));
+        tvUncheckedCount.setText(String.valueOf(checkedItems));
         tvCheckedCount.setText(String.valueOf(shoppingList.size() - checkedItems));
+        buttonClearShoppingList.setEnabled(false);
     }
 
     private void incrementCheckedItems() {
@@ -252,7 +253,7 @@ public class ShoppingListFragment extends Fragment {
         checkedItems--;
         tvCheckedCount.setText(String.valueOf(checkedItems));
         tvUncheckedCount.setText(String.valueOf(shoppingList.size() - checkedItems));
-        if (checkedItems == 0) {
+        if (checkedItems == 0 || checkedItems < shoppingList.size()) {
             buttonClearShoppingList.setEnabled(false);
         }
     }

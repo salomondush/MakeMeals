@@ -129,10 +129,11 @@
             android:textAlignment="center"
             android:background="@drawable/background_edit_text"/>
 
-        <FrameLayout
-            android:id="@+id/flSearchResultsContainer"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recipeListRecyclerView"
+            android:background="@color/white"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent"/>
 
     </LinearLayout>
 

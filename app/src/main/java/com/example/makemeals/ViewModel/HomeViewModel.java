@@ -63,7 +63,7 @@ public class HomeViewModel extends ViewModel {
         if (recommendationData == null) {
             recommendationData = new MutableLiveData<>();
             // call loadRecipes method with call back to get the data
-            processRecommendations();
+//            processRecommendations();
         }
         return recommendationData;
     }

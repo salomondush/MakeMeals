@@ -35,7 +35,9 @@ import com.example.makemeals.ParseApplication;
 import com.example.makemeals.R;
 import com.example.makemeals.RestClient;
 import com.example.makemeals.ViewModel.RecipesSearchViewModel;
+import com.example.makemeals.ViewModel.SharedViewModel;
 import com.example.makemeals.adapters.IngredientsPageAdapter;
+import com.example.makemeals.adapters.RecipeAdapter;
 import com.example.makemeals.databinding.FragmentSearchBinding;
 import com.example.makemeals.models.Ingredient;
 import com.example.makemeals.models.Recipe;
@@ -78,14 +80,19 @@ public class SearchFragment extends Fragment {
     private List<String> searchIngredientsNames;
     private AutoCompleteTextView recipeDiet;
     private AutoCompleteTextView recipeType;
+    private TextView tvSearchBar;
+    private MaterialButton searchButton;
+    private ImageButton ibHideSearchBlock;
     private LinearLayout llSearchResultBlock;
     private LinearLayout llSearchBlock;
     private AutoCompleteTextView etSearchText;
-    private Fragment recipesListFragment;
     private CircularProgressIndicator progressIndicator;
     private List<SearchHistory> searchHistories;
     private SearchHistoryDao searchHistoryDao;
     private ArrayAdapter<String> searchQueryAdapter;
+    private RecyclerView recipeListRecyclerView;
+    private RecipeAdapter recipeAdapter;
+    private ArrayList<Recipe> recipes;
 
     private RecipesSearchViewModel recipesSearchViewModel;
 
@@ -131,16 +138,21 @@ public class SearchFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         FragmentSearchBinding binding = FragmentSearchBinding.bind(view);
 
-        MaterialButton searchButton = binding.searchButton;
+        recipesSearchViewModel = new ViewModelProvider(requireActivity()).get(RecipesSearchViewModel.class);
+        SharedViewModel sharedViewModel =
+                new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+
+        searchButton = binding.searchButton;
         recipeDiet = binding.recipeDiet;
         recipeType = binding.recipeType;
         RecyclerView rvSearchIngredients = binding.rvSearchIngredients;
         progressIndicator = binding.progressIndicator;
-        TextView tvSearchBar = binding.tvSearchBar;
+        tvSearchBar = binding.tvSearchBar;
         llSearchResultBlock = binding.llSearchResultBlock;
         llSearchBlock = binding.llSearchBlock;
-        ImageButton ibHideSearchBlock = binding.ibHideSearchBlock;
+        ibHideSearchBlock = binding.ibHideSearchBlock;
         etSearchText = binding.etSearchText;
+        recipeListRecyclerView = binding.recipeListRecyclerView;
 
         // define our db and delete any excess search history data
         searchHistoryDao =
@@ -151,10 +163,23 @@ public class SearchFragment extends Fragment {
             }
         });
 
-        recipesSearchViewModel = new ViewModelProvider(requireActivity()).get(RecipesSearchViewModel.class);
-        recipesSearchViewModel.getRecipes().observe(getViewLifecycleOwner(), recipes -> {
+        recipes = new ArrayList<>();
+        recipeAdapter = new RecipeAdapter(recipes, getContext(), recipesSearchViewModel);
+        recipeListRecyclerView.setAdapter(recipeAdapter);
+        recipeListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        recipeAdapter.setOnItemClickListener((itemView, position) -> {
+
+            // call the activity to show the recipe details
+            sharedViewModel.select(recipes.get(position));
+            ((MainActivity) requireActivity()).showRecipeDetails();
+        });
+
+        recipesSearchViewModel.getRecipes().observe(getViewLifecycleOwner(), updateRecipes -> {
             if (recipes != null) {
-                ((RecipesListFragment) recipesListFragment).updateRecipes(recipes);
+                recipes.clear();
+                recipes.addAll(updateRecipes);
+                recipeAdapter.notifyDataSetChanged();
             }
         });
 
@@ -166,15 +191,15 @@ public class SearchFragment extends Fragment {
         rvSearchIngredients.setAdapter(ingredientsPageAdapter);
         rvSearchIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // initialize the child fragment that displays result recipes in a recyclerView
-        List<Recipe> resultRecipes = new ArrayList<>();
-        recipesListFragment = RecipesListFragment.newInstance(resultRecipes);
-
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.add(R.id.flSearchResultsContainer, recipesListFragment).commit();
-
+        // setup data for the search drop down options for search, diet, and type
         setupDropdownOptions();
 
+        setupClickListeners();
+
+        querySearchIngredients();
+    }
+
+    private void setupClickListeners() {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -213,11 +238,9 @@ public class SearchFragment extends Fragment {
         ibHideSearchBlock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               hideSearchBlock();
+                hideSearchBlock();
             }
         });
-
-        querySearchIngredients();
     }
 
     private void setupDropdownOptions() {
@@ -298,7 +321,14 @@ public class SearchFragment extends Fragment {
                     try {
                         JSONObject responseJson =
                                 new JSONObject(Objects.requireNonNull(response.body()).string());
-                        recipesSearchViewModel.setRecipes((Recipe.fromJsonArray(responseJson.getJSONArray(Constant.RESULTS))));
+
+                        requireActivity().runOnUiThread(() -> {
+                            try {
+                                recipesSearchViewModel.setRecipes((Recipe.fromJsonArray(responseJson.getJSONArray(Constant.RESULTS))));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        });
 
                         requireActivity().runOnUiThread(() -> {
                             hideSearchBlock();

@@ -7,6 +7,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
@@ -15,8 +17,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.makemeals.Constant;
+import com.example.makemeals.MainActivity;
 import com.example.makemeals.R;
+import com.example.makemeals.ViewModel.RecipesSearchViewModel;
 import com.example.makemeals.ViewModel.RecipesSharedViewModel;
+import com.example.makemeals.ViewModel.RecipesViewModel;
+import com.example.makemeals.ViewModel.SharedViewModel;
+import com.example.makemeals.adapters.RecipeAdapter;
 import com.example.makemeals.databinding.FragmentRecipesBinding;
 import com.example.makemeals.models.Recipe;
 import com.google.android.material.button.MaterialButtonToggleGroup;
@@ -32,11 +39,13 @@ import java.util.stream.Collectors;
  * create an instance of this fragment.
  */
 public class RecipesFragment extends Fragment {
-    private Fragment recipesListFragment;
     private List<Recipe> recipesFilterList;
     private FragmentRecipesBinding binding;
     private MaterialButtonToggleGroup toggleButtonRecipes;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private RecyclerView recipeListRecyclerView;
+    private RecipeAdapter recipeAdapter;
+
 
     public RecipesFragment() {
         // Required empty public constructor
@@ -69,11 +78,14 @@ public class RecipesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        binding = FragmentRecipesBinding.bind(view);
-        toggleButtonRecipes = binding.toggleButtonRecipes;
-
         RecipesSharedViewModel recipesSharedViewModel =
                 new ViewModelProvider(requireActivity()).get(RecipesSharedViewModel.class);
+        SharedViewModel sharedViewModel =
+                new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+
+        binding = FragmentRecipesBinding.bind(view);
+        toggleButtonRecipes = binding.toggleButtonRecipes;
+        recipeListRecyclerView = binding.recipeListRecyclerView;
 
         swipeRefreshLayout = binding.swipeRefreshLayout;
         swipeRefreshLayout.setOnRefreshListener(recipesSharedViewModel::loadRecipes);
@@ -83,18 +95,22 @@ public class RecipesFragment extends Fragment {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        recipesFilterList = new ArrayList<>();
-
-        recipesListFragment = RecipesListFragment.newInstance(new ArrayList<>());
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.add(R.id.flRecipesContainer, recipesListFragment).commit();
-
-
-        RecipesSharedViewModel model = new ViewModelProvider(requireActivity()).get(RecipesSharedViewModel.class);
         swipeRefreshLayout.setRefreshing(true);
-        model.getRecipes().observe(getViewLifecycleOwner(), recipes -> {
+        recipesSharedViewModel.getRecipes().observe(getViewLifecycleOwner(), recipes -> {
             swipeRefreshLayout.setRefreshing(false);
             setupToggleButtonFilterGroup(recipes);
+        });
+
+        recipesFilterList = new ArrayList<>();
+        recipeAdapter = new RecipeAdapter(recipesFilterList, getContext(), recipesSharedViewModel);
+        recipeListRecyclerView.setAdapter(recipeAdapter);
+        recipeListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        recipeAdapter.setOnItemClickListener((itemView, position) -> {
+
+            // call the activity to show the recipe details
+            sharedViewModel.select(recipesFilterList.get(position));
+            ((MainActivity) requireActivity()).showRecipeDetails();
         });
     }
 
@@ -136,6 +152,6 @@ public class RecipesFragment extends Fragment {
             recipesFilterList.addAll(recipes.stream().filter(Recipe::getFavorite)
                     .collect(Collectors.toList()));
         }
-        ((RecipesListFragment) recipesListFragment).updateRecipes(recipesFilterList);
+        recipeAdapter.notifyDataSetChanged();
     }
 }

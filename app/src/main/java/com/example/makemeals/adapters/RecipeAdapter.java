@@ -25,6 +25,7 @@ import com.example.makemeals.Constant;
 import com.example.makemeals.MainActivity;
 import com.example.makemeals.R;
 import com.example.makemeals.ViewModel.RecipesSharedViewModel;
+import com.example.makemeals.ViewModel.RecipesViewModel;
 import com.example.makemeals.customClasses.OnDoubleTapListener;
 import com.example.makemeals.databinding.RecipeItemBinding;
 import com.example.makemeals.models.Recipe;
@@ -53,17 +54,17 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     private static final String FAT = "Fat";
     private static final String CARBS = "Carbohydrates";
     final private List<Recipe> recipes;
-    private final RecipesSharedViewModel recipesSharedViewModel;
+//    private final RecipesSharedViewModel recipesSharedViewModel;
     final private Context context;
     private RecipeItemBinding binding;
     private OnItemClickListener onItemClickListener;
+    private RecipesViewModel recipesViewModel;
 
 
-    public RecipeAdapter(List<Recipe> recipes, Context context) {
+    public RecipeAdapter(List<Recipe> recipes, Context context, RecipesViewModel recipesViewModel) {
         this.recipes = recipes;
         this.context = context;
-        this.recipesSharedViewModel = new ViewModelProvider((MainActivity) context)
-                .get(RecipesSharedViewModel.class);
+        this.recipesViewModel = recipesViewModel;
     }
 
     @NonNull
@@ -156,7 +157,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             recipe.saveInBackground(e -> {
                 if (e == null) {
                     // update recipes model
-                    recipesSharedViewModel.updateRecipe(recipe);
+                    recipesViewModel.updateRecipe(recipe);
                     updateRecommendations(recipe, recipe.getSaved());
                 } else {
                     // show error and reverse toggle
@@ -173,7 +174,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             recipe.saveInBackground(e -> {
                 if (e == null) {
                     // update in recipes model
-                    recipesSharedViewModel.updateRecipe(recipe);
+                    recipesViewModel.updateRecipe(recipe);
                     updateRecommendations(recipe, recipe.getFavorite());
                 } else {
                     // show error and reverse toggle

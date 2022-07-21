@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.makemeals.models.Recipe;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * View model to used to hold user search results
@@ -20,7 +21,7 @@ public class RecipesSearchViewModel extends RecipesViewModel {
         return recipes;
     }
 
-    public void setRecipes(List<Recipe> recipes) {
-        this.recipes.postValue(recipes);
+    public void setRecipes(List<Recipe> recipesUpdate) {
+        recipes.setValue(recipesUpdate);
     }
 }
