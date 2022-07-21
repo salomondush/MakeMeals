@@ -6,7 +6,7 @@ import androidx.room.RoomDatabase;
 import com.example.makemeals.models.SearchHistory;
 import com.example.makemeals.models.SearchHistoryDao;
 
-@Database(entities = {SearchHistory.class}, version = 1)
+@Database(entities = {SearchHistory.class}, version = 2)
 public abstract class SearchHistoryDataBase extends RoomDatabase {
     public abstract SearchHistoryDao searchHistoryDao();
 

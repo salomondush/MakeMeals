@@ -28,10 +28,12 @@ import java.sql.Array;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -90,9 +92,7 @@ public class HomeFragment extends Fragment {
         swipeRefreshLayout = binding.swipeRefreshLayout;
         model = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
 
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            model.processRecommendations();
-        });
+        swipeRefreshLayout.setOnRefreshListener(() -> model.processRecommendations());
 
         // Configure the refreshing colors
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
@@ -110,7 +110,15 @@ public class HomeFragment extends Fragment {
         model.getRecommendedRecipes().observe(getViewLifecycleOwner(), recommendationsUpdate -> {
             swipeRefreshLayout.setRefreshing(false);
             recommendations.clear();
-            recommendations.addAll(recommendationsUpdate);
+
+            // add the recommendations without empty data
+            recommendations.addAll(recommendationsUpdate.stream()
+                            .filter(map -> {
+                                ArrayList<List<Recipe>> values = new ArrayList<>(map.values());
+                                return !values.get(0).isEmpty();
+                            })
+                            .collect(Collectors.toList()));
+
             recommendationsAdapter.notifyDataSetChanged();
         });
 

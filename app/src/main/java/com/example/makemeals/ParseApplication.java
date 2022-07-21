@@ -20,7 +20,7 @@ public class ParseApplication extends Application {
         super.onCreate();
 
         searchHistoryDataBase = Room.databaseBuilder(this, SearchHistoryDataBase.class,
-                        SearchHistoryDataBase.NAME).build();
+                        SearchHistoryDataBase.NAME).fallbackToDestructiveMigration().build();
 
         ParseObject.registerSubclass(Ingredient.class);
         ParseObject.registerSubclass(Recipe.class);

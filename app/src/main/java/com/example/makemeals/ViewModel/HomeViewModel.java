@@ -60,7 +60,6 @@ public class HomeViewModel extends ViewModel {
 
 
     public MutableLiveData<List<HashMap<String, List<Recipe>>>> getRecommendedRecipes() {
-        Log.i("HomeViewModel", "getRecommendedRecipes");
         if (recommendationData == null) {
             recommendationData = new MutableLiveData<>();
             // call loadRecipes method with call back to get the data
@@ -70,6 +69,7 @@ public class HomeViewModel extends ViewModel {
     }
 
     public void processRecommendations() {
+//        recommendationData
 
         // get local HOUR of the day
         String localTime = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(new Date());
@@ -93,7 +93,7 @@ public class HomeViewModel extends ViewModel {
      */
     private void getUserRecommendations() {
         ParseQuery<Recommendation> query = ParseQuery.getQuery(Recommendation.class);
-        query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
+        query.setCachePolicy(ParseQuery.CachePolicy.NETWORK_ONLY);
         query.whereEqualTo(Recommendation.USER, ParseUser.getCurrentUser());
         query.getFirstInBackground((recommendation, e) -> {
             if (e == null) {
@@ -106,8 +106,6 @@ public class HomeViewModel extends ViewModel {
                     HashMap<String, List<Recipe>> category = recommendations.get(i);
                     getRecipesByCategory(category, i);
                 }
-
-
             } else {
                 e.printStackTrace();
             }
@@ -123,6 +121,7 @@ public class HomeViewModel extends ViewModel {
      */
     private void addTopRecommendations(JSONObject diets, JSONObject cuisines) {
         // get the first 3 elements with the highest value in diets
+        recommendations.clear(); // for new recommendation data
         HashMap<String, Integer> dietsMap = new HashMap<>();
         HashMap<String, Integer> cuisinesMap = new HashMap<>();
 
@@ -160,6 +159,8 @@ public class HomeViewModel extends ViewModel {
             map.put(Constant.CUISINE + "*" + cuisinesList.get(i).getKey(), new ArrayList<>());
             recommendations.add(map);
         }
+
+        Log.i("HomeViewModel", "recommendations: " + recommendations);
     }
 
     /**

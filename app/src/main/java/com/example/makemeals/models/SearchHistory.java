@@ -4,11 +4,16 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.parse.ParseUser;
+
 @Entity
 public class SearchHistory {
 
     @PrimaryKey(autoGenerate = true)
     public int id;
+
+    @ColumnInfo(name = "user_id")
+    public String userId;
 
     @ColumnInfo(name = "search_term")
     public String searchQuery;
@@ -24,6 +29,7 @@ public class SearchHistory {
         searchHistory.searchQuery = query;
         searchHistory.searchType = type;
         searchHistory.searchDiet = diet;
+        searchHistory.userId = ParseUser.getCurrentUser().getObjectId();
         return searchHistory;
     }
 }

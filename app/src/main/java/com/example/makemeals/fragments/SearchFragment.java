@@ -235,7 +235,8 @@ public class SearchFragment extends Fragment {
         recipeType.setAdapter(typesAdapter);
 
         AsyncTask.execute(() -> {
-            searchHistories = searchHistoryDao.getRecent();
+            searchHistories = searchHistoryDao.getRecent(ParseUser.getCurrentUser().getObjectId()
+                    , Constant.VISIBLE_THRESHOLD);
             for (SearchHistory searchHistory : searchHistories) {
                 searchOptions.add(searchHistory.searchQuery);
             }

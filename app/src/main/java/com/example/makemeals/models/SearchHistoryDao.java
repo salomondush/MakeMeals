@@ -15,9 +15,9 @@ public interface SearchHistoryDao {
     @Insert
     void insert(SearchHistory searchHistory);
 
-    // get the last 5 search history
-    @Query("SELECT * FROM searchhistory ORDER BY id DESC LIMIT 5")
-    List<SearchHistory> getRecent();
+    // get the last 5 search history matching provided userId
+    @Query("SELECT * FROM searchhistory WHERE user_id = :userId ORDER BY id DESC LIMIT :limit")
+    List<SearchHistory> getRecent(String userId, int limit);
 
     @Insert
     void insertAll(SearchHistory... searchHistories);
