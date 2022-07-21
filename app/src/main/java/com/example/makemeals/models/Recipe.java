@@ -1,5 +1,6 @@
 package com.example.makemeals.models;
 
+import com.example.makemeals.Constant;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -65,6 +66,7 @@ public class Recipe extends ParseObject {
 
     private static Recipe getRecipeBySpnId(int spnId) {
         ParseQuery<Recipe> query = ParseQuery.getQuery(Recipe.class);
+        query.whereEqualTo(Constant.USER, ParseUser.getCurrentUser());
         query.whereEqualTo(SPN_ID, spnId);
         try {
             return query.getFirst();

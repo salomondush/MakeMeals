@@ -346,7 +346,7 @@ public class IngredientsFragment extends Fragment {
             String[] item = line.split(",");
             if (item.length >= MINIMUM_LENGTH) {
                 // only works with recipes with items in the second column
-                items.add(item[1]);
+                items.add(item[0]);
             }
         }
         return items;
