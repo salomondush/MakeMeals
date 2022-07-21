@@ -63,13 +63,12 @@ public class HomeViewModel extends ViewModel {
         if (recommendationData == null) {
             recommendationData = new MutableLiveData<>();
             // call loadRecipes method with call back to get the data
-//            processRecommendations();
+            processRecommendations();
         }
         return recommendationData;
     }
 
     public void processRecommendations() {
-//        recommendationData
 
         // get local HOUR of the day
         String localTime = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(new Date());

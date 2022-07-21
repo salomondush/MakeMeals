@@ -79,7 +79,7 @@ public class IngredientsFragment extends Fragment {
     private LinearLayout addLayout;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    private static final String REST_URL = "http://172.20.9.185:3200/file/analyse";
+    private static final String REST_URL = "http://172.23.178.111:3200/file/analyse";
     private static final int MINIMUM_LENGTH = 2;
     private static final int GALLERY_IMAGE_ACTIVITY_REQUEST_CODE = 3;
 
