@@ -78,14 +78,10 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
 
             String image = ingredient.optString("image");
             Glide.with(context).load(Constant.IMAGE_BASE_URL + image)
+                    .placeholder(R.drawable.recipe_image_placeholder)
                     .centerCrop()
                     .transform(new RoundedCorners(Constant.IMAGE_RADIUS))
                     .into(ivIngredientImage);
-        }
-
-        public void scale(float scale) {
-            ivIngredientImage.setScaleX(scale);
-            ivIngredientImage.setScaleY(scale);
         }
     }
 

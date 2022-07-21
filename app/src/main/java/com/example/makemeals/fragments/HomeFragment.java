@@ -5,23 +5,33 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.TextView;
 
-import com.example.makemeals.Constant;
 import com.example.makemeals.R;
+import com.example.makemeals.ViewModel.HomeViewModel;
+import com.example.makemeals.adapters.RecommendationsAdapter;
+import com.example.makemeals.databinding.FragmentHomeBinding;
 import com.example.makemeals.models.Recipe;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
+import java.sql.Array;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,11 +40,11 @@ import java.util.List;
  */
 public class HomeFragment extends Fragment {
 
-    private Fragment recipesListFragment;
-    private CircularProgressIndicator progressIndicator;
-    private static final String SAVED = "saved";
+    private RecommendationsAdapter recommendationsAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private HomeViewModel model;
 
-    public static final int REQUEST_LIMIT = 20;
+    public static final String TIME_FORMAT = "HH";
 
     public HomeFragment() {
         // Required empty public constructor
@@ -43,9 +53,10 @@ public class HomeFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
+     *
      * @return A new instance of fragment HomeFragment.
      */
-    public static HomeFragment newInstance(String param1, String param2) {
+    public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -55,6 +66,10 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // set an exit transition animation
+        TransitionInflater inflater = TransitionInflater.from(requireContext());
+        setExitTransition(inflater.inflateTransition(R.transition.fade));
     }
 
     @Override
@@ -67,40 +82,55 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        FragmentHomeBinding binding = FragmentHomeBinding.bind(view);
 
-        progressIndicator = view.findViewById(R.id.progressIndicator);
 
-        List<Recipe> savedRecipes = new ArrayList<>();
-        recipesListFragment = RecipesListFragment.newInstance(savedRecipes, Constant.HOME);
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.add(R.id.flSavedRecipesContainer, recipesListFragment).commit();
-        querySavedRecipes();
-    }
+        RecyclerView recommendationsRecyclerView = binding.recommendationsRecyclerView;
+        TextView mealTypeTextView = binding.mealTypeTextView;
+        swipeRefreshLayout = binding.swipeRefreshLayout;
+        model = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
 
-    private void querySavedRecipes() {
-        showProgressBar();
-        ParseQuery<Recipe> query = ParseQuery.getQuery(Recipe.class);
-        query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
-        // only get 20 most recent Recipes
-        query.setLimit(REQUEST_LIMIT);
-        query.orderByDescending(Recipe.KEY_CREATED_AT);
-        query.whereEqualTo(Constant.USER, ParseUser.getCurrentUser());
-        query.whereEqualTo(SAVED, true);
-        query.findInBackground((recipes, e) -> {
-            if (e == null) {
-                hideProgressBar();
-                ((RecipesListFragment) recipesListFragment).updateRecipes(recipes);
-            } else {
-                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            model.processRecommendations();
         });
-    }
 
-    private void showProgressBar() {
-        progressIndicator.setVisibility(View.VISIBLE);
-    }
+        // Configure the refreshing colors
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
-    private void hideProgressBar() {
-        progressIndicator.setVisibility(View.GONE);
+        List<HashMap<String, List<Recipe>>> recommendations = new ArrayList<>();
+        recommendationsAdapter = new RecommendationsAdapter(recommendations,
+                getContext());
+        recommendationsRecyclerView.setAdapter(recommendationsAdapter);
+        recommendationsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        swipeRefreshLayout.setRefreshing(true);
+        model.getRecommendedRecipes().observe(getViewLifecycleOwner(), recommendationsUpdate -> {
+            swipeRefreshLayout.setRefreshing(false);
+            recommendations.clear();
+            recommendations.addAll(recommendationsUpdate);
+            recommendationsAdapter.notifyDataSetChanged();
+        });
+
+        // get local HOUR of the day
+        String localTime = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(new Date());
+        int hour = Integer.parseInt(localTime);
+
+        // if hour is between 6 and 10, set meal type to breakfast
+        if (hour >= 6 && hour <= 10) {
+            mealTypeTextView.setText(getString(R.string.breakfast));
+        } else if (hour >= 11 && hour <= 14) {
+            // if hour is between 11 and 14, set meal type to lunch
+            mealTypeTextView.setText(getString(R.string.lunch));
+        } else if (hour >= 15 && hour <= 18) {
+            // if hour is between 15 and 18, set meal type to dinner
+            mealTypeTextView.setText(getString(R.string.dinner));
+        } else {
+            // if hour is between 19 and 24, set meal type to snack
+            mealTypeTextView.setText(getString(R.string.snack));
+        }
+
     }
 }

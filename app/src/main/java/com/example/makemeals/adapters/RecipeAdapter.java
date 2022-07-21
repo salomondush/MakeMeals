@@ -15,22 +15,30 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.makemeals.Constant;
+import com.example.makemeals.MainActivity;
 import com.example.makemeals.R;
+import com.example.makemeals.ViewModel.RecipesSharedViewModel;
 import com.example.makemeals.customClasses.OnDoubleTapListener;
 import com.example.makemeals.databinding.RecipeItemBinding;
 import com.example.makemeals.models.Recipe;
+import com.example.makemeals.models.Recommendation;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -45,19 +53,17 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     private static final String FAT = "Fat";
     private static final String CARBS = "Carbohydrates";
     final private List<Recipe> recipes;
+    private final RecipesSharedViewModel recipesSharedViewModel;
     final private Context context;
     private RecipeItemBinding binding;
     private OnItemClickListener onItemClickListener;
-    private final int page;
 
-    public RecipeAdapter(List<Recipe> recipes, Context context, int page) {
-        this.recipes = recipes;
-        this.context = context;
-        this.page = page;
-    }
 
     public RecipeAdapter(List<Recipe> recipes, Context context) {
-        this(recipes, context, Constant.NEUTRAL);
+        this.recipes = recipes;
+        this.context = context;
+        this.recipesSharedViewModel = new ViewModelProvider((MainActivity) context)
+                .get(RecipesSharedViewModel.class);
     }
 
     @NonNull
@@ -126,12 +132,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             fatsUnit = binding.fatsUnit;
             LinearLayout llNutritionInfo = binding.llNutritionInfo;
 
-            llNutritionInfo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onItemClickListener.onItemClick(itemView, getAdapterPosition());
-                }
-            });
+            llNutritionInfo.setOnClickListener(v -> onItemClickListener.onItemClick(itemView, getAdapterPosition()));
 
             // set on double click listener for the recipe image to favorite/unfavorite the recipe
             recipeImage.setOnTouchListener(new OnDoubleTapListener(context) {
@@ -143,39 +144,24 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             });
 
 
-            tbSave.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Recipe recipe = recipes.get(getAdapterPosition());
-                    // update or save the recipe
-                    recipe.setSaved(!recipe.getSaved());
-                    recipe.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e == null) {
-                                // update in recipes list
-                                if (page == Constant.HOME) {
-                                    if (!tbSave.isChecked()) {
-                                        recipes.remove(getAdapterPosition());
-                                        notifyItemRemoved(getAdapterPosition());
-                                    }
-                                } else {
-                                    recipes.set(getAdapterPosition(), recipe);
-                                }
-                            } else {
-                                // show error and reverse toggle
-                                Toast.makeText(context, context.getString(R.string.error_saving_recipe), Toast.LENGTH_SHORT).show();
-                                tbSave.setChecked(!tbSave.isChecked());
-                            }
-                        }
-                    });
-                }
-            });
+            tbSave.setOnClickListener(v -> saveRecipe(getAdapterPosition()));
 
-            tbFavorite.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    favoriteRecipe(getAdapterPosition());
+            tbFavorite.setOnClickListener(v -> favoriteRecipe(getAdapterPosition()));
+        }
+
+        private void saveRecipe(int position){
+            // update or save the recipe
+            Recipe recipe = recipes.get(position);
+            recipe.setSaved(!recipe.getSaved());
+            recipe.saveInBackground(e -> {
+                if (e == null) {
+                    // update recipes model
+                    recipesSharedViewModel.updateRecipe(recipe);
+                    updateRecommendations(recipe, recipe.getSaved());
+                } else {
+                    // show error and reverse toggle
+                    Toast.makeText(context, context.getString(R.string.error_saving_recipe), Toast.LENGTH_SHORT).show();
+                    tbSave.setChecked(!tbSave.isChecked());
                 }
             });
         }
@@ -184,26 +170,73 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             Recipe recipe = recipes.get(position);
             // update or save the recipe
             recipe.setFavorite(!recipe.getFavorite());
-            recipe.saveInBackground(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if (e == null) {
-                        // update in recipes list
-                        if (page == Constant.FAVORITES) {
-                            if (!tbFavorite.isChecked()) {
-                                recipes.remove(position);
-                                notifyItemRemoved(getAdapterPosition());
-                            }
-                        } else {
-                            recipes.set(getAdapterPosition(), recipe);
-                        }
-                    } else {
-                        // show error and reverse toggle
-                        Toast.makeText(context, context.getString(R.string.error_favoriting_recipe), Toast.LENGTH_SHORT).show();
-                        tbFavorite.setChecked(!tbSave.isChecked());
-                    }
+            recipe.saveInBackground(e -> {
+                if (e == null) {
+                    // update in recipes model
+                    recipesSharedViewModel.updateRecipe(recipe);
+                    updateRecommendations(recipe, recipe.getFavorite());
+                } else {
+                    // show error and reverse toggle
+                    Toast.makeText(context, context.getString(R.string.error_favoriting_recipe), Toast.LENGTH_SHORT).show();
+                    tbFavorite.setChecked(!tbSave.isChecked());
                 }
             });
+        }
+
+        public void updateRecommendations(Recipe recipe, boolean increment){
+
+            ParseQuery.getQuery(Recommendation.class)
+                .whereEqualTo(Constant.USER, ParseUser.getCurrentUser())
+                .getFirstInBackground((recommendation, e1) -> {
+                    if (e1 == null) {
+
+                        // updates user diet recommendation
+                        JSONObject diets = recommendation.getDiets();
+                        JSONArray recipeDiets = recipe.getDiets();
+                        if (recipeDiets != null) {
+                            for (int i = 0; i < recipeDiets.length(); i++) {
+                                try {
+                                    String diet = recipeDiets.optString(i);
+                                    diets.put(diet,
+                                            increment?
+                                                    diets.optInt(diet) + 1:
+                                                    diets.optInt(diet) == 0? 0:
+                                                            diets.optInt(diet) - 1);
+                                } catch (JSONException e2) {
+                                    e2.printStackTrace();
+                                }
+                            }
+                        }
+
+                        // update user cuisine recommendation
+                        JSONObject cuisines = recommendation.getCuisines();
+                        JSONArray recipeCuisines = recipe.getCuisines();
+                        if (recipeCuisines != null) {
+                            for (int i = 0; i < recipeCuisines.length(); i++) {
+                                try {
+                                    String cuisine = recipeCuisines.optString(i);
+
+                                    cuisines.put(cuisine,
+                                            increment?
+                                                    cuisines.optInt(cuisine) + 1:
+                                                    cuisines.optInt(cuisine) == 0? 0:
+                                                            cuisines.optInt(cuisine) - 1);
+
+                                } catch (JSONException e2) {
+                                    e2.printStackTrace();
+                                }
+                            }
+                        }
+
+                        recommendation.setDiets(diets);
+                        recommendation.setCuisines(cuisines);
+                        recommendation.saveInBackground(e -> {
+                            if (e != null) {
+                                Toast.makeText(context, context.getString(R.string.error_saving_recommendation), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
         }
 
         public void bind(Recipe recipe) {
@@ -234,6 +267,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             tbSave.setChecked(recipe.getSaved());
             tbFavorite.setChecked(recipe.getFavorite());
             Glide.with(context).load(recipe.getImageUrl())
+                    .placeholder(R.drawable.recipe_image_placeholder)
                     .centerCrop()
                     .transform(new RoundedCorners(Constant.IMAGE_RADIUS))
                     .into(recipeImage);

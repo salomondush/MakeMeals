@@ -11,16 +11,13 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 import android.os.Bundle;
-import android.os.storage.StorageManager;
-import android.os.storage.StorageVolume;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.example.makemeals.databinding.ActivityMainBinding;
-import com.example.makemeals.fragments.FavoritesFragment;
+import com.example.makemeals.fragments.RecipesFragment;
 import com.example.makemeals.fragments.HomeFragment;
 import com.example.makemeals.fragments.IngredientsFragment;
 import com.example.makemeals.fragments.ProfileFragment;
@@ -28,16 +25,14 @@ import com.example.makemeals.fragments.RecipeDetailsFragment;
 import com.example.makemeals.fragments.SearchFragment;
 import com.example.makemeals.fragments.ShareRecipeFragment;
 import com.example.makemeals.fragments.ShoppingListFragment;
-import com.example.makemeals.models.Recipe;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import org.w3c.dom.Text;
-
 import java.util.Objects;
+import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity {
     private final FragmentManager fragmentManager = getSupportFragmentManager();
@@ -155,16 +150,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void showRecipeDetails(Recipe recipe) {
-        Fragment fragment = RecipeDetailsFragment.newInstance(recipe);
+    public void showRecipeDetails() {
+        Fragment fragment = new RecipeDetailsFragment();
         fragmentManager.beginTransaction()
                 .replace(R.id.flContainer, fragment)
                 .addToBackStack(null)
                 .commit();
     }
 
-    public void showRecipeSharingFragment(Recipe recipe) {
-        Fragment fragment = ShareRecipeFragment.newInstance(recipe);
+    public void showRecipeSharingFragment() {
+        Fragment fragment = new ShareRecipeFragment();
         fragmentManager.beginTransaction()
                 .replace(R.id.flContainer, fragment)
                 .addToBackStack(null)
@@ -187,20 +182,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void getShoppingListCount() {
+    private void getShoppingListCount() {
         ParseUser.getQuery()
-                .setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK)
-                .getInBackground(ParseUser.getCurrentUser().getObjectId(), new GetCallback<ParseUser>() {
-                    @Override
-                    public void done(ParseUser object, ParseException e) {
-                        if (e == null) {
-                            // add all the ingredients from object to the shopping list
-                            setCartItemCount(Objects.requireNonNull(object.getJSONArray("shoppingList")).length());
-                        } else {
-                            e.printStackTrace();
-                        }
+            .setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK)
+            .getInBackground(ParseUser.getCurrentUser().getObjectId(), new GetCallback<ParseUser>() {
+                @Override
+                public void done(ParseUser object, ParseException e) {
+                    if (e == null) {
+                        // add all the ingredients from object to the shopping list
+                        setCartItemCount(Objects.requireNonNull(object.getJSONArray("shoppingList")).length());
+                    } else {
+                        e.printStackTrace();
                     }
-                });
+                }
+            });
     }
 
     public int getCartItemCount() {
@@ -223,8 +218,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.search:
                 fragment = new SearchFragment();
                 break;
-            case R.id.favorites:
-                fragment = new FavoritesFragment();
+            case R.id.recipes:
+                fragment = new RecipesFragment();
                 break;
             case R.id.profile:
                 fragment = new ProfileFragment();
@@ -235,6 +230,10 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         fragmentManager.beginTransaction()
+                .setCustomAnimations(
+                        R.anim.fade_in,
+                        R.anim.fade_out
+                )
                 .replace(R.id.flContainer, fragment)
                 .addToBackStack(null)
                 .commit();
