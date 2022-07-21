@@ -23,6 +23,7 @@ public class Constant {
     public static final String CUISINE = "cuisine";
     public static final String DIET = "diet";
     public static final String TYPE = "type";
+    public static final String QUERY = "query";
     public static final String NUMBER = "number";
     public static final String INCLUDE_INGREDIENTS = "includeIngredients";
     public static final String FILL_INGREDIENTS = "fillIngredients";

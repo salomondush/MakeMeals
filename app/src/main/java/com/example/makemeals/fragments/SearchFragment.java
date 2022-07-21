@@ -261,67 +261,59 @@ public class SearchFragment extends Fragment {
 
     private void searchRecipes(String type, String diet, String query) {
         showProgressBar();
-        RestClient restClient = new RestClient(getContext());
-        restClient.complexSearch(searchIngredientsNames, type, diet, query,
-            new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    super.onSuccess(statusCode, headers, response);
 
-                    OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient();
 
-                    HttpUrl.Builder urlBuilder =
-                            Objects.requireNonNull(HttpUrl.parse(Constant.RECIPE_SEARCH_URL)).newBuilder();
-                    urlBuilder.addQueryParameter(Constant.API_KEY, Constant.SPN_API_KEY);
-                    urlBuilder.addQueryParameter(Constant.NUMBER, String.valueOf(Constant.MAX_RESULTS));
-                    urlBuilder.addQueryParameter(Constant.INCLUDE_INGREDIENTS, TextUtils.join(",", searchIngredientsNames));
-                    urlBuilder.addQueryParameter(Constant.TYPE, type);
-                    urlBuilder.addQueryParameter(Constant.DIET, diet);
-                    urlBuilder.addQueryParameter(Constant.FILL_INGREDIENTS, String.valueOf(true));
-                    urlBuilder.addQueryParameter(Constant.ADD_RECIPE_INFORMATION, String.valueOf(true));
-                    urlBuilder.addQueryParameter(Constant.ADD_RECIPE_NUTRITION, String.valueOf(true));
-                    urlBuilder.addQueryParameter(Constant.INSTRUCTIONS_REQUIRED, String.valueOf(true));
+        HttpUrl.Builder urlBuilder =
+                Objects.requireNonNull(HttpUrl.parse(Constant.RECIPE_SEARCH_URL)).newBuilder();
+        urlBuilder.addQueryParameter(Constant.API_KEY, Constant.SPN_API_KEY);
+        urlBuilder.addQueryParameter(Constant.NUMBER, String.valueOf(Constant.MAX_RESULTS));
+        urlBuilder.addQueryParameter(Constant.INCLUDE_INGREDIENTS, TextUtils.join(",", searchIngredientsNames));
+        urlBuilder.addQueryParameter(Constant.TYPE, type);
+        urlBuilder.addQueryParameter(Constant.QUERY, query);
+        urlBuilder.addQueryParameter(Constant.DIET, diet);
+        urlBuilder.addQueryParameter(Constant.FILL_INGREDIENTS, String.valueOf(true));
+        urlBuilder.addQueryParameter(Constant.ADD_RECIPE_INFORMATION, String.valueOf(true));
+        urlBuilder.addQueryParameter(Constant.ADD_RECIPE_NUTRITION, String.valueOf(true));
+        urlBuilder.addQueryParameter(Constant.INSTRUCTIONS_REQUIRED, String.valueOf(true));
 
-                    Request request = new Request.Builder()
-                            .url(urlBuilder.build().toString())
-                            .build();
+        Request request = new Request.Builder()
+                .url(urlBuilder.build().toString())
+                .build();
 
-                    client.newCall(request).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                            e.printStackTrace();
-                        }
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
+            }
 
-                        @Override
-                        public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
-                            requireActivity().runOnUiThread(() -> {
-                                hideProgressBar();
-                            });
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
+                requireActivity().runOnUiThread(() -> {
+                    hideProgressBar();
+                });
 
-                            if (response.isSuccessful()) {
-                                try {
-                                    JSONObject responseJson =
-                                            new JSONObject(Objects.requireNonNull(response.body()).string());
-                                    recipesSearchViewModel.setRecipes((Recipe.fromJsonArray(responseJson.getJSONArray(Constant.RESULTS))));
+                if (response.isSuccessful()) {
+                    try {
+                        JSONObject responseJson =
+                                new JSONObject(Objects.requireNonNull(response.body()).string());
+                        recipesSearchViewModel.setRecipes((Recipe.fromJsonArray(responseJson.getJSONArray(Constant.RESULTS))));
 
-                                    requireActivity().runOnUiThread(() -> {
-                                        hideSearchBlock();
-                                    });
-                                } catch (JSONException | IOException e) {
-                                    e.printStackTrace();
-                                }
-                            } else {
-                                requireActivity().runOnUiThread(() -> {
-                                    Toast.makeText(getActivity(),
-                                            requireContext().getString(R.string.connection_failed),
-                                            Toast.LENGTH_LONG).show();
-                                });
-                            }
-                        }
+                        requireActivity().runOnUiThread(() -> {
+                            hideSearchBlock();
+                        });
+                    } catch (JSONException | IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(getActivity(),
+                                requireContext().getString(R.string.connection_failed),
+                                Toast.LENGTH_LONG).show();
                     });
                 }
-            });
-
+            }
+        });
     }
 
     private void querySearchIngredients() {
