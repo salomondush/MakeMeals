@@ -5,7 +5,7 @@
 2. [Product Spec](#Product-Spec)
 3. [Wireframes](#Wireframes)
 4. [Schema](#Schema)
-5. [Components and connections diagram](#Components and connections diagram)
+5. [Components and connections diagram](#Components-and-connections-diagram)
 
 ## Overview
 ### Description
