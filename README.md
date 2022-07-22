@@ -2,11 +2,12 @@
 
 ## Table of Contents
 1. [Overview](#Overview)
-1. [Product Spec](#Product-Spec)
-1. [Wireframes](#Wireframes)
-2. [Schema](#Schema)
+2. [Product Spec](#Product-Spec)
+3. [Wireframes](#Wireframes)
+4. [Schema](#Schema)
+5. [Components and connections diagram](#Components and connections diagram)
 
-## -[] Overview
+## Overview
 ### Description
 The food app for meal planning  including managing grocery shopping and cooking menus, from scanning grocery shopping receipts to suggesting what type of food you can make with the available ingredients and saving + sharing your favorite recipes 
 
@@ -173,7 +174,6 @@ https://www.figma.com/.../6u95Y8yEE0cTQKWmrO.../MakeMeals...
    * diets
    * cuisines
    
-### Networking
-- [Add list of network requests by screen ]
-- [Create basic snippets for each Parse network request]
-- [OPTIONAL: List endpoints if using existing API such as Yelp]
+### Components and connections diagram
+![Screen Shot 2022-07-22 at 3 35 30 PM](https://user-images.githubusercontent.com/63796975/180577150-e57e64fc-cf4b-4c4c-8d6a-0d3c4dc0f4b1.png)
+
