@@ -165,6 +165,13 @@ https://www.figma.com/.../6u95Y8yEE0cTQKWmrO.../MakeMeals...
 * ShoppingItem
    * fields (Object)
    * isChecked (Boolean)
+* Recommendation
+   * OjectId
+   * updateAt
+   * createdAt
+   * user (pointer reference to user class)
+   * diets
+   * cuisines
    
 ### Networking
 - [Add list of network requests by screen ]
