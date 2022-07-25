@@ -10,6 +10,8 @@ public class Constant {
     public final static String IMAGE_BASE_URL = "https://spoonacular.com/cdn/ingredients_100x100/";;
     public final static String OBJECT_ID = "objectId";
     public final static String USER = "user";
+    public final static int SAVE_RECOMMENDATION_NUM = 1;
+    public final static int FAVORITE_RECOMMENDATION_NUM = 1;
     public static final String SPOONACULAR_BASE_URL = "https://api.spoonacular.com/";
     public static final String SPN_API_KEY = BuildConfig.SPN_API_KEY;
     public static final int MAX_RESULTS = 10;

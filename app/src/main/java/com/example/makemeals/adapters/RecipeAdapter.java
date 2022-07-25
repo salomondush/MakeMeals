@@ -146,7 +146,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
                 if (e == null) {
                     // update recipes model
                     recipesViewModel.updateRecipe(recipe);
-                    updateRecommendations(recipe, recipe.getSaved());
+                    updateRecommendations(recipe, recipe.getSaved(), Constant.SAVE_RECOMMENDATION_NUM);
                 } else {
                     // show error and reverse toggle
                     Toast.makeText(context, context.getString(R.string.error_saving_recipe), Toast.LENGTH_SHORT).show();
@@ -163,7 +163,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
                 if (e == null) {
                     // update in recipes model
                     recipesViewModel.updateRecipe(recipe);
-                    updateRecommendations(recipe, recipe.getFavorite());
+                    updateRecommendations(recipe, recipe.getFavorite(), Constant.FAVORITE_RECOMMENDATION_NUM);
                 } else {
                     // show error and reverse toggle
                     Toast.makeText(context, context.getString(R.string.error_favoriting_recipe), Toast.LENGTH_SHORT).show();
@@ -172,7 +172,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             });
         }
 
-        public void updateRecommendations(Recipe recipe, boolean increment){
+        public void updateRecommendations(Recipe recipe, boolean increment, int amount){
 
             ParseQuery.getQuery(Recommendation.class)
                 .whereEqualTo(Constant.USER, ParseUser.getCurrentUser())
@@ -188,9 +188,9 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
                                     String diet = recipeDiets.optString(i);
                                     diets.put(diet,
                                             increment?
-                                                    diets.optInt(diet) + 1:
+                                                    diets.optInt(diet) + amount:
                                                     diets.optInt(diet) == 0? 0:
-                                                            diets.optInt(diet) - 1);
+                                                            diets.optInt(diet) - amount);
                                 } catch (JSONException e2) {
                                     e2.printStackTrace();
                                 }
@@ -207,9 +207,9 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
 
                                     cuisines.put(cuisine,
                                             increment?
-                                                    cuisines.optInt(cuisine) + 1:
+                                                    cuisines.optInt(cuisine) + amount:
                                                     cuisines.optInt(cuisine) == 0? 0:
-                                                            cuisines.optInt(cuisine) - 1);
+                                                            cuisines.optInt(cuisine) - amount);
 
                                 } catch (JSONException e2) {
                                     e2.printStackTrace();
