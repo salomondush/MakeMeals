@@ -24,6 +24,7 @@ import com.example.makemeals.ViewModel.RecipesSharedViewModel;
 import com.example.makemeals.ViewModel.RecipesViewModel;
 import com.example.makemeals.ViewModel.SharedViewModel;
 import com.example.makemeals.adapters.RecipeAdapter;
+import com.example.makemeals.customClasses.EndlessRecyclerViewScrollListener;
 import com.example.makemeals.databinding.FragmentRecipesBinding;
 import com.example.makemeals.models.Recipe;
 import com.google.android.material.button.MaterialButtonToggleGroup;
@@ -104,7 +105,20 @@ public class RecipesFragment extends Fragment {
         recipesFilterList = new ArrayList<>();
         recipeAdapter = new RecipeAdapter(recipesFilterList, getContext(), recipesSharedViewModel);
         recipeListRecyclerView.setAdapter(recipeAdapter);
-        recipeListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        // configure endless scroll listener
+        // Triggered only when new data needs to be appended to the list
+        // Add whatever code is needed to append new items to the bottom of the list
+        EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                loadNextDataFromParse(page);
+            }
+        };
+        recipeListRecyclerView.setLayoutManager(linearLayoutManager);
+        recipeListRecyclerView.addOnScrollListener(scrollListener);
 
         recipeAdapter.setOnItemClickListener((itemView, position) -> {
 
@@ -112,6 +126,9 @@ public class RecipesFragment extends Fragment {
             sharedViewModel.select(recipesFilterList.get(position));
             ((MainActivity) requireActivity()).showRecipeDetails();
         });
+    }
+
+    private void loadNextDataFromParse(int page) {
     }
 
     /**

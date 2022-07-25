@@ -26,10 +26,19 @@ public class RecipesSharedViewModel extends RecipesViewModel {
      * Loads user recipes from Parse
      */
     public void loadRecipes() {
+        loadRecipes(0);
+    }
+
+    /**
+     * Loads user recipes from Parse on a specific page
+     * @param page the page to load
+     */
+    public void loadRecipes(int page){
         ParseQuery<Recipe> query = ParseQuery.getQuery(Recipe.class);
         query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
         // only get 20 most recent Recipes
         query.setLimit(Constant.REQUEST_LIMIT);
+        query.setSkip(page * Constant.REQUEST_LIMIT);
         query.orderByDescending(Recipe.KEY_CREATED_AT);
         query.whereEqualTo(Constant.USER, ParseUser.getCurrentUser());
         query.findInBackground((resultRecipes, e) -> {
