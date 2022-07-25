@@ -9,14 +9,14 @@
     tools:context=".fragments.RecipesFragment">
 
     <com.google.android.material.button.MaterialButtonToggleGroup
-        android:id="@+id/toggleButtonRecipes"
+        android:id="@+id/recipesToggleButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:selectionRequired="true"
         app:singleSelection="true"
-        app:checkedButton="@+id/buttonAll">
+        app:checkedButton="@+id/allButton">
         <Button
-            android:id="@+id/buttonAll"
+            android:id="@+id/allButton"
             android:layout_weight="0.3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
             style="?attr/materialButtonOutlinedStyle"
             />
         <Button
-            android:id="@+id/buttonSaved"
+            android:id="@+id/savedButton"
             android:layout_weight="0.3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
             style="?attr/materialButtonOutlinedStyle"
             />
         <Button
-            android:id="@+id/buttonFavorites"
+            android:id="@+id/favoritesButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"

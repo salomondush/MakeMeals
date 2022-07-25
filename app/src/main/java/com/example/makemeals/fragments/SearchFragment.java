@@ -6,24 +6,17 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.loader.content.AsyncTaskLoader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,7 +26,6 @@ import com.example.makemeals.Constant;
 import com.example.makemeals.MainActivity;
 import com.example.makemeals.ParseApplication;
 import com.example.makemeals.R;
-import com.example.makemeals.RestClient;
 import com.example.makemeals.ViewModel.RecipesSearchViewModel;
 import com.example.makemeals.ViewModel.SharedViewModel;
 import com.example.makemeals.adapters.IngredientsPageAdapter;
@@ -46,9 +38,6 @@ import com.example.makemeals.models.SearchHistory;
 import com.example.makemeals.models.SearchHistoryDao;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.parse.FindCallback;
-import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -61,8 +50,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import cz.msebera.android.httpclient.Header;
-import okhttp3.CacheControl;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
@@ -79,14 +66,14 @@ public class SearchFragment extends Fragment {
     private IngredientsPageAdapter ingredientsPageAdapter;
     private List<Ingredient> ingredients;
     private List<String> searchIngredientsNames;
-    private AutoCompleteTextView recipeDiet;
-    private AutoCompleteTextView recipeType;
-    private TextView tvSearchBar;
-    private MaterialButton searchButton;
-    private ImageButton ibHideSearchBlock;
-    private LinearLayout llSearchResultBlock;
-    private LinearLayout llSearchBlock;
-    private AutoCompleteTextView etSearchText;
+    private AutoCompleteTextView recipeDietAutoCompleteTextView;
+    private AutoCompleteTextView recipeTypeAutoCompleteTextView;
+    private TextView searchBarTextView;
+    private MaterialButton searchMaterialButton;
+    private ImageButton hideSearchBlockImageButton;
+    private LinearLayout searchResultBlockLinearLayout;
+    private LinearLayout searchBlockLinearLayout;
+    private AutoCompleteTextView searchAutoCompleteTextView;
     private CircularProgressIndicator progressIndicator;
     private List<SearchHistory> searchHistories;
     private SearchHistoryDao searchHistoryDao;
@@ -145,16 +132,16 @@ public class SearchFragment extends Fragment {
         SharedViewModel sharedViewModel =
                 new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
-        searchButton = binding.searchButton;
-        recipeDiet = binding.recipeDiet;
-        recipeType = binding.recipeType;
-        RecyclerView rvSearchIngredients = binding.rvSearchIngredients;
+        searchMaterialButton = binding.searchMaterialButton;
+        recipeDietAutoCompleteTextView = binding.recipeDietAutoCompleteTextView;
+        recipeTypeAutoCompleteTextView = binding.recipeTypeAutoCompleteTextView;
+        RecyclerView searchIngredientsRecyclerView = binding.searchIngredientsRecyclerView;
         progressIndicator = binding.progressIndicator;
-        tvSearchBar = binding.tvSearchBar;
-        llSearchResultBlock = binding.llSearchResultBlock;
-        llSearchBlock = binding.llSearchBlock;
-        ibHideSearchBlock = binding.ibHideSearchBlock;
-        etSearchText = binding.etSearchText;
+        searchBarTextView = binding.searchBarTextView;
+        searchResultBlockLinearLayout = binding.searchResultBlockLinearLayout;
+        searchBlockLinearLayout = binding.searchBlockLinearLayout;
+        hideSearchBlockImageButton = binding.hideSearchBlockImageButton;
+        searchAutoCompleteTextView = binding.searchAutoCompleteTextView;
         RecyclerView recipeListRecyclerView = binding.recipeListRecyclerView;
 
         // define our db and delete any excess search history data
@@ -201,12 +188,12 @@ public class SearchFragment extends Fragment {
         });
 
 
-        // set and attach ingredients adapter to rvSearchIngredients recyclerView
+        // set and attach ingredients adapter to searchIngredientsRecyclerView recyclerView
         ingredients = new ArrayList<>();
         searchIngredientsNames = new ArrayList<>();
         ingredientsPageAdapter = new IngredientsPageAdapter(ingredients, getContext(), true);
-        rvSearchIngredients.setAdapter(ingredientsPageAdapter);
-        rvSearchIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
+        searchIngredientsRecyclerView.setAdapter(ingredientsPageAdapter);
+        searchIngredientsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // setup data for the search drop down options for search, diet, and type
         setupDropdownOptions();
@@ -225,10 +212,10 @@ public class SearchFragment extends Fragment {
     }
 
     private void setupClickListeners() {
-        searchButton.setOnClickListener(v -> {
-            type = recipeType.getText().toString();
-            diet = recipeDiet.getText().toString();
-            query = etSearchText.getText().toString();
+        searchMaterialButton.setOnClickListener(v -> {
+            type = recipeTypeAutoCompleteTextView.getText().toString();
+            diet = recipeDietAutoCompleteTextView.getText().toString();
+            query = searchAutoCompleteTextView.getText().toString();
 
             AsyncTask.execute(() -> {
                 searchHistoryDao.insert(SearchHistory.createEntry(query, type, diet));
@@ -247,9 +234,9 @@ public class SearchFragment extends Fragment {
             }
         });
 
-        tvSearchBar.setOnClickListener(v -> showSearchBlock());
+        searchBarTextView.setOnClickListener(v -> showSearchBlock());
 
-        ibHideSearchBlock.setOnClickListener(v -> hideSearchBlock());
+        hideSearchBlockImageButton.setOnClickListener(v -> hideSearchBlock());
     }
 
     private void setupDropdownOptions() {
@@ -257,14 +244,14 @@ public class SearchFragment extends Fragment {
         searchOptions = new ArrayList<>();
         searchQueryAdapter = new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_list_item_1, searchOptions);
-        etSearchText.setAdapter(searchQueryAdapter);
+        searchAutoCompleteTextView.setAdapter(searchQueryAdapter);
 
         ArrayAdapter<String> optionsAdapter = new ArrayAdapter<>(requireContext(),
                 android.R.layout.simple_list_item_1, DIET_OPTIONS);
         ArrayAdapter<String> typesAdapter = new ArrayAdapter<>(requireContext(),
                 android.R.layout.simple_list_item_1, TYPE_OPTIONS);
-        recipeDiet.setAdapter(optionsAdapter);
-        recipeType.setAdapter(typesAdapter);
+        recipeDietAutoCompleteTextView.setAdapter(optionsAdapter);
+        recipeTypeAutoCompleteTextView.setAdapter(typesAdapter);
 
         AsyncTask.execute(() -> {
             searchHistories = searchHistoryDao.getRecent(ParseUser.getCurrentUser().getObjectId()
@@ -276,16 +263,16 @@ public class SearchFragment extends Fragment {
         });
 
 
-        etSearchText.setOnItemClickListener((parent, view, position, id) -> {
+        searchAutoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
 
             String queryName = searchOptions.get(position);
             searchHistories.forEach(searchHistory -> {
                 if (searchHistory.searchQuery.equals(queryName)) {
                     if (!searchHistory.searchDiet.isEmpty()) {
-                        recipeDiet.setText(searchHistory.searchDiet);
+                        recipeDietAutoCompleteTextView.setText(searchHistory.searchDiet);
                     }
                     if (!searchHistory.searchType.isEmpty()) {
-                        recipeType.setText(searchHistory.searchType);
+                        recipeTypeAutoCompleteTextView.setText(searchHistory.searchType);
                     }
                 }
             });
@@ -387,13 +374,13 @@ public class SearchFragment extends Fragment {
     }
 
     private void hideSearchBlock(){
-        llSearchBlock.setVisibility(View.GONE);
-        llSearchResultBlock.setVisibility(View.VISIBLE);
+        searchBlockLinearLayout.setVisibility(View.GONE);
+        searchResultBlockLinearLayout.setVisibility(View.VISIBLE);
     }
 
     private void showSearchBlock(){
-        llSearchBlock.setVisibility(View.VISIBLE);
-        llSearchResultBlock.setVisibility(View.GONE);
+        searchBlockLinearLayout.setVisibility(View.VISIBLE);
+        searchResultBlockLinearLayout.setVisibility(View.GONE);
     }
 
     private void showProgressBar() {

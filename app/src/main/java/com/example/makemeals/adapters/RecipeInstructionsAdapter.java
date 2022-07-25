@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -53,26 +52,26 @@ public class RecipeInstructionsAdapter extends RecyclerView.Adapter<RecipeInstru
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        final private TextView tvInstructionItemText;
-        private final RecyclerView rvInstructionSteps;
+        final private TextView instructionItemTextView;
+        private final RecyclerView instructionStepsRecyclerView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvInstructionItemText = binding.tvInstructionItemText;
-            rvInstructionSteps = binding.rvInstructionSteps;
+            instructionItemTextView = binding.instructionItemTextView;
+            instructionStepsRecyclerView = binding.instructionStepsRecyclerView;
         }
 
         public void bind(JSONObject instruction) {
             String instructionName = "name";
             String instructionSteps = "steps";
 
-            tvInstructionItemText.setText(instruction.optString(instructionName));
+            instructionItemTextView.setText(instruction.optString(instructionName));
 
             JSONArray steps = instruction.optJSONArray(instructionSteps);
             if (steps != null) {
                 InstructionStepsAdapter instructionStepsAdapter = new InstructionStepsAdapter(steps, context, withCheckBox);
-                rvInstructionSteps.setAdapter(instructionStepsAdapter);
-                rvInstructionSteps.setLayoutManager(new LinearLayoutManager(context));
+                instructionStepsRecyclerView.setAdapter(instructionStepsAdapter);
+                instructionStepsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.example.makemeals.adapters;
 
 import android.content.Context;
-import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +19,8 @@ import com.example.makemeals.R;
 import com.example.makemeals.databinding.RecipeIngredientItemBinding;
 import com.google.android.material.snackbar.Snackbar;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,23 +54,23 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         final private ImageView ivIngredientImage;
-        private final TextView tvDetailIngredientName;
-        private final TextView tvIngredientQuantity;
+        private final TextView detailIngredientNameTextView;
+        private final TextView ingredientQuantityTextView;
         private CheckBox cbIngredient;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            tvDetailIngredientName = binding.tvDetailIngredientName;
-            tvIngredientQuantity = binding.tvIngredientQuantity;
+            detailIngredientNameTextView = binding.detailIngredientNameTextView;
+            ingredientQuantityTextView = binding.ingredientQuantityTextView;
             ivIngredientImage = binding.ivIngredientImage;
         }
 
         public void bind(JSONObject ingredient) {
-            tvDetailIngredientName.setText(ingredient.optString("name"));
+            detailIngredientNameTextView.setText(ingredient.optString("name"));
             JSONObject measure = Objects.requireNonNull(ingredient.optJSONObject("measures")).optJSONObject("us");
             String quantity = Objects.requireNonNull(measure).optInt("amount") + " " + measure.optString("unitShort");
-            tvIngredientQuantity.setText(quantity);
+            ingredientQuantityTextView.setText(quantity);
 
             String image = ingredient.optString("image");
             Glide.with(context).load(Constant.IMAGE_BASE_URL + image)

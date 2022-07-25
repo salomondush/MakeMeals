@@ -14,14 +14,14 @@
         android:contentDescription="@string/ingredient_image" />
 
     <LinearLayout
-        android:id="@+id/ingredient"
+        android:id="@+id/ingredientLinearLayout"
         android:layout_gravity="center"
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView
-            android:id="@+id/tvDetailIngredientName"
+            android:id="@+id/detailIngredientNameTextView"
             android:textSize="11sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tvIngredientQuantity"
+        android:id="@+id/ingredientQuantityTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="visible"
@@ -40,7 +40,7 @@
         android:textColor="@color/black"/>
 
     <CheckBox
-        android:id="@+id/cbSelectIngredient"
+        android:id="@+id/selectIngredientCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"

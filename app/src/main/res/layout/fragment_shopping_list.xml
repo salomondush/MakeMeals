@@ -17,10 +17,10 @@
         android:visibility="gone" />
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cvShoppingList"
+        android:id="@+id/shoppingListMaterialCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/cvShoppingListInfo"
+        android:layout_above="@+id/shoppingListStatusMaterialCardView"
         android:layout_alignParentTop="true"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="10dp"
@@ -33,7 +33,7 @@
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvShoppingList"
+                android:id="@+id/shoppingListRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
@@ -41,7 +41,7 @@
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cvShoppingListInfo"
+        android:id="@+id/shoppingListStatusMaterialCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -69,7 +69,7 @@
                     android:text="@string/unchecked" />
 
                 <TextView
-                    android:id="@+id/tvUncheckedCount"
+                    android:id="@+id/uncheckedCountTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -91,7 +91,7 @@
                     android:text="@string/checked" />
 
                 <TextView
-                    android:id="@+id/tvCheckedCount"
+                    android:id="@+id/checkedCountTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -101,7 +101,7 @@
             </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/buttonClearShoppingList"
+                android:id="@+id/clearShoppingListMaterialButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="5dp"

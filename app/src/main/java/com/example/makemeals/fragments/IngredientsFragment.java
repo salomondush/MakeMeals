@@ -5,22 +5,18 @@ import static android.app.Activity.RESULT_OK;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +24,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
@@ -36,7 +31,6 @@ import com.codepath.asynchttpclient.RequestHeaders;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.makemeals.R;
-import com.example.makemeals.ViewModel.HomeViewModel;
 import com.example.makemeals.adapters.IngredientsPageAdapter;
 import com.example.makemeals.adapters.IngredientsDialogAdapter;
 import com.example.makemeals.databinding.FragmentIngredientsBinding;
@@ -52,7 +46,6 @@ import com.parse.SaveCallback;
 import org.json.JSONException;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,13 +63,13 @@ import okhttp3.RequestBody;
 public class IngredientsFragment extends Fragment {
     private static final String USER = "user";
     private static final String FORMAT = "image/jpeg";
-    private RecyclerView rvIngredients;
+    private RecyclerView ingredientsRecyclerView;
     private IngredientsPageAdapter adapter;
     private List<Ingredient> ingredients;
     private List<String> dialogIngredients;
-    private EditText etIngredientName;
-    private ImageButton addButton;
-    private LinearLayout addLayout;
+    private EditText ingredientNameEditText;
+    private ImageButton addImageButton;
+    private LinearLayout addLinearLayout;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private static final String REST_URL = "http://172.23.178.111:3200/file/analyse";
@@ -125,12 +118,12 @@ public class IngredientsFragment extends Fragment {
         materialAlertDialogBuilder = new MaterialAlertDialogBuilder(requireContext());
         FragmentIngredientsBinding binding = FragmentIngredientsBinding.bind(view);
 
-        rvIngredients = binding.rvIngredients;
-        addButton = binding.addButton;
-        addLayout = binding.addLayout;
-        ImageButton buttonAddIngredient = binding.buttonAddIngredient;
-        etIngredientName = binding.etIngredientName;
-        ImageButton galleryButton = binding.galleryButton;
+        ingredientsRecyclerView = binding.ingredientsRecyclerView;
+        addImageButton = binding.addImageButton;
+        addLinearLayout = binding.addLinearLayout;
+        ImageButton addIngredientImageButton = binding.addIngredientImageButton;
+        ingredientNameEditText = binding.ingredientNameEditText;
+        ImageButton galleryImageButton = binding.galleryImageButton;
 
         swipeRefreshLayout = binding.swipeRefreshLayout;
         swipeRefreshLayout.setOnRefreshListener(this::queryIngredients);
@@ -143,38 +136,38 @@ public class IngredientsFragment extends Fragment {
 
         ingredients = new ArrayList<>();
         adapter = new IngredientsPageAdapter(ingredients, getContext(), false);
-        rvIngredients.setAdapter(adapter);
-        rvIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
+        ingredientsRecyclerView.setAdapter(adapter);
+        ingredientsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new IngredientsPageAdapter.SwipeHelper(adapter, rvIngredients));
-        itemTouchHelper.attachToRecyclerView(rvIngredients);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new IngredientsPageAdapter.SwipeHelper(adapter, ingredientsRecyclerView));
+        itemTouchHelper.attachToRecyclerView(ingredientsRecyclerView);
 
 
-        adapter.setOnRemoveIngredientClickListener((itemView, position) -> adapter.deleteItem(rvIngredients, position));
+        adapter.setOnRemoveIngredientClickListener((itemView, position) -> adapter.deleteItem(ingredientsRecyclerView, position));
 
-        galleryButton.setOnClickListener(v -> {
+        galleryImageButton.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent, GALLERY_IMAGE_ACTIVITY_REQUEST_CODE);
         });
 
-        addButton.setOnClickListener(v -> {
-            if (addLayout.getVisibility() == View.GONE) {
-                addLayout.setVisibility(View.VISIBLE);
-                addButton.setBackground
+        addImageButton.setOnClickListener(v -> {
+            if (addLinearLayout.getVisibility() == View.GONE) {
+                addLinearLayout.setVisibility(View.VISIBLE);
+                addImageButton.setBackground
                         (ResourcesCompat.getDrawable(getResources(),
                                 R.drawable.make_meals_remove_icon, null));
             } else {
-                addLayout.setVisibility(View.GONE);
-                addButton.setBackground
+                addLinearLayout.setVisibility(View.GONE);
+                addImageButton.setBackground
                         (ResourcesCompat.getDrawable(getResources(),
                                 R.drawable.add_icon, null));
             }
         });
 
-        buttonAddIngredient.setOnClickListener(v -> {
-            String ingredientName = etIngredientName.getText().toString();
+        addIngredientImageButton.setOnClickListener(v -> {
+            String ingredientName = ingredientNameEditText.getText().toString();
             if (ingredientName.isEmpty()) {
-                etIngredientName.setError(requireContext().getString(R.string.ingredient_name_is_required));
+                ingredientNameEditText.setError(requireContext().getString(R.string.ingredient_name_is_required));
                 return;
             }
             Ingredient ingredient = new Ingredient();
@@ -182,7 +175,7 @@ public class IngredientsFragment extends Fragment {
             ingredient.setUser(ParseUser.getCurrentUser());
             ingredient.saveInBackground(e -> {
                 if (e == null) {
-                    etIngredientName.setText("");
+                    ingredientNameEditText.setText("");
                     ingredients.add(ingredient);
                     adapter.notifyItemInserted(ingredients.size() - 1);
                 } else {
@@ -216,7 +209,7 @@ public class IngredientsFragment extends Fragment {
 
         dialogIngredients = new ArrayList<>(ingredientItems);
 
-        RecyclerView rvDialogIngredients = addIngredientsDialogView.findViewById(R.id.rvDialogIngredients);
+        RecyclerView rvDialogIngredients = addIngredientsDialogView.findViewById(R.id.dialogIngredientsRecyclerView);
         IngredientsDialogAdapter dialogAdapter = new IngredientsDialogAdapter(dialogIngredients, getContext());
         rvDialogIngredients.setAdapter(dialogAdapter);
         rvDialogIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -234,7 +227,7 @@ public class IngredientsFragment extends Fragment {
 
                 List<Ingredient> newIngredients = new ArrayList<>();
 
-                // save all ingredients in rvDialogIngredients to dialogIngredients
+                // save all ingredients in dialogIngredientsRecyclerView to dialogIngredients
                 for (int i = 0; i < dialogIngredients.size(); i++) {
                     String ingredientName = dialogIngredients.get(i);
                     if (!ingredientName.isEmpty()) {

@@ -17,7 +17,7 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/ivRecipeImage"
+            android:id="@+id/recipeImageView"
             android:layout_width="150dp"
             android:layout_height="100dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -28,7 +28,7 @@
 
         <!-- recipe instructions and ingredients -->
         <LinearLayout
-            android:id="@+id/llNutritionInfo"
+            android:id="@+id/nutritionInfoLinearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constrainedWidth="true"
@@ -37,11 +37,11 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="2dp"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/ivRecipeImage"
+            app:layout_constraintStart_toEndOf="@+id/recipeImageView"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/tvRecipeTitle"
+                android:id="@+id/recipeTitleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/recipe_title"
@@ -71,7 +71,7 @@
 
                     <!-- ready in time -->
                     <TextView
-                        android:id="@+id/tvReadyInTime"
+                        android:id="@+id/readyInTimeTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/_45m" />
@@ -91,7 +91,7 @@
 
                     <!-- ready in time -->
                     <TextView
-                        android:id="@+id/tvTypes"
+                        android:id="@+id/typesTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/lunch_main_course" />
@@ -119,7 +119,7 @@
 
                     <!-- ready in time -->
                     <TextView
-                        android:id="@+id/tvServings"
+                        android:id="@+id/servingsTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/_2" />
@@ -139,7 +139,7 @@
 
                     <!-- ready in time -->
                     <TextView
-                        android:id="@+id/tvDiets"
+                        android:id="@+id/dietsTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/no_diet" />
@@ -148,14 +148,14 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/llInstructions"
+            android:id="@+id/instructionsLinearLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_below="@id/ivRecipeImage"
+            android:layout_below="@id/recipeImageView"
             android:orientation="vertical"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/llNutritionInfo"
+            app:layout_constraintTop_toBottomOf="@+id/nutritionInfoLinearLayout"
             app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.5">
 
@@ -167,7 +167,7 @@
                 android:textStyle="bold" />
 
             <com.example.makemeals.customClasses.PinchRecyclerView
-                android:id="@+id/rvRecipeDetailInstructions"
+                android:id="@+id/recipeDetailInstructionsRecyclerView"
                 android:nestedScrollingEnabled="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -176,15 +176,15 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/llIngredients"
+            android:id="@+id/ingredientsLinearLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_below="@id/ivRecipeImage"
-            android:layout_toEndOf="@id/llInstructions"
+            android:layout_below="@id/recipeImageView"
+            android:layout_toEndOf="@id/instructionsLinearLayout"
             android:layout_weight="0.5"
             android:orientation="vertical"
-            app:layout_constraintStart_toEndOf="@+id/llInstructions"
-            app:layout_constraintTop_toBottomOf="@+id/llNutritionInfo"
+            app:layout_constraintStart_toEndOf="@+id/instructionsLinearLayout"
+            app:layout_constraintTop_toBottomOf="@+id/nutritionInfoLinearLayout"
             app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.5">
 
@@ -196,7 +196,7 @@
                 android:textStyle="bold" />
 
             <com.example.makemeals.customClasses.PinchRecyclerView
-                android:id="@+id/rvRecipeDetailIngredients"
+                android:id="@+id/recipeDetailIngredientsRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="10dp"

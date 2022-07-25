@@ -3,7 +3,6 @@ package com.example.makemeals.adapters;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,18 +52,18 @@ public class IngredientsDialogAdapter extends RecyclerView.Adapter<IngredientsDi
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        final private TextView tvDialogIngredientDate;
-        final private EditText etIngredientName;
-        final private TextView tvIngredientQuantity;
+        final private TextView dialogIngredientDateTextView;
+        final private EditText dialogIngredientNameEditText;
+        final private TextView ingredientQuantityTextView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            etIngredientName = binding.etDialogIngredientName;
-            tvDialogIngredientDate = binding.tvDialogIngredientDate;
-            tvIngredientQuantity = binding.tvIngredientQuantity;
+            dialogIngredientNameEditText = binding.dialogIngredientNameEditText;
+            dialogIngredientDateTextView = binding.dialogIngredientDateTextView;
+            ingredientQuantityTextView = binding.ingredientQuantityTextView;
 
-            etIngredientName.addTextChangedListener(new TextWatcher() {
+            dialogIngredientNameEditText.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 }
@@ -77,7 +76,7 @@ public class IngredientsDialogAdapter extends RecyclerView.Adapter<IngredientsDi
                 public void afterTextChanged(Editable s) {
                     String ingredientName = s.toString();
                     if (ingredientName.isEmpty()) {
-                        etIngredientName.setError(context.getString(R.string.ingredient_name_is_required));
+                        dialogIngredientNameEditText.setError(context.getString(R.string.ingredient_name_is_required));
                     } else {
                         ingredients.set(getAdapterPosition(), ingredientName);
                     }
@@ -86,11 +85,11 @@ public class IngredientsDialogAdapter extends RecyclerView.Adapter<IngredientsDi
         }
 
         public void bind(String ingredient) {
-            etIngredientName.setText(ingredient);
+            dialogIngredientNameEditText.setText(ingredient);
             // get current date
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             Date date = new Date();
-            tvDialogIngredientDate.setText(dateFormat.format(date));
+            dialogIngredientDateTextView.setText(dateFormat.format(date));
         }
     }
 

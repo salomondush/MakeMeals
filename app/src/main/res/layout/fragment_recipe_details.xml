@@ -19,7 +19,7 @@
         
         <!-- recipe image -->
         <ImageView
-            android:id="@+id/ivRecipeImage"
+            android:id="@+id/recipeImageView"
             android:layout_width="200dp"
             android:layout_height="150dp"
             tools:srcCompat="@tools:sample/avatars"
@@ -41,7 +41,7 @@
             android:orientation="horizontal">
 
             <ToggleButton
-                android:id="@+id/tbSave"
+                android:id="@+id/saveToggleButton"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_marginEnd="20dp"
@@ -52,7 +52,7 @@
                 android:textOn=""/>
             <!--Favorite Recipe Button-->
             <ToggleButton
-                android:id="@+id/tbFavorite"
+                android:id="@+id/favoriteToggleButton"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_marginEnd="20dp"
@@ -63,7 +63,7 @@
                 android:textOn=""/>
 
             <ImageButton
-                android:id="@+id/ibShare"
+                android:id="@+id/shareImageButton"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_marginEnd="20dp"
@@ -75,7 +75,7 @@
                 android:contentDescription="@string/share_button" />
 
             <ImageButton
-                android:id="@+id/ibShoppingList"
+                android:id="@+id/shoppingListImageButton"
                 android:layout_width="22dp"
                 android:layout_height="25dp"
                 android:layout_marginBottom="5dp"
@@ -92,7 +92,7 @@
 
     <!-- recipe title -->
     <TextView
-        android:id="@+id/tvRecipeTitle"
+        android:id="@+id/recipeTitleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
@@ -101,14 +101,14 @@
         android:text="@string/recipe_title"/>
 
     <com.google.android.material.button.MaterialButtonToggleGroup
-        android:id="@+id/toggleButtonRecipeInfo"
+        android:id="@+id/recipeInfoToggleButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:selectionRequired="true"
         app:singleSelection="true"
-        app:checkedButton="@+id/buttonNutrition">
+        app:checkedButton="@+id/nutritionButton">
         <Button
-            android:id="@+id/buttonNutrition"
+            android:id="@+id/nutritionButton"
             android:layout_weight="0.3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -117,7 +117,7 @@
             style="?attr/materialButtonOutlinedStyle"
             />
         <Button
-            android:id="@+id/buttonIngredients"
+            android:id="@+id/ingredientsButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
@@ -126,7 +126,7 @@
             style="?attr/materialButtonOutlinedStyle"
             />
         <Button
-            android:id="@+id/buttonInstructions"
+            android:id="@+id/instructionsButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
@@ -138,7 +138,7 @@
 
     <!-- nutrition info -->
     <LinearLayout
-        android:id="@+id/llNutritionInfo"
+        android:id="@+id/nutritionInfoLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="visible"
@@ -164,7 +164,7 @@
 
                 <!-- ready in time -->
                 <TextView
-                    android:id="@+id/tvReadyInTime"
+                    android:id="@+id/readyInTimeTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/_45m"/>
@@ -183,7 +183,7 @@
 
                 <!-- ready in time -->
                 <TextView
-                    android:id="@+id/tvTypes"
+                    android:id="@+id/typesTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/lunch_main_course"/>
@@ -210,7 +210,7 @@
 
                 <!-- ready in time -->
                 <TextView
-                    android:id="@+id/tvServings"
+                    android:id="@+id/servingsTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/_2"/>
@@ -229,7 +229,7 @@
 
                 <!-- ready in time -->
                 <TextView
-                    android:id="@+id/tvDiets"
+                    android:id="@+id/dietsTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/no_diet"/>
@@ -241,7 +241,7 @@
 
     <!-- recipe Ingredients -->
     <LinearLayout
-        android:id="@+id/llIngredients"
+        android:id="@+id/ingredientsLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
@@ -254,7 +254,7 @@
             android:text="@string/ingredients"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvRecipeDetailIngredients"
+            android:id="@+id/recipeDetailIngredientsRecyclerView"
             android:layout_width="match_parent"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
@@ -264,7 +264,7 @@
 
     <!-- recipe instructions -->
     <LinearLayout
-        android:id="@+id/llInstructions"
+        android:id="@+id/instructionsLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
@@ -277,7 +277,7 @@
             android:text="@string/instructions"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvRecipeDetailInstructions"
+            android:id="@+id/recipeDetailInstructionsRecyclerView"
             android:layout_width="match_parent"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"

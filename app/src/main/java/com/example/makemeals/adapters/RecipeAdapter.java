@@ -2,8 +2,6 @@ package com.example.makemeals.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,35 +13,25 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.makemeals.Constant;
-import com.example.makemeals.MainActivity;
 import com.example.makemeals.R;
-import com.example.makemeals.ViewModel.RecipesSharedViewModel;
 import com.example.makemeals.ViewModel.RecipesViewModel;
 import com.example.makemeals.customClasses.OnDoubleTapListener;
 import com.example.makemeals.databinding.RecipeItemBinding;
 import com.example.makemeals.models.Recipe;
 import com.example.makemeals.models.Recommendation;
-import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
-
-import cz.msebera.android.httpclient.cookie.params.CookieSpecPNames;
 
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder> {
     private static final String NAME = "name";
@@ -105,8 +93,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     public class ViewHolder extends RecyclerView.ViewHolder {
         final private ImageView recipeImage;
         final private TextView recipeTitle;
-        final private ToggleButton tbSave;
-        final private ToggleButton tbFavorite;
+        final private ToggleButton saveToggleButton;
+        final private ToggleButton favoriteToggleButton;
         private final TextView calsValue;
         private final TextView proteinsValue;
         private final TextView carbsValue;
@@ -121,8 +109,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             super(itemView);
             recipeImage = binding.recipeImage;
             recipeTitle = binding.recipeTitle;
-            tbSave = binding.tbSave;
-            tbFavorite = binding.tbFavorite;
+            saveToggleButton = binding.saveToggleButton;
+            favoriteToggleButton = binding.favoriteToggleButton;
             calsValue = binding.calsValue;
             proteinsValue = binding.proteinsValue;
             carbsValue = binding.carbsValue;
@@ -131,23 +119,23 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             carbsUnit = binding.carbsUnit;
             proteinsUnit = binding.proteinsUnit;
             fatsUnit = binding.fatsUnit;
-            LinearLayout llNutritionInfo = binding.llNutritionInfo;
+            LinearLayout nutritionInfoLinearLayout = binding.nutritionInfoLinearLayout;
 
-            llNutritionInfo.setOnClickListener(v -> onItemClickListener.onItemClick(itemView, getAdapterPosition()));
+            nutritionInfoLinearLayout.setOnClickListener(v -> onItemClickListener.onItemClick(itemView, getAdapterPosition()));
 
             // set on double click listener for the recipe image to favorite/unfavorite the recipe
             recipeImage.setOnTouchListener(new OnDoubleTapListener(context) {
                 @Override
                 public void onDoubleTap(MotionEvent e) {
-                    tbFavorite.setChecked(!tbFavorite.isChecked());
+                    favoriteToggleButton.setChecked(!favoriteToggleButton.isChecked());
                     favoriteRecipe(getAdapterPosition());
                 }
             });
 
 
-            tbSave.setOnClickListener(v -> saveRecipe(getAdapterPosition()));
+            saveToggleButton.setOnClickListener(v -> saveRecipe(getAdapterPosition()));
 
-            tbFavorite.setOnClickListener(v -> favoriteRecipe(getAdapterPosition()));
+            favoriteToggleButton.setOnClickListener(v -> favoriteRecipe(getAdapterPosition()));
         }
 
         private void saveRecipe(int position){
@@ -162,7 +150,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
                 } else {
                     // show error and reverse toggle
                     Toast.makeText(context, context.getString(R.string.error_saving_recipe), Toast.LENGTH_SHORT).show();
-                    tbSave.setChecked(!tbSave.isChecked());
+                    saveToggleButton.setChecked(!saveToggleButton.isChecked());
                 }
             });
         }
@@ -179,7 +167,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
                 } else {
                     // show error and reverse toggle
                     Toast.makeText(context, context.getString(R.string.error_favoriting_recipe), Toast.LENGTH_SHORT).show();
-                    tbFavorite.setChecked(!tbSave.isChecked());
+                    favoriteToggleButton.setChecked(!saveToggleButton.isChecked());
                 }
             });
         }
@@ -265,8 +253,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
 
 
             recipeTitle.setText(recipe.getTitle());
-            tbSave.setChecked(recipe.getSaved());
-            tbFavorite.setChecked(recipe.getFavorite());
+            saveToggleButton.setChecked(recipe.getSaved());
+            favoriteToggleButton.setChecked(recipe.getFavorite());
             Glide.with(context).load(recipe.getImageUrl())
                     .placeholder(R.drawable.recipe_image_placeholder)
                     .centerCrop()

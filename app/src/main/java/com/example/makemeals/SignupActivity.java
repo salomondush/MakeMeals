@@ -17,9 +17,9 @@ import com.parse.SignUpCallback;
 public class SignupActivity extends AppCompatActivity {
 
 
-    private EditText signupUsername;
-    private EditText signupPassword;
-    private EditText getSignupPasswordConfirm;
+    private EditText signupUsernameEditText;
+    private EditText signupPasswordEditText;
+    private EditText confirmSignupPasswordEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,25 +27,21 @@ public class SignupActivity extends AppCompatActivity {
         com.example.makemeals.databinding.ActivitySignupBinding binding = ActivitySignupBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        signupUsername = binding.signupUsername;
-        signupPassword = binding.signupPassword;
-        getSignupPasswordConfirm = binding.confirmSignupPassword;
-        Button signupButton = binding.signupButton;
+        signupUsernameEditText = binding.signupUsernameEditText;
+        signupPasswordEditText = binding.signupPasswordEditText;
+        confirmSignupPasswordEditText = binding.confirmSignupPasswordEditText;
+        Button signupMaterialButton = binding.signupMaterialButton;
 
-        signupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String username = signupUsername.getText().toString();
-                String password = signupPassword.getText().toString();
-                String confirmPassword = getSignupPasswordConfirm.getText().toString();
+        signupMaterialButton.setOnClickListener(v -> {
+            String username = signupUsernameEditText.getText().toString();
+            String password = signupPasswordEditText.getText().toString();
+            String confirmPassword = confirmSignupPasswordEditText.getText().toString();
 
-                if (password.equals(confirmPassword)){
-                    signupUser(username, password);
-                } else {
-                    Toast.makeText(SignupActivity.this, R.string.passwords_do_not_match, Toast.LENGTH_SHORT).show();
-                }
+            if (password.equals(confirmPassword)){
+                signupUser(username, password);
+            } else {
+                Toast.makeText(SignupActivity.this, R.string.passwords_do_not_match, Toast.LENGTH_SHORT).show();
             }
-
         });
     }
 
@@ -53,19 +49,16 @@ public class SignupActivity extends AppCompatActivity {
         ParseUser user = new ParseUser();
         user.setUsername(username);
         user.setPassword(password);
-        user.signUpInBackground(new SignUpCallback() {
-            @Override
-            public void done(com.parse.ParseException e) {
-                if (e != null) {
-                    Toast.makeText(SignupActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        user.signUpInBackground(e -> {
+            if (e != null) {
+                Toast.makeText(SignupActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
 
-                } else {
-                    Recommendation recommendation = new Recommendation();
-                    recommendation.setUser(ParseUser.getCurrentUser());
-                    recommendation.saveInBackground();
-                    goToMainActivity();
-                    Toast.makeText(SignupActivity.this, R.string.sign_up_successful, Toast.LENGTH_SHORT).show();
-                }
+            } else {
+                Recommendation recommendation = new Recommendation();
+                recommendation.setUser(ParseUser.getCurrentUser());
+                recommendation.saveInBackground();
+                goToMainActivity();
+                Toast.makeText(SignupActivity.this, R.string.sign_up_successful, Toast.LENGTH_SHORT).show();
             }
         });
     }

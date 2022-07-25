@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,21 +23,13 @@ import com.example.makemeals.adapters.ShoppingListAdapter;
 import com.example.makemeals.databinding.FragmentShoppingListBinding;
 import com.example.makemeals.models.ShoppingItem;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.progressindicator.CircularProgressIndicator;
-import com.parse.FindCallback;
 import com.parse.GetCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.parse.boltsinternal.Task;
-
-import org.json.JSONArray;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,11 +45,11 @@ public class ShoppingListFragment extends Fragment {
     private final String SHOPPING_ITEM = "ShoppingItem";
     private List<ShoppingItem> shoppingList;
     private ShoppingListAdapter shoppingListAdapter;
-    private MaterialButton buttonClearShoppingList;
+    private MaterialButton clearShoppingListMaterialButton;
     private SwipeRefreshLayout swipeRefreshLayout;
     private int checkedItems;
-    private TextView tvUncheckedCount;
-    private TextView tvCheckedCount;
+    private TextView uncheckedCountTextView;
+    private TextView checkedCountTextView;
 
 
     public ShoppingListFragment() {
@@ -95,10 +86,10 @@ public class ShoppingListFragment extends Fragment {
 
         checkedItems = CHECKED_ITEMS_INITIAL_VALUE;
         FragmentShoppingListBinding binding = FragmentShoppingListBinding.bind(view);
-        buttonClearShoppingList = binding.buttonClearShoppingList;
-        tvUncheckedCount = binding.tvUncheckedCount;
-        tvCheckedCount = binding.tvCheckedCount;
-        RecyclerView rvShoppingList = binding.rvShoppingList;
+        clearShoppingListMaterialButton = binding.clearShoppingListMaterialButton;
+        uncheckedCountTextView = binding.uncheckedCountTextView;
+        checkedCountTextView = binding.checkedCountTextView;
+        RecyclerView shoppingListRecyclerView = binding.shoppingListRecyclerView;
 
         swipeRefreshLayout = binding.swipeRefreshLayout;
         swipeRefreshLayout.setOnRefreshListener(this::getShoppingList);
@@ -111,8 +102,8 @@ public class ShoppingListFragment extends Fragment {
 
         shoppingList = new ArrayList<>();
         shoppingListAdapter = new ShoppingListAdapter(shoppingList, getContext());
-        rvShoppingList.setAdapter(shoppingListAdapter);
-        rvShoppingList.setLayoutManager(new LinearLayoutManager(getContext()));
+        shoppingListRecyclerView.setAdapter(shoppingListAdapter);
+        shoppingListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         getShoppingList();
 
         shoppingListAdapter.setOnIsCheckedListener(new ShoppingListAdapter.OnItemClickListener() {
@@ -139,7 +130,7 @@ public class ShoppingListFragment extends Fragment {
             }
         });
 
-        buttonClearShoppingList.setOnClickListener(new View.OnClickListener() {
+        clearShoppingListMaterialButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // show dialog to confirm clear shopping list
@@ -235,26 +226,26 @@ public class ShoppingListFragment extends Fragment {
 
     private void resetShoppingListState() {
         checkedItems = CHECKED_ITEMS_INITIAL_VALUE;
-        tvUncheckedCount.setText(String.valueOf(checkedItems));
-        tvCheckedCount.setText(String.valueOf(shoppingList.size() - checkedItems));
-        buttonClearShoppingList.setEnabled(false);
+        uncheckedCountTextView.setText(String.valueOf(checkedItems));
+        checkedCountTextView.setText(String.valueOf(shoppingList.size() - checkedItems));
+        clearShoppingListMaterialButton.setEnabled(false);
     }
 
     private void incrementCheckedItems() {
         checkedItems++;
-        tvCheckedCount.setText(String.valueOf(checkedItems));
-        tvUncheckedCount.setText(String.valueOf(shoppingList.size() - checkedItems));
+        checkedCountTextView.setText(String.valueOf(checkedItems));
+        uncheckedCountTextView.setText(String.valueOf(shoppingList.size() - checkedItems));
         if (checkedItems == shoppingList.size()) {
-            buttonClearShoppingList.setEnabled(true);
+            clearShoppingListMaterialButton.setEnabled(true);
         }
     }
 
     private void decrementCheckedItems() {
         checkedItems--;
-        tvCheckedCount.setText(String.valueOf(checkedItems));
-        tvUncheckedCount.setText(String.valueOf(shoppingList.size() - checkedItems));
+        checkedCountTextView.setText(String.valueOf(checkedItems));
+        uncheckedCountTextView.setText(String.valueOf(shoppingList.size() - checkedItems));
         if (checkedItems == 0 || checkedItems < shoppingList.size()) {
-            buttonClearShoppingList.setEnabled(false);
+            clearShoppingListMaterialButton.setEnabled(false);
         }
     }
 }

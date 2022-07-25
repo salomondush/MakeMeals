@@ -49,19 +49,19 @@ public class InstructionStepsAdapter extends RecyclerView.Adapter<InstructionSte
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        final private TextView tvInstructionStepNumber;
-        final private TextView tvInstructionStepText;
+        final private TextView instructionStepNumberTextView;
+        final private TextView instructionStepTextView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvInstructionStepNumber = binding.tvInstructionStepNumber;
-            tvInstructionStepText = binding.tvInstructionStepText;
-            CheckBox cbInstructionStep = binding.cbInstructionStep;
+            instructionStepNumberTextView = binding.instructionStepNumberTextView;
+            instructionStepTextView = binding.instructionStepTextView;
+            CheckBox instructionStepCheckBox = binding.instructionStepCheckBox;
 
             if (withCheckBox) {
-                cbInstructionStep.setVisibility(View.VISIBLE);
+                instructionStepCheckBox.setVisibility(View.VISIBLE);
             } else {
-                cbInstructionStep.setVisibility(View.GONE);
+                instructionStepCheckBox.setVisibility(View.GONE);
             }
         }
 
@@ -69,8 +69,8 @@ public class InstructionStepsAdapter extends RecyclerView.Adapter<InstructionSte
             String stepNumber = "number";
             String stepText = "step";
 
-            tvInstructionStepNumber.setText(String.format("%s.", step.optInt(stepNumber)));
-            tvInstructionStepText.setText(step.optString(stepText));
+            instructionStepNumberTextView.setText(String.format("%s.", step.optInt(stepNumber)));
+            instructionStepTextView.setText(step.optString(stepText));
         }
     }
 }

@@ -9,21 +9,21 @@
     tools:context=".fragments.SearchFragment">
 
     <LinearLayout
-        android:id="@+id/llSearchBlock"
+        android:id="@+id/searchBlockLinearLayout"
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:visibility="gone"
         android:layout_height="wrap_content">
 
         <ImageButton
-            android:id="@+id/ibHideSearchBlock"
+            android:id="@+id/hideSearchBlockImageButton"
             android:layout_width="17dp"
             android:layout_height="17dp"
             android:background="@drawable/remove_icon"
             android:contentDescription="@string/remove_button_description" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/searchTextMenu"
+            android:id="@+id/searchMenuTextInputLayout"
             android:layout_marginEnd="5dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
@@ -33,7 +33,7 @@
             android:layout_height="wrap_content">
 
             <AutoCompleteTextView
-                android:id="@+id/etSearchText"
+                android:id="@+id/searchAutoCompleteTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text" />
@@ -48,7 +48,7 @@
             android:baselineAligned="false">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/typeMenu"
+                android:id="@+id/typeMenuTextInputLayout"
                 android:layout_weight="0.4"
                 android:layout_marginEnd="5dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
@@ -59,7 +59,7 @@
                 app:boxBackgroundColor="@color/white">
 
                 <AutoCompleteTextView
-                    android:id="@+id/recipeType"
+                    android:id="@+id/recipeTypeAutoCompleteTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
@@ -68,7 +68,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/DietMenu"
+                android:id="@+id/dietMenuTextInputLayout"
                 android:layout_weight="0.4"
                 android:layout_marginStart="5dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
@@ -79,7 +79,7 @@
                 app:boxBackgroundColor="@color/white">
 
                 <AutoCompleteTextView
-                    android:id="@+id/recipeDiet"
+                    android:id="@+id/recipeDietAutoCompleteTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
@@ -89,7 +89,7 @@
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvSearchIngredients"
+            android:id="@+id/searchIngredientsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -102,7 +102,7 @@
             android:visibility="gone" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/searchButton"
+            android:id="@+id/searchMaterialButton"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
@@ -115,13 +115,13 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/llSearchResultBlock"
+        android:id="@+id/searchResultBlockLinearLayout"
         android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView
-            android:id="@+id/tvSearchBar"
+            android:id="@+id/searchBarTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/search"

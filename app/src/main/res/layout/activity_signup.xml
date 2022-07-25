@@ -22,7 +22,7 @@
             android:src="@drawable/make_meals_logo"
             android:contentDescription="@string/logo" />
         <EditText
-            android:id="@+id/signupUsername"
+            android:id="@+id/signupUsernameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp"
@@ -35,7 +35,7 @@
             android:textSize="14sp" />
 
         <EditText
-            android:id="@+id/signupPassword"
+            android:id="@+id/signupPasswordEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -48,7 +48,7 @@
             android:textSize="14sp" />
 
         <EditText
-            android:id="@+id/confirmSignupPassword"
+            android:id="@+id/confirmSignupPasswordEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -62,7 +62,7 @@
 
         <!-- material button is used to display the "Login" button to user-->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/signupButton"
+            android:id="@+id/signupMaterialButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"

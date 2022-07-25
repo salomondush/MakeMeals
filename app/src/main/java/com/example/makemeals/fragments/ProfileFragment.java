@@ -67,28 +67,23 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         FragmentProfileBinding binding = FragmentProfileBinding.bind(view);
 
-        TextView tvProfileUsername = binding.tvProfileUsername;
-        ImageView ivProfileImage = binding.ivProfileImage;
-        MaterialButton logoutButton = binding.logoutButton;
+        TextView profileUsernameTextView = binding.profileUsernameTextView;
+        ImageView profileImageView = binding.profileImageView;
+        MaterialButton logoutMaterialButton = binding.logoutMaterialButton;
 
-        logoutButton.setOnClickListener(v -> {
-            ParseUser.logOutInBackground(new LogOutCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if (e != null) {
-                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                    } else {
-                        Intent intent = new Intent(getContext(), LoginActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        requireActivity().finish();
-                        Toast.makeText(getContext(), "Logged out", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-        });
+        logoutMaterialButton.setOnClickListener(v -> ParseUser.logOutInBackground(e -> {
+            if (e != null) {
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            } else {
+                Intent intent = new Intent(getContext(), LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                requireActivity().finish();
+                Toast.makeText(getContext(), "Logged out", Toast.LENGTH_SHORT).show();
+            }
+        }));
 
-        tvProfileUsername.setText(ParseUser.getCurrentUser().getUsername());
+        profileUsernameTextView.setText(ParseUser.getCurrentUser().getUsername());
 
         String PROFILE_IMAGE = "profileImage";
         ParseFile image = ParseUser.getCurrentUser().getParseFile(PROFILE_IMAGE);
@@ -96,7 +91,7 @@ public class ProfileFragment extends Fragment {
         if (image != null) {
             Glide.with(requireContext()).load(image.getUrl())
                     .circleCrop()
-                    .into(ivProfileImage);
+                    .into(profileImageView);
         }
     }
 }

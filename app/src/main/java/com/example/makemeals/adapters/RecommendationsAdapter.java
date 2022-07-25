@@ -56,13 +56,13 @@ public class RecommendationsAdapter extends RecyclerView.Adapter<Recommendations
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView categoryTitleTextView;
-        private final RecyclerView recyclerViewRecommendedRecipes;
+        private final RecyclerView recommendedRecipesRecyclerView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             categoryTitleTextView = binding.categoryTitleTextView;
-            recyclerViewRecommendedRecipes = binding.recyclerViewRecommendedRecipes;
+            recommendedRecipesRecyclerView = binding.recommendedRecipesRecyclerView;
         }
 
         public void bind(HashMap<String, List<Recipe>> recommendation) {
@@ -73,8 +73,8 @@ public class RecommendationsAdapter extends RecyclerView.Adapter<Recommendations
 
             RecommendedRecipesAdapter recommendedRecipesAdapter = new RecommendedRecipesAdapter(recommendation.get(typeName),
                     context);
-            recyclerViewRecommendedRecipes.setAdapter(recommendedRecipesAdapter);
-            recyclerViewRecommendedRecipes.setLayoutManager(new LinearLayoutManager(context,
+            recommendedRecipesRecyclerView.setAdapter(recommendedRecipesAdapter);
+            recommendedRecipesRecyclerView.setLayoutManager(new LinearLayoutManager(context,
                     LinearLayoutManager.HORIZONTAL, false));
         }
     }

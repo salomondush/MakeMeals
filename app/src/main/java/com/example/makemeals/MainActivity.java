@@ -32,7 +32,6 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.Objects;
-import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity {
     private final FragmentManager fragmentManager = getSupportFragmentManager();
@@ -116,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
         final MenuItem menuItem = menu.findItem(R.id.shoppingCart);
         View actionView = menuItem.getActionView();
-        textCartItemCount = (TextView) actionView.findViewById(R.id.tvShoppingCount);
+        textCartItemCount = (TextView) actionView.findViewById(R.id.shoppingCountTextView);
         setupBadge();
 
         actionView.setOnClickListener(new View.OnClickListener() {

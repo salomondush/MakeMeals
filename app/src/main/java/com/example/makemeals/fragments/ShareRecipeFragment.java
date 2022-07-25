@@ -13,11 +13,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
-import android.transition.TransitionInflater;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -30,7 +27,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.makemeals.Constant;
-import com.example.makemeals.MainActivity;
 import com.example.makemeals.R;
 import com.example.makemeals.ViewModel.SharedViewModel;
 import com.example.makemeals.adapters.RecipeIngredientsAdapter;
@@ -41,8 +37,6 @@ import com.example.makemeals.models.Recipe;
 import com.google.android.material.button.MaterialButton;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,7 +46,7 @@ import java.util.List;
 public class ShareRecipeFragment extends Fragment {
 
     private Recipe recipe;
-    private LinearLayout llNutritionInfo;
+    private LinearLayout nutritionInfoLinearLayout;
     private Float scale = 1f;
     private int currentX;
     private int currentY;
@@ -108,19 +102,19 @@ public class ShareRecipeFragment extends Fragment {
                 this.recipe = recipe;
 
 
-                ImageView ivRecipeImage = binding.ivRecipeImage;
-                TextView tvRecipeTitle = binding.tvRecipeTitle;
-                TextView tvReadyInTime = binding.tvReadyInTime;
-                TextView tvTypes = binding.tvTypes;
-                TextView tvServings = binding.tvServings;
-                TextView tvDiets = binding.tvDiets;
-                llNutritionInfo = binding.llNutritionInfo;
+                ImageView recipeImageView = binding.recipeImageView;
+                TextView recipeTitleTextView = binding.recipeTitleTextView;
+                TextView readyInTimeTextView = binding.readyInTimeTextView;
+                TextView typesTextView = binding.typesTextView;
+                TextView servingsTextView = binding.servingsTextView;
+                TextView dietsTextView = binding.dietsTextView;
+                nutritionInfoLinearLayout = binding.nutritionInfoLinearLayout;
                 MaterialButton buttonShareRecipe = binding.buttonShareRecipe;
                 MaterialButton buttonCancelSharing = binding.buttonCancelSharing;
                 llSharableRecipeInfo = binding.llSharableRecipeInfo;
 
 
-                llNutritionInfo.setOnTouchListener(new View.OnTouchListener() {
+                nutritionInfoLinearLayout.setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
                         ScaleGestureDetector scaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.OnScaleGestureListener() {
@@ -128,8 +122,8 @@ public class ShareRecipeFragment extends Fragment {
                             public boolean onScale(ScaleGestureDetector detector) {
                                 scale *= detector.getScaleFactor();
                                 scale = Math.max(0.1f, Math.min(scale, 5.0f));
-                                llNutritionInfo.setScaleX(scale);
-                                llNutritionInfo.setScaleY(scale);
+                                nutritionInfoLinearLayout.setScaleX(scale);
+                                nutritionInfoLinearLayout.setScaleY(scale);
                                 return true;
                             }
 
@@ -158,16 +152,16 @@ public class ShareRecipeFragment extends Fragment {
                                     int deltaY = y - currentY;
                                     currentX = x;
                                     currentY = y;
-                                    llNutritionInfo.setX(llNutritionInfo.getX() + deltaX);
-                                    llNutritionInfo.setY(llNutritionInfo.getY() + deltaY);
+                                    nutritionInfoLinearLayout.setX(nutritionInfoLinearLayout.getX() + deltaX);
+                                    nutritionInfoLinearLayout.setY(nutritionInfoLinearLayout.getY() + deltaY);
                                 } else if (mode == ZOOM) {
                                     float newDist = spacing(event);
                                     if (newDist > 5f) {
                                         float scale = newDist / oldDistLlNutritionInfo;
 
                                         // if scale > 1, zoom in image. If scale < 1, zoom out image based on midpoint of image
-                                        llNutritionInfo.setScaleX(scale);
-                                        llNutritionInfo.setScaleY(scale);
+                                        nutritionInfoLinearLayout.setScaleX(scale);
+                                        nutritionInfoLinearLayout.setScaleY(scale);
                                     }
                                 }
                                 break;
@@ -191,7 +185,7 @@ public class ShareRecipeFragment extends Fragment {
                 });
 
 
-                ivRecipeImage.setOnTouchListener(new View.OnTouchListener() {
+                recipeImageView.setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
                         ScaleGestureDetector scaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.OnScaleGestureListener() {
@@ -199,8 +193,8 @@ public class ShareRecipeFragment extends Fragment {
                             public boolean onScale(ScaleGestureDetector detector) {
                                 scale *= detector.getScaleFactor();
                                 scale = Math.max(0.1f, Math.min(scale, 5.0f));
-                                ivRecipeImage.setScaleX(scale);
-                                ivRecipeImage.setScaleY(scale);
+                                recipeImageView.setScaleX(scale);
+                                recipeImageView.setScaleY(scale);
                                 return true;
                             }
 
@@ -229,15 +223,15 @@ public class ShareRecipeFragment extends Fragment {
                                     int deltaY = y - currentY;
                                     currentX = x;
                                     currentY = y;
-                                    ivRecipeImage.setX(ivRecipeImage.getX() + deltaX);
-                                    ivRecipeImage.setY(ivRecipeImage.getY() + deltaY);
+                                    recipeImageView.setX(recipeImageView.getX() + deltaX);
+                                    recipeImageView.setY(recipeImageView.getY() + deltaY);
                                 } else if (mode == ZOOM) {
                                     float newDist = spacing(event);
                                     if (newDist > 5f) {
                                         float scale = newDist / oldDistImage;
                                         // if scale > 1, zoom in image. If scale < 1, zoom out image based on midpoint of image
-                                        ivRecipeImage.setScaleX(scale);
-                                        ivRecipeImage.setScaleY(scale);
+                                        recipeImageView.setScaleX(scale);
+                                        recipeImageView.setScaleY(scale);
                                     }
                                 }
                                 break;
@@ -285,31 +279,33 @@ public class ShareRecipeFragment extends Fragment {
                 });
 
 
-                PinchRecyclerView rvRecipeDetailIngredients = binding.rvRecipeDetailIngredients;
-                PinchRecyclerView rvRecipeDetailInstructions = binding.rvRecipeDetailInstructions;
+                PinchRecyclerView recipeDetailIngredientsRecyclerView =
+                        binding.recipeDetailIngredientsRecyclerView;
+                PinchRecyclerView recipeDetailInstructionsRecyclerView =
+                        binding.recipeDetailInstructionsRecyclerView;
 
 
                 Glide.with(requireContext()).load(recipe.getImageUrl())
                         .placeholder(R.drawable.recipe_image_placeholder)
                         .centerCrop()
                         .transform(new RoundedCorners(Constant.IMAGE_RADIUS))
-                        .into(ivRecipeImage);
-                tvRecipeTitle.setText(recipe.getTitle());
-                tvReadyInTime.setText(MessageFormat.format("{0}m", recipe.getReadyInMinutes()));
-                tvTypes.setText(RecipeDetailsFragment.getDishTypesStringFromRecipe(recipe));
-                tvServings.setText(String.valueOf(recipe.getServings()));
-                tvDiets.setText(RecipeDetailsFragment.getDietStringFromRecipe(recipe));
+                        .into(recipeImageView);
+                recipeTitleTextView.setText(recipe.getTitle());
+                readyInTimeTextView.setText(MessageFormat.format("{0}m", recipe.getReadyInMinutes()));
+                typesTextView.setText(RecipeDetailsFragment.getDishTypesStringFromRecipe(recipe));
+                servingsTextView.setText(String.valueOf(recipe.getServings()));
+                dietsTextView.setText(RecipeDetailsFragment.getDietStringFromRecipe(recipe));
 
                 // get ingredients from jsonArray and display them using adapter
                 RecipeIngredientsAdapter recipeIngredientsAdapter = new RecipeIngredientsAdapter(recipe.getExtendedIngredients(), getContext());
-                rvRecipeDetailIngredients.setAdapter(recipeIngredientsAdapter);
-                rvRecipeDetailIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
+                recipeDetailIngredientsRecyclerView.setAdapter(recipeIngredientsAdapter);
+                recipeDetailIngredientsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
                 // get instructions from jsonArray and display them using adapter
                 RecipeInstructionsAdapter recipeInstructionsAdapter = new RecipeInstructionsAdapter(recipe.getAnalyzedInstructions(), getContext());
-                rvRecipeDetailInstructions.setAdapter(recipeInstructionsAdapter);
-                rvRecipeDetailInstructions.setLayoutManager(new LinearLayoutManager(getContext()));
+                recipeDetailInstructionsRecyclerView.setAdapter(recipeInstructionsAdapter);
+                recipeDetailInstructionsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             }
         });
     }

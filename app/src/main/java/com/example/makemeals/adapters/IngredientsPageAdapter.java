@@ -56,7 +56,7 @@ public class IngredientsPageAdapter extends RecyclerView.Adapter<IngredientsPage
     }
 
     /**
-     * This method allows the parent activity or fragment to define a remove ingredient click listener.
+     * This method allows the parent activity or fragment to define a remove ingredientLinearLayout click listener.
      *
      * @param listener
      */
@@ -65,7 +65,7 @@ public class IngredientsPageAdapter extends RecyclerView.Adapter<IngredientsPage
     }
 
     /**
-     * This method allows the parent activity or fragment to define a select ingredient listener
+     * This method allows the parent activity or fragment to define a select ingredientLinearLayout listener
      *
      * @param listener
      */
@@ -82,44 +82,36 @@ public class IngredientsPageAdapter extends RecyclerView.Adapter<IngredientsPage
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        final private TextView name;
-        final private TextView date;
-        final private ImageButton removeIngredient;
-        final private CheckBox cbSelectIngredient;
+        final private TextView ingredientNameTextView;
+        final private TextView ingredientDateTextView;
+        final private ImageButton removeImageButton;
+        final private CheckBox selectIngredientCheckBox;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            name = binding.ingredientName;
-            date = binding.ingredientDate;
-            removeIngredient = binding.removeButton;
-            cbSelectIngredient = binding.cbSelectIngredient;
+            ingredientNameTextView = binding.ingredientNameTextView;
+            ingredientDateTextView = binding.ingredientDateTextView;
+            removeImageButton = binding.removeImageButton;
+            selectIngredientCheckBox = binding.selectIngredientCheckBox;
 
-            removeIngredient.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    removeIngredientClickListener.onItemClick(itemView, getAdapterPosition());
-                }
-            });
+            removeImageButton.setOnClickListener(v ->
+                    removeIngredientClickListener.onItemClick(itemView, getAdapterPosition()));
 
-            cbSelectIngredient.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onSelectIngredientListener.onItemClick(itemView, getAdapterPosition());
-                }
-            });
+            selectIngredientCheckBox.setOnClickListener(v ->
+                    onSelectIngredientListener.onItemClick(itemView, getAdapterPosition()));
         }
 
         public void bind(Ingredient ingredient) {
-            name.setText(ingredient.getName());
-            date.setText(ingredient.getCreatedAt().toString());
+            ingredientNameTextView.setText(ingredient.getName());
+            ingredientDateTextView.setText(ingredient.getCreatedAt().toString());
 
             if (isSearchIngredient) {
-                removeIngredient.setVisibility(View.GONE);
-                cbSelectIngredient.setVisibility(View.VISIBLE);
+                removeImageButton.setVisibility(View.GONE);
+                selectIngredientCheckBox.setVisibility(View.VISIBLE);
             } else {
-                removeIngredient.setVisibility(View.VISIBLE);
-                cbSelectIngredient.setVisibility(View.GONE);
+                removeImageButton.setVisibility(View.VISIBLE);
+                selectIngredientCheckBox.setVisibility(View.GONE);
             }
         }
     }
@@ -151,39 +143,29 @@ public class IngredientsPageAdapter extends RecyclerView.Adapter<IngredientsPage
         Ingredient newIngredient = new Ingredient();
         newIngredient.setName(ingredient.getName());
         newIngredient.setUser(ingredient.getUser());
-        newIngredient.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e != null) {
-                    Toast.makeText(context, context.getString(R.string.error) + e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-                ingredients.add(position, newIngredient);
-                notifyItemInserted(position);
-                parentView.scrollToPosition(position);
+        newIngredient.saveInBackground(e -> {
+            if (e != null) {
+                Toast.makeText(context, context.getString(R.string.error) + e.getMessage(), Toast.LENGTH_LONG).show();
             }
+            ingredients.add(position, newIngredient);
+            notifyItemInserted(position);
+            parentView.scrollToPosition(position);
         });
     }
 
     public void deleteItem(RecyclerView parentView, int position) {
         Ingredient ingredient = ingredients.get(position);
-        ingredient.deleteInBackground(new DeleteCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    ingredients.remove(position);
-                    notifyItemRemoved(position);
+        ingredient.deleteInBackground(e -> {
+            if (e == null) {
+                ingredients.remove(position);
+                notifyItemRemoved(position);
 
-                    Snackbar snackbar = Snackbar.make(parentView, context.getString(R.string.ingredient_deleted), Snackbar.LENGTH_LONG)
-                            .setAction(context.getString(R.string.undo), new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    restoreItem(parentView, ingredient, position);
-                                }
-                            });
-                    snackbar.show();
-                } else {
-                    Toast.makeText(context, context.getString(R.string.error_deleting_ingredient), Toast.LENGTH_SHORT).show();
-                }
+                Snackbar snackbar = Snackbar.make(parentView, context.getString(R.string.ingredient_deleted), Snackbar.LENGTH_LONG)
+                        .setAction(context.getString(R.string.undo), v ->
+                                restoreItem(parentView, ingredient, position));
+                snackbar.show();
+            } else {
+                Toast.makeText(context, context.getString(R.string.error_deleting_ingredient), Toast.LENGTH_SHORT).show();
             }
         });
     }

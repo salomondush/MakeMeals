@@ -1,13 +1,6 @@
 package com.example.makemeals.fragments;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,9 +11,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.provider.MediaStore;
-import android.transition.TransitionInflater;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,38 +23,26 @@ import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.example.makemeals.MainActivity;
 import com.example.makemeals.R;
-import com.example.makemeals.RestClient;
 import com.example.makemeals.ViewModel.SharedViewModel;
-import com.example.makemeals.adapters.IngredientsDialogAdapter;
 import com.example.makemeals.adapters.RecipeIngredientsAdapter;
 import com.example.makemeals.adapters.RecipeInstructionsAdapter;
 import com.example.makemeals.databinding.FragmentRecipeDetailsBinding;
-import com.example.makemeals.models.Ingredient;
 import com.example.makemeals.models.Recipe;
 import com.example.makemeals.models.ShoppingItem;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
-import cz.msebera.android.httpclient.Header;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,13 +52,13 @@ import cz.msebera.android.httpclient.Header;
 public class RecipeDetailsFragment extends Fragment {
     public static final String SHOPPING_LIST = "shoppingList";
     private CircularProgressIndicator progressIndicator;
-    private ToggleButton tbSave;
-    private ToggleButton tbFavorite;
-    private LinearLayout llNutritionInfo;
-    private LinearLayout llIngredients;
-    private LinearLayout llInstructions;
+    private ToggleButton saveToggleButton;
+    private ToggleButton favoriteToggleButton;
+    private LinearLayout nutritionInfoLinearLayout;
+    private LinearLayout ingredientsLinearLayout;
+    private LinearLayout instructionsLinearLayout;
     private Recipe recipe;
-    private MaterialButtonToggleGroup toggleButtonRecipeInfo;
+    private MaterialButtonToggleGroup recipeInfoToggleButton;
 
 
     // material popup
@@ -132,60 +110,62 @@ public class RecipeDetailsFragment extends Fragment {
                 materialAlertDialogBuilder = new MaterialAlertDialogBuilder(requireContext());
                 progressIndicator = binding.progressIndicator;
 
-                ImageView ivRecipeImage = binding.ivRecipeImage;
-                TextView tvRecipeTitle = binding.tvRecipeTitle;
-                TextView tvReadyInTime = binding.tvReadyInTime;
-                TextView tvTypes = binding.tvTypes;
-                TextView tvServings = binding.tvServings;
-                TextView tvDiets = binding.tvDiets;
+                ImageView recipeImageView = binding.recipeImageView;
+                TextView recipeTitleTextView = binding.recipeTitleTextView;
+                TextView readyInTimeTextView = binding.readyInTimeTextView;
+                TextView typesTextView = binding.typesTextView;
+                TextView servingsTextView = binding.servingsTextView;
+                TextView dietsTextView = binding.dietsTextView;
 
-                RecyclerView rvRecipeDetailIngredients = binding.rvRecipeDetailIngredients;
-                RecyclerView rvRecipeDetailInstructions = binding.rvRecipeDetailInstructions;
+                RecyclerView recipeDetailIngredientsRecyclerView =
+                        binding.recipeDetailIngredientsRecyclerView;
+                RecyclerView recipeDetailInstructionsRecyclerView =
+                        binding.recipeDetailInstructionsRecyclerView;
 
-                tbSave = binding.tbSave;
-                tbFavorite = binding.tbFavorite;
-                ImageButton ibShare = binding.ibShare;
-                ImageButton ibShoppingList = binding.ibShoppingList;
+                saveToggleButton = binding.saveToggleButton;
+                favoriteToggleButton = binding.favoriteToggleButton;
+                ImageButton shareImageButton = binding.shareImageButton;
+                ImageButton shoppingListImageButton = binding.shoppingListImageButton;
 
-                toggleButtonRecipeInfo = binding.toggleButtonRecipeInfo;
-                llNutritionInfo = binding.llNutritionInfo;
-                llIngredients = binding.llIngredients;
-                llInstructions = binding.llInstructions;
+                recipeInfoToggleButton = binding.recipeInfoToggleButton;
+                nutritionInfoLinearLayout = binding.nutritionInfoLinearLayout;
+                ingredientsLinearLayout = binding.ingredientsLinearLayout;
+                instructionsLinearLayout = binding.instructionsLinearLayout;
 
                 Glide.with(requireContext()).load(recipe.getImageUrl())
                         .placeholder(R.drawable.recipe_image_placeholder)
                         .centerCrop()
                         .transform(new RoundedCorners(IMAGE_RADIUS))
-                        .into(ivRecipeImage);
-                tvRecipeTitle.setText(recipe.getTitle());
-                tvReadyInTime.setText(MessageFormat.format("{0}m", recipe.getReadyInMinutes()));
-                tvTypes.setText(getDishTypesStringFromRecipe(recipe));
-                tvServings.setText(String.valueOf(recipe.getServings()));
-                tvDiets.setText(getDietStringFromRecipe(recipe));
+                        .into(recipeImageView);
+                recipeTitleTextView.setText(recipe.getTitle());
+                readyInTimeTextView.setText(MessageFormat.format("{0}m", recipe.getReadyInMinutes()));
+                typesTextView.setText(getDishTypesStringFromRecipe(recipe));
+                servingsTextView.setText(String.valueOf(recipe.getServings()));
+                dietsTextView.setText(getDietStringFromRecipe(recipe));
 
                 // get ingredients from jsonArray and display them using adapter
                 RecipeIngredientsAdapter recipeIngredientsAdapter = new RecipeIngredientsAdapter(recipe.getExtendedIngredients(), getContext());
-                rvRecipeDetailIngredients.setAdapter(recipeIngredientsAdapter);
-                rvRecipeDetailIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
+                recipeDetailIngredientsRecyclerView.setAdapter(recipeIngredientsAdapter);
+                recipeDetailIngredientsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
                 // get instructions from jsonArray and display them using adapter
                 RecipeInstructionsAdapter recipeInstructionsAdapter = new RecipeInstructionsAdapter(recipe.getAnalyzedInstructions(), getContext(), true);
-                rvRecipeDetailInstructions.setAdapter(recipeInstructionsAdapter);
-                rvRecipeDetailInstructions.setLayoutManager(new LinearLayoutManager(getContext()));
+                recipeDetailInstructionsRecyclerView.setAdapter(recipeInstructionsAdapter);
+                recipeDetailInstructionsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
                 // set up toggle button group for recipe info
                 setupToggleButtonGroup();
 
-                tbSave.setChecked(recipe.getSaved());
-                tbFavorite.setChecked(recipe.getFavorite());
+                saveToggleButton.setChecked(recipe.getSaved());
+                favoriteToggleButton.setChecked(recipe.getFavorite());
 
-                tbSave.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                saveToggleButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     recipe.setSaved(isChecked);
                     recipe.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
                             if (e != null){
-                                tbSave.setChecked(!isChecked);
+                                saveToggleButton.setChecked(!isChecked);
                                 Toast.makeText(getContext(),
                                         (isChecked? requireContext().getString(R.string.error_saving_recipe):
                                                 requireContext().getString(R.string.error_unsaving_recipe)), Toast.LENGTH_SHORT).show();
@@ -198,13 +178,13 @@ public class RecipeDetailsFragment extends Fragment {
                     });
                 });
 
-                tbFavorite.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                favoriteToggleButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     recipe.setFavorite(isChecked);
                     recipe.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
                             if (e != null){
-                                tbFavorite.setChecked(!isChecked);
+                                favoriteToggleButton.setChecked(!isChecked);
                                 Toast.makeText(getContext(), (isChecked? requireContext().getString(R.string.error_favoriting_recipe):
                                         requireContext().getString(R.string.error_unfavoriting_recipe)), Toast.LENGTH_SHORT).show();
                             } else {
@@ -216,11 +196,11 @@ public class RecipeDetailsFragment extends Fragment {
                     });
                 });
 
-                ibShare.setOnClickListener(v -> {
+                shareImageButton.setOnClickListener(v -> {
                     ((MainActivity) requireActivity()).showRecipeSharingFragment();
                 });
 
-                ibShoppingList.setOnClickListener(v -> {
+                shoppingListImageButton.setOnClickListener(v -> {
                     launchAddToShoppingListDialog();
                 });
             }
@@ -232,10 +212,10 @@ public class RecipeDetailsFragment extends Fragment {
      * Sets up the toggle button group for the recipe info.
      */
     private void setupToggleButtonGroup() {
-        int initialId = toggleButtonRecipeInfo.getCheckedButtonId();
+        int initialId = recipeInfoToggleButton.getCheckedButtonId();
         displayCheckedIdInformation(initialId);
 
-        toggleButtonRecipeInfo.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+        recipeInfoToggleButton.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (isChecked){
                 displayCheckedIdInformation(checkedId);
             }
@@ -243,18 +223,18 @@ public class RecipeDetailsFragment extends Fragment {
     }
 
     private void displayCheckedIdInformation(int checkedId){
-        if (checkedId == R.id.buttonNutrition) {
-            llNutritionInfo.setVisibility(View.VISIBLE);
-            llIngredients.setVisibility(View.GONE);
-            llInstructions.setVisibility(View.GONE);
-        } else if (checkedId == R.id.buttonIngredients) {
-            llNutritionInfo.setVisibility(View.GONE);
-            llIngredients.setVisibility(View.VISIBLE);
-            llInstructions.setVisibility(View.GONE);
-        } else if (checkedId == R.id.buttonInstructions) {
-            llNutritionInfo.setVisibility(View.GONE);
-            llIngredients.setVisibility(View.GONE);
-            llInstructions.setVisibility(View.VISIBLE);
+        if (checkedId == R.id.nutritionButton) {
+            nutritionInfoLinearLayout.setVisibility(View.VISIBLE);
+            ingredientsLinearLayout.setVisibility(View.GONE);
+            instructionsLinearLayout.setVisibility(View.GONE);
+        } else if (checkedId == R.id.ingredientsButton) {
+            nutritionInfoLinearLayout.setVisibility(View.GONE);
+            ingredientsLinearLayout.setVisibility(View.VISIBLE);
+            instructionsLinearLayout.setVisibility(View.GONE);
+        } else if (checkedId == R.id.instructionsButton) {
+            nutritionInfoLinearLayout.setVisibility(View.GONE);
+            ingredientsLinearLayout.setVisibility(View.GONE);
+            instructionsLinearLayout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -286,7 +266,7 @@ public class RecipeDetailsFragment extends Fragment {
 
         List<JSONObject> shoppingIngredients = recipe.getExtendedIngredients();
 
-        RecyclerView rvDialogIngredients = addShoppingIngredientsDialogView.findViewById(R.id.rvDialogIngredients);
+        RecyclerView rvDialogIngredients = addShoppingIngredientsDialogView.findViewById(R.id.dialogIngredientsRecyclerView);
         RecipeIngredientsAdapter shoppingIngredientsDialogAdapter = new RecipeIngredientsAdapter(shoppingIngredients, getContext());
         rvDialogIngredients.setAdapter(shoppingIngredientsDialogAdapter);
         rvDialogIngredients.setLayoutManager(new LinearLayoutManager(getContext()));

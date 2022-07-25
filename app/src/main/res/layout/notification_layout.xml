@@ -10,7 +10,7 @@
     android:gravity="center">
 
     <ImageView
-        android:id="@+id/ivShoppingCart"
+        android:id="@+id/shoppingCartImageView"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_gravity="center"
@@ -18,7 +18,7 @@
         android:src="@drawable/shopping_cart_icon" />
 
     <androidx.cardview.widget.CardView
-        android:layout_toEndOf="@id/ivShoppingCart"
+        android:layout_toEndOf="@id/shoppingCartImageView"
         android:layout_marginStart="-10dp"
         android:layout_width="18dp"
         android:layout_height="18dp"
@@ -30,7 +30,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/tvShoppingCount"
+                android:id="@+id/shoppingCountTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"

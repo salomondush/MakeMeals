@@ -15,7 +15,7 @@
         android:textSize="18sp" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewRecommendedRecipes"
+        android:id="@+id/recommendedRecipesRecyclerView"
         android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

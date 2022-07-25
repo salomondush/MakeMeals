@@ -5,30 +5,24 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.makemeals.Constant;
 import com.example.makemeals.MainActivity;
 import com.example.makemeals.R;
-import com.example.makemeals.ViewModel.RecipesSearchViewModel;
 import com.example.makemeals.ViewModel.RecipesSharedViewModel;
-import com.example.makemeals.ViewModel.RecipesViewModel;
 import com.example.makemeals.ViewModel.SharedViewModel;
 import com.example.makemeals.adapters.RecipeAdapter;
 import com.example.makemeals.customClasses.EndlessRecyclerViewScrollListener;
 import com.example.makemeals.databinding.FragmentRecipesBinding;
 import com.example.makemeals.models.Recipe;
 import com.google.android.material.button.MaterialButtonToggleGroup;
-import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +36,7 @@ import java.util.stream.Collectors;
 public class RecipesFragment extends Fragment {
     private List<Recipe> recipesFilterList;
     private FragmentRecipesBinding binding;
-    private MaterialButtonToggleGroup toggleButtonRecipes;
+    private MaterialButtonToggleGroup recipesToggleButton;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecipeAdapter recipeAdapter;
 
@@ -84,7 +78,7 @@ public class RecipesFragment extends Fragment {
                 new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
         binding = FragmentRecipesBinding.bind(view);
-        toggleButtonRecipes = binding.toggleButtonRecipes;
+        recipesToggleButton = binding.recipesToggleButton;
         RecyclerView recipeListRecyclerView = binding.recipeListRecyclerView;
 
         swipeRefreshLayout = binding.swipeRefreshLayout;
@@ -136,10 +130,10 @@ public class RecipesFragment extends Fragment {
      * @param recipes
      */
     private void setupToggleButtonFilterGroup(List<Recipe> recipes) {
-        int initialId = toggleButtonRecipes.getCheckedButtonId();
+        int initialId = recipesToggleButton.getCheckedButtonId();
         displayCheckedIdInformation(initialId, recipes);
 
-        toggleButtonRecipes.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+        recipesToggleButton.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (isChecked){
                 displayCheckedIdInformation(checkedId, recipes);
             }
@@ -152,18 +146,18 @@ public class RecipesFragment extends Fragment {
      * @param recipes
      */
     private void displayCheckedIdInformation(int checkedId, List<Recipe> recipes) {
-        if (checkedId == binding.buttonAll.getId()){
+        if (checkedId == binding.allButton.getId()){
             recipesFilterList.clear();
 
             // only add saved or favorited recipes to the list
             recipesFilterList.addAll(recipes.stream()
                     .filter(recipe -> recipe.getFavorite() || recipe.getSaved())
                     .collect(Collectors.toList()));
-        } else if (checkedId == binding.buttonSaved.getId()){
+        } else if (checkedId == binding.savedButton.getId()){
             recipesFilterList.clear();
             recipesFilterList.addAll(recipes.stream().filter(Recipe::getSaved)
                     .collect(Collectors.toList()));
-        } else if (checkedId == binding.buttonFavorites.getId()){
+        } else if (checkedId == binding.favoritesButton.getId()){
             recipesFilterList.clear();
             recipesFilterList.addAll(recipes.stream().filter(Recipe::getFavorite)
                     .collect(Collectors.toList()));

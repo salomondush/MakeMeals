@@ -71,24 +71,24 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         final private ImageView ivIngredientImage;
-        private final TextView tvDetailIngredientName;
-        private final TextView tvIngredientQuantity;
-        private final CheckBox cbSelectIngredient;
+        private final TextView detailIngredientNameTextView;
+        private final TextView ingredientQuantityTextView;
+        private final CheckBox selectIngredientCheckBox;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            tvDetailIngredientName = binding.tvDetailIngredientName;
-            tvIngredientQuantity = binding.tvIngredientQuantity;
+            detailIngredientNameTextView = binding.detailIngredientNameTextView;
+            ingredientQuantityTextView = binding.ingredientQuantityTextView;
             ivIngredientImage = binding.ivIngredientImage;
-            cbSelectIngredient = binding.cbSelectIngredient;
+            selectIngredientCheckBox = binding.selectIngredientCheckBox;
 
-            cbSelectIngredient.setVisibility(View.VISIBLE);
-            cbSelectIngredient.setOnClickListener(v -> {
-                if (cbSelectIngredient.isChecked()) {
-                    tvDetailIngredientName.setPaintFlags(tvDetailIngredientName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            selectIngredientCheckBox.setVisibility(View.VISIBLE);
+            selectIngredientCheckBox.setOnClickListener(v -> {
+                if (selectIngredientCheckBox.isChecked()) {
+                    detailIngredientNameTextView.setPaintFlags(detailIngredientNameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 } else {
-                    tvDetailIngredientName.setPaintFlags(tvDetailIngredientName.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                    detailIngredientNameTextView.setPaintFlags(detailIngredientNameTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
                 }
 
                 isCheckedListener.onItemClick(v, getAdapterPosition());
@@ -105,10 +105,10 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
             String amount = "amount";
             String imageField = "image";
 
-            tvDetailIngredientName.setText(ingredientFields.optString(name));
+            detailIngredientNameTextView.setText(ingredientFields.optString(name));
             JSONObject measure = Objects.requireNonNull(ingredientFields.optJSONObject(measures)).optJSONObject(unitType);
             String quantity = Objects.requireNonNull(measure).optInt(amount) + " " + measure.optString(shortUnit);
-            tvIngredientQuantity.setText(quantity);
+            ingredientQuantityTextView.setText(quantity);
 
             String image = ingredientFields.optString(imageField);
             ;
@@ -119,11 +119,11 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                     .into(ivIngredientImage);
 
             if (shoppingItem.getIsChecked()) {
-                cbSelectIngredient.setChecked(true);
-                tvDetailIngredientName.setPaintFlags(tvDetailIngredientName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                selectIngredientCheckBox.setChecked(true);
+                detailIngredientNameTextView.setPaintFlags(detailIngredientNameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             } else {
-                cbSelectIngredient.setChecked(false);
-                tvDetailIngredientName.setPaintFlags(tvDetailIngredientName.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                selectIngredientCheckBox.setChecked(false);
+                detailIngredientNameTextView.setPaintFlags(detailIngredientNameTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
             }
         }
     }
