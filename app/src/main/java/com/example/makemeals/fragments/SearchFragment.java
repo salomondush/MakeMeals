@@ -38,6 +38,7 @@ import com.example.makemeals.ViewModel.RecipesSearchViewModel;
 import com.example.makemeals.ViewModel.SharedViewModel;
 import com.example.makemeals.adapters.IngredientsPageAdapter;
 import com.example.makemeals.adapters.RecipeAdapter;
+import com.example.makemeals.customClasses.EndlessRecyclerViewScrollListener;
 import com.example.makemeals.databinding.FragmentSearchBinding;
 import com.example.makemeals.models.Ingredient;
 import com.example.makemeals.models.Recipe;
@@ -90,9 +91,11 @@ public class SearchFragment extends Fragment {
     private List<SearchHistory> searchHistories;
     private SearchHistoryDao searchHistoryDao;
     private ArrayAdapter<String> searchQueryAdapter;
-    private RecyclerView recipeListRecyclerView;
     private RecipeAdapter recipeAdapter;
     private ArrayList<Recipe> recipes;
+    private String type;
+    private String diet;
+    private String query;
 
     private RecipesSearchViewModel recipesSearchViewModel;
 
@@ -152,7 +155,7 @@ public class SearchFragment extends Fragment {
         llSearchBlock = binding.llSearchBlock;
         ibHideSearchBlock = binding.ibHideSearchBlock;
         etSearchText = binding.etSearchText;
-        recipeListRecyclerView = binding.recipeListRecyclerView;
+        RecyclerView recipeListRecyclerView = binding.recipeListRecyclerView;
 
         // define our db and delete any excess search history data
         searchHistoryDao =
@@ -166,7 +169,21 @@ public class SearchFragment extends Fragment {
         recipes = new ArrayList<>();
         recipeAdapter = new RecipeAdapter(recipes, getContext(), recipesSearchViewModel);
         recipeListRecyclerView.setAdapter(recipeAdapter);
-        recipeListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        // configure endless scroll listener
+        // Triggered only when new data needs to be appended to the list
+        // Add whatever code is needed to append new items to the bottom of the list
+        EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                loadNextDataFromApi(page);
+            }
+        };
+
+        recipeListRecyclerView.setLayoutManager(linearLayoutManager);
+        recipeListRecyclerView.addOnScrollListener(scrollListener);
 
         recipeAdapter.setOnItemClickListener((itemView, position) -> {
 
@@ -199,48 +216,40 @@ public class SearchFragment extends Fragment {
         querySearchIngredients();
     }
 
+    /**
+     * Calls the API to load recipes corresponding to the current scroll position.
+     * @param page
+     */
+    private void loadNextDataFromApi(int page) {
+        searchRecipes(type, diet, query, page);
+    }
+
     private void setupClickListeners() {
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String type = recipeType.getText().toString();
-                String diet = recipeDiet.getText().toString();
-                String query = etSearchText.getText().toString();
+        searchButton.setOnClickListener(v -> {
+            type = recipeType.getText().toString();
+            diet = recipeDiet.getText().toString();
+            query = etSearchText.getText().toString();
 
-                AsyncTask.execute(() -> {
-                    searchHistoryDao.insert(SearchHistory.createEntry(query, type, diet));
-                    searchOptions.add(query);
-                    searchQueryAdapter.notifyDataSetChanged();
-                });
+            AsyncTask.execute(() -> {
+                searchHistoryDao.insert(SearchHistory.createEntry(query, type, diet));
+                searchOptions.add(query);
+                searchQueryAdapter.notifyDataSetChanged();
+            });
 
-                searchRecipes(type, diet, query);
+            searchRecipes(type, diet, query);
+        });
+
+        ingredientsPageAdapter.setOnSelectIngredientClickListener((itemView, position) -> {
+            if (searchIngredientsNames.contains(ingredients.get(position).getName())) {
+                searchIngredientsNames.remove(ingredients.get(position).getName());
+            } else {
+                searchIngredientsNames.add(ingredients.get(position).getName());
             }
         });
 
-        ingredientsPageAdapter.setOnSelectIngredientClickListener(new IngredientsPageAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View itemView, int position) {
-                if (searchIngredientsNames.contains(ingredients.get(position).getName())) {
-                    searchIngredientsNames.remove(ingredients.get(position).getName());
-                } else {
-                    searchIngredientsNames.add(ingredients.get(position).getName());
-                }
-            }
-        });
+        tvSearchBar.setOnClickListener(v -> showSearchBlock());
 
-        tvSearchBar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showSearchBlock();
-            }
-        });
-
-        ibHideSearchBlock.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideSearchBlock();
-            }
-        });
+        ibHideSearchBlock.setOnClickListener(v -> hideSearchBlock());
     }
 
     private void setupDropdownOptions() {
@@ -283,7 +292,7 @@ public class SearchFragment extends Fragment {
         });
     }
 
-    private void searchRecipes(String type, String diet, String query) {
+    private void searchRecipes(String type, String diet, String query, int page) {
         showProgressBar();
 
         OkHttpClient client = new OkHttpClient();
@@ -292,6 +301,7 @@ public class SearchFragment extends Fragment {
                 Objects.requireNonNull(HttpUrl.parse(Constant.RECIPE_SEARCH_URL)).newBuilder();
         urlBuilder.addQueryParameter(Constant.API_KEY, Constant.SPN_API_KEY);
         urlBuilder.addQueryParameter(Constant.NUMBER, String.valueOf(Constant.MAX_RESULTS));
+        urlBuilder.addQueryParameter(Constant.OFFSET, String.valueOf(page * Constant.MAX_RESULTS));
         urlBuilder.addQueryParameter(Constant.INCLUDE_INGREDIENTS, TextUtils.join(",", searchIngredientsNames));
         urlBuilder.addQueryParameter(Constant.TYPE, type);
         urlBuilder.addQueryParameter(Constant.QUERY, query);
@@ -324,7 +334,15 @@ public class SearchFragment extends Fragment {
 
                         requireActivity().runOnUiThread(() -> {
                             try {
-                                recipesSearchViewModel.setRecipes((Recipe.fromJsonArray(responseJson.getJSONArray(Constant.RESULTS))));
+                                if (page == 0) {
+                                    recipesSearchViewModel
+                                            .setRecipes((Recipe.fromJsonArray(responseJson
+                                                    .getJSONArray(Constant.RESULTS))));
+                                } else {
+                                    recipesSearchViewModel
+                                            .addRecipes(Recipe.fromJsonArray(responseJson
+                                                    .getJSONArray(Constant.RESULTS)));
+                                }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -347,22 +365,23 @@ public class SearchFragment extends Fragment {
         });
     }
 
+    private void searchRecipes(String type, String diet, String query) {
+        searchRecipes(type, diet, query, 0);
+    }
+
     private void querySearchIngredients() {
         showProgressBar();
         ParseQuery<Ingredient> query = ParseQuery.getQuery(Ingredient.class);
         query.whereEqualTo(Constant.USER, ParseUser.getCurrentUser());
         query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
-        query.findInBackground(new FindCallback<Ingredient>() {
-            @Override
-            public void done(List<Ingredient> objects, ParseException e) {
-                if (e == null && objects != null) {
-                    ingredients.clear();
-                    ingredients.addAll(objects);
-                    ingredientsPageAdapter.notifyDataSetChanged();
-                    hideProgressBar();
-                } else if (objects != null) {
-                    Toast.makeText(getContext(), requireContext().getString(R.string.error_getting_search_ingredients), Toast.LENGTH_SHORT).show();
-                }
+        query.findInBackground((objects, e) -> {
+            if (e == null && objects != null) {
+                ingredients.clear();
+                ingredients.addAll(objects);
+                ingredientsPageAdapter.notifyDataSetChanged();
+                hideProgressBar();
+            } else if (objects != null) {
+                Toast.makeText(getContext(), requireContext().getString(R.string.error_getting_search_ingredients), Toast.LENGTH_SHORT).show();
             }
         });
     }

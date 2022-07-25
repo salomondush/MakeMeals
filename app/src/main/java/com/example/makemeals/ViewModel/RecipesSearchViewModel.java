@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.makemeals.models.Recipe;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,5 +24,14 @@ public class RecipesSearchViewModel extends RecipesViewModel {
 
     public void setRecipes(List<Recipe> recipesUpdate) {
         recipes.setValue(recipesUpdate);
+    }
+
+    public void addRecipes(List<Recipe> recipesUpdate) {
+        List<Recipe> currentRecipes = recipes.getValue();
+        if (currentRecipes == null) {
+            currentRecipes = new ArrayList<>();
+        }
+        currentRecipes.addAll(recipesUpdate);
+        recipes.setValue(currentRecipes);
     }
 }
