@@ -44,7 +44,6 @@ public class RecipesFragment extends Fragment {
     private FragmentRecipesBinding binding;
     private MaterialButtonToggleGroup toggleButtonRecipes;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private RecyclerView recipeListRecyclerView;
     private RecipeAdapter recipeAdapter;
 
 
@@ -86,7 +85,7 @@ public class RecipesFragment extends Fragment {
 
         binding = FragmentRecipesBinding.bind(view);
         toggleButtonRecipes = binding.toggleButtonRecipes;
-        recipeListRecyclerView = binding.recipeListRecyclerView;
+        RecyclerView recipeListRecyclerView = binding.recipeListRecyclerView;
 
         swipeRefreshLayout = binding.swipeRefreshLayout;
         swipeRefreshLayout.setOnRefreshListener(recipesSharedViewModel::loadRecipes);
