@@ -42,11 +42,10 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     private static final String FAT = "Fat";
     private static final String CARBS = "Carbohydrates";
     final private List<Recipe> recipes;
-//    private final RecipesSharedViewModel recipesSharedViewModel;
     final private Context context;
     private RecipeItemBinding binding;
     private OnItemClickListener onItemClickListener;
-    private RecipesViewModel recipesViewModel;
+    private final RecipesViewModel recipesViewModel;
 
 
     public RecipeAdapter(List<Recipe> recipes, Context context, RecipesViewModel recipesViewModel) {
